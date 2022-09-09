@@ -12,10 +12,10 @@ import java.util.Date;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/sistema")
+@RequestMapping("/api")
 @OpenAPIDefinition(info = @Info(title = "Sistema de gestão de entreteinimento", version = "1.0", description = ""))
 
-public class SistemaController {
+public class SystemController {
 
     @GetMapping("/status")
     public ResponseEntity statusApi() {
