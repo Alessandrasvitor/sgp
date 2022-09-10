@@ -9,13 +9,13 @@ import io.swagger.v3.oas.annotations.info.Info;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin
 @RestController
 @RequestMapping("/user")
+@PreAuthorize("hasAuthority('USER')")
 @OpenAPIDefinition(info = @Info(title = "Sistema de gestão de entreteinimento", version = "1.0", description = ""))
 public class UserController {
 
@@ -29,7 +29,6 @@ public class UserController {
     }
 
     @ResponseBody
-    @Secured({"USER"})
     @GetMapping("/{id}")
     public ResponseEntity getById(@PathVariable Long id) {
         try {
@@ -92,7 +91,7 @@ public class UserController {
 
     @ResponseBody
     @GetMapping("/reset/{id}")
-    public ResponseEntity getResetPassword(@PathVariable Long id) {
+    public ResponseEntity resetPassword(@PathVariable Long id) {
         try {
             userService.resetPassword(id);
             return ResponseEntity.ok().build();
@@ -107,8 +106,10 @@ public class UserController {
     @GetMapping("/info")
     public ResponseEntity getUserDetails() {
         try {
-            String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            return ResponseEntity.ok().body(userService.getByEmail(email));
+            String details = "User: " + SecurityContextHolder.getContext().getAuthentication().getPrincipal() + "<br/>" +
+                    "User Authorities: " + SecurityContextHolder.getContext().getAuthentication().getAuthorities() + "<br/>" +
+                    "Detalhes: " + SecurityContextHolder.getContext().getAuthentication().getDetails();
+            return ResponseEntity.ok().body(details);
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

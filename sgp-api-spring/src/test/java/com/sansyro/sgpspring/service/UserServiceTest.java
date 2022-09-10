@@ -17,8 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,6 +52,21 @@ public class UserServiceTest {
         when(repository.findById(any())).thenReturn(Optional.empty());
         assertThrows(ServiceException.class, () -> service.getById(ID));
         verify(repository, times(1)).findById(any());
+    }
+
+    @Test
+    void getByEmailTest() {
+        when(repository.findByEmail(any())).thenReturn(new User());
+        User user = service.getByEmail(RandomStringUtils.randomAlphabetic(8));
+        verify(repository, times(1)).findByEmail(any());
+        assertNotNull(user);
+    }
+
+    @Test
+    void getByEmailWithErrorTest() {
+        when(repository.findByEmail(any())).thenReturn(null);
+        assertThrows(ServiceException.class, () -> service.getByEmail(RandomStringUtils.randomAlphabetic(8)));
+        verify(repository, times(1)).findByEmail(any());
     }
 
     @Test
@@ -106,6 +120,16 @@ public class UserServiceTest {
     void updatePasswordWithErrorTest() {
         when(repository.findById(any())).thenReturn(Optional.of(new User()));
         assertThrows(ServiceException.class, () -> service.updatePassword(ID, null));
+    }
+
+    @Test
+    void resetPasswordTest() {
+        User user = UserBuild.getUser();
+        when(repository.findById(any())).thenReturn(Optional.of(user));
+        when(repository.save(any())).thenReturn(user);
+        service.resetPassword(ID);
+        verify(repository, times(1)).save(any());
+        assertEquals(user.getPassword(), "bh1234"+user.getUserHashCode());
     }
 
 }

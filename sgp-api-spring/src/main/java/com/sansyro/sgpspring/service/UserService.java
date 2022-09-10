@@ -4,17 +4,14 @@ import com.sansyro.sgpspring.entity.User;
 import com.sansyro.sgpspring.entity.dto.UserRequest;
 import com.sansyro.sgpspring.exception.ServiceException;
 import com.sansyro.sgpspring.repository.UserRepository;
-import com.sansyro.sgpspring.security.JWTFilter;
 import com.sansyro.sgpspring.util.GeralUtil;
 import com.sansyro.sgpspring.util.SecurityUtil;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -91,22 +88,6 @@ public class UserService {
 
     private String getNewHashCode() {
         return RandomStringUtils.randomAlphabetic(10);
-    }
-
-    public String login(UserRequest userRequest) throws UsernameNotFoundException, IOException {
-        User user = userRepository.findByEmail(userRequest.getEmail());
-        if(user == null) {
-            throw new UsernameNotFoundException("Usuário não encontrado!");
-        }
-        StringBuilder password = new StringBuilder(userRequest.getPassword()).append(user.getUserHashCode());
-        String passwordCripto = SecurityUtil.bCryptPasswordEncoder().encode(password.toString());
-        if(SecurityUtil.bCryptPasswordEncoder().matches(passwordCripto, user.getPassword())) {
-            return null;
-        }
-
-        user.setToken(JWTFilter.getToken(user.getEmail()));
-        userRepository.save(user);
-        return user.getToken();
     }
 
     public void resetPassword(Long id) {
