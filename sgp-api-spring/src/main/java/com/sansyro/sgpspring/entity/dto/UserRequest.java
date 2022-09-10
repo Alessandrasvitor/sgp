@@ -15,9 +15,11 @@ public class UserRequest {
 
     private String name;
     private String email;
+
+    private String password;
     private Set<FunctionalityEnum> functionalities;
 
     public User mapperEntity() {
-        return User.builder().name(name).email(email).functionalities(functionalities).build();
+        return User.builder().name(name).email(email).password(password).functionalities(functionalities).build();
     }
 }
