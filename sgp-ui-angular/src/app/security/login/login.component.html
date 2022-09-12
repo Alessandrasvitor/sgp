@@ -1,0 +1,37 @@
+<div class="grid p-fluid">
+  <div class="col-4"></div>
+  <div class="col-4">
+    <div class="login align-content-center">
+      <p-card>
+        <ng-template pTemplate="header">
+          <h2 *ngIf="!createNewPwd" class="align-items-center">
+            Login
+          </h2>
+          <h2 *ngIf="createNewPwd" class="align-items-center">
+            Criar nova senha
+          </h2>
+        </ng-template>
+          <div class="field">
+            <label>Email</label>
+            <input required type="text" pInputText [(ngModel)]="user.email" />
+          </div>
+          <div class="field">
+            <label *ngIf="!createNewPwd">Senha</label>
+            <label *ngIf="createNewPwd">Nova Senha</label>
+            <p-password required [(ngModel)]="user.password" [toggleMask]="true"></p-password>
+          </div>
+          <div *ngIf="createNewPwd" class="field">
+            <label>Confirmar Nova Senha</label>
+            <p-password required id="passwordConfirm" [(ngModel)]="user.password"></p-password>
+            <small *ngIf="user.password !== password" class="p-error">A senhas não são compatíveis.</small>
+          </div>
+        <ng-template pTemplate="footer">          
+          <button pButton *ngIf="!createNewPwd" (click)="login()" type="button" label="Login" ></button>
+          <button pButton *ngIf="createNewPwd" (click)="createPwd()" type="button" label="Atualizar" ></button>
+        </ng-template>
+    </p-card>
+    </div>
+  </div>
+  
+</div>
+

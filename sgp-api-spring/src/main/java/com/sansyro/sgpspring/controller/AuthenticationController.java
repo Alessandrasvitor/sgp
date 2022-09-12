@@ -5,21 +5,17 @@ import com.sansyro.sgpspring.entity.dto.TokenResponse;
 import com.sansyro.sgpspring.entity.dto.UserRequest;
 import com.sansyro.sgpspring.exception.ServiceException;
 import com.sansyro.sgpspring.security.service.AuthenticationService;
-import com.sansyro.sgpspring.security.service.TokenService;
+import com.sansyro.sgpspring.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/auth")
 public class AuthenticationController {
 
@@ -27,23 +23,31 @@ public class AuthenticationController {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private TokenService tokenService;
+    private UserService userService;
 
     @Autowired
     private AuthenticationService authenticationService;
 
-    @PostMapping
-    public ResponseEntity auth(@RequestBody @Validated UserRequest request){
+    @PostMapping("/login")
+    public ResponseEntity login(@RequestBody @Validated UserRequest request){
         try {
             User user = authenticationService.login(request);
-            String token = tokenService.generateToken(user);
-            return ResponseEntity.ok(TokenResponse.builder().type("Bearer").token(token).build());
+            return ResponseEntity.ok(TokenResponse.builder().type("Bearer").token(user.getToken()).build());
         } catch (ServiceException | UsernameNotFoundException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
+    }
 
+    @PutMapping("/logout/{id}")
+    public ResponseEntity logout(@PathVariable Long id){
+        try {
+            authenticationService.logout(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
 }

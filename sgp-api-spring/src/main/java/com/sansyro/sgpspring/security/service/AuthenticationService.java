@@ -12,12 +12,16 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AuthenticationService implements UserDetailsService {
 
     @Autowired
     private UserRepository repository;
+
+    @Autowired
+    private TokenService tokenService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -35,7 +39,18 @@ public class AuthenticationService implements UserDetailsService {
         if(SecurityUtil.bCryptPasswordEncoder().matches(passwordCripto, user.getPassword())) {
             throw new UsernameNotFoundException("Usuário ou senha não encontrado");
         }
+        user.setToken(tokenService.generateToken(user));
+        repository.save(user);
         return user;
+    }
+
+    public void logout(Long id) throws UsernameNotFoundException {
+        Optional<User> userOptional = repository.findById(id);
+        if(userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setToken(null);
+            repository.save(user);
+        }
     }
 
 }
