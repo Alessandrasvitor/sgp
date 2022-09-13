@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { User } from 'src/app/shared/class/classes';
+import { MessageService } from 'primeng/api';
+import { User } from 'src/app/shared/class/user';
 import { ErrorService } from 'src/app/shared/service/error.service';
 import { SecurityService } from '../security.service';
 
@@ -18,6 +19,7 @@ export class LoginComponent implements OnInit {
     private securityService: SecurityService,
     private errorService: ErrorService,
     private router: Router,
+    private messageService: MessageService
   ) { }
 
   ngOnInit() { }
@@ -42,6 +44,15 @@ export class LoginComponent implements OnInit {
       .catch(erro => {
         this.errorService.handle(erro);
       });
+  }
+
+  redirect(init: string) {
+    if(init) {
+      const route = init.toLowerCase();
+      this.router.navigate(['/'+route]);
+      return;
+    }
+    this.router.navigate(['/course']);
   }
 
   createPwd() {

@@ -13,7 +13,7 @@
         </ng-template>
           <div class="field">
             <label>Email</label>
-            <input required type="text" pInputText [(ngModel)]="user.email" />
+            <input required [disabled]="createNewPwd" type="text" pInputText [(ngModel)]="user.email" />
           </div>
           <div class="field">
             <label *ngIf="!createNewPwd">Senha</label>

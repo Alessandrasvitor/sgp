@@ -9,6 +9,8 @@ import { ExcelService } from './shared/service/excel.service';
 import { FeaturesModule } from './features/features.module';
 import { SecurityModule } from './security/security.module';
 import { AppRoutingModule } from './app.routing.module';
+import { SecurityModule } from './security/security.module';
+import { JwtHelperService } from '@auth0/angular-jwt';
 import { SharedModule } from './shared/shared.module';
 import { AppComponent } from './app.component';
 

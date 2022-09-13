@@ -17,6 +17,7 @@ import { CardModule } from 'primeng/card';
 import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
 
+
 @NgModule({
   declarations: [
     SecurityComponent,
@@ -37,7 +38,7 @@ import { MessageModule } from 'primeng/message';
     MessageModule
   ],
   providers: [
-    ErrorService
+    ErrorService,
   ]
 })
 export class SecurityModule { }

@@ -57,6 +57,7 @@ public class UserService {
         userUpdate.setName(user.getName());
         userUpdate.setStartView(user.getStartView());
         userUpdate.setEmail(user.getEmail());
+        userUpdate.setInit(user.getInit());
         return userRepository.save(userUpdate);
     }
 
