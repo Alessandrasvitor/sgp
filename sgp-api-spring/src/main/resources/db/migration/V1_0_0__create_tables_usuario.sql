@@ -5,7 +5,8 @@ create table user (
      email varchar(100) not null UNIQUE,
      password varchar(255) not null,
      user_hash_code varchar(255) not null,
-     token  varchar(255)
+     init varchar(50),
+     token varchar(255)
 );
 
 create table functionality_user (

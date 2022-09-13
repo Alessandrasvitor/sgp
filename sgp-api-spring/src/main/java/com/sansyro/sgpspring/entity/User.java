@@ -44,6 +44,9 @@ public class User implements UserDetails {
     private String userHashCode;
     private String token;
 
+    @Enumerated(EnumType.STRING)
+    private FunctionalityEnum init;
+
     @ElementCollection(targetClass = FunctionalityEnum.class, fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name="functionality_user", joinColumns = @JoinColumn(name = "user_id"))
@@ -55,7 +58,7 @@ public class User implements UserDetails {
     }
 
     public UserResponse mapperDTP() {
-        return UserResponse.builder().id(id).name(name).email(email).functionalities(functionalities).build();
+        return UserResponse.builder().id(id).name(name).email(email).init(init).functionalities(functionalities).build();
     }
 
     @Override

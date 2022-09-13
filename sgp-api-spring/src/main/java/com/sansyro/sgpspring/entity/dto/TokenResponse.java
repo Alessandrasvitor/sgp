@@ -8,4 +8,5 @@ import lombok.Data;
 public class TokenResponse {
     private String type;
     private String token;
+    private UserResponse user;
 }

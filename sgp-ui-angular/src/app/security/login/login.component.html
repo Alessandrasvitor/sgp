@@ -13,7 +13,7 @@
         </ng-template>
           <div class="field">
             <label>Email</label>
-            <input required type="text" pInputText [(ngModel)]="user.email" />
+            <input required [disabled]="createNewPwd" type="text" pInputText [(ngModel)]="user.email" />
           </div>
           <div class="field">
             <label *ngIf="!createNewPwd">Senha</label>
@@ -22,7 +22,7 @@
           </div>
           <div *ngIf="createNewPwd" class="field">
             <label>Confirmar Nova Senha</label>
-            <p-password required id="passwordConfirm" [(ngModel)]="user.password"></p-password>
+            <p-password required id="passwordConfirm" [(ngModel)]="password"></p-password>
             <small *ngIf="user.password !== password" class="p-error">A senhas não são compatíveis.</small>
           </div>
         <ng-template pTemplate="footer">          

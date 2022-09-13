@@ -54,11 +54,13 @@ public class UserService {
         User userUpdate = getById(id);
         userUpdate.setName(user.getName());
         userUpdate.setEmail(user.getEmail());
+        userUpdate.setInit(user.getInit());
         return userRepository.save(userUpdate);
     }
 
     public User updatePassword(Long id, String password) {
         User userUpdate = getById(id);
+        userUpdate.setUserHashCode(getNewHashCode());
         userUpdate.setPassword(validatePassword(password,userUpdate.getUserHashCode()));
         return userRepository.save(userUpdate);
     }

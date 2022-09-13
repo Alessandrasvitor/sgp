@@ -7,6 +7,7 @@ import { MessageService } from 'primeng/api';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app.routing.module';
 import { SecurityModule } from './security/security.module';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @NgModule({
   declarations: [	
@@ -18,7 +19,9 @@ import { SecurityModule } from './security/security.module';
     ToastModule,
     SecurityModule,
   ],
-  providers: [MessageService],
+  providers: [
+    MessageService,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
