@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from './../../environments/environment';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHandler, HttpHeaders, HttpRequest } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
 
 @Injectable({
@@ -44,5 +44,27 @@ export class SecurityService {
 			}
 		});
 	}
+
+	changePassword(pwd: any, id: any) {
+		return this.http.put(this.url + '/changePassword/'+id, {password: pwd});
+	}
+
+	intercept(req: HttpRequest<any>, next: HttpHandler) {
+
+		if (localStorage.getItem('token')) {
+		  req = req.clone({
+			setHeaders: {
+			  Authorization: sessionStorage.getItem('beares') + ' ' + localStorage.getItem('token')
+			}
+		  })
+		}
+	
+		return next.handle(req);
+	
+	  }
+
+	  getAuthorizated() {
+		return {headers: new HttpHeaders().set('Authorization', `Bearer ${localStorage.getItem('token')}`)};
+	  }
 
 }

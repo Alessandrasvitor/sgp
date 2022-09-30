@@ -1,0 +1,25 @@
+export enum CategoriaEnum {
+    ADMINISTRACAO,
+    AGRICULTURA,
+    ARTE,
+    CIENCIAS_EXATAS,
+    CIENCIAS_HUMANAS,
+    DIREITO,
+    EDUCACAO,
+    GASTRONOMIA,
+    IDIOMAS,
+    INFORMATICA,
+    MODA_BELEZA,
+    MUSICA,
+    OUTRAS,
+    SAUDE,
+    SEXUAKIDADE,
+    CONCURSO
+}
+
+export enum StatusEnum {
+    FAIL,
+    FINISH,
+    PENDING,
+    PROGRESS
+}

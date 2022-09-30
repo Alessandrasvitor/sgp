@@ -14,6 +14,7 @@ public class UserResponse {
 
     private Long id;
     private String name;
+    private String startView;
     private String email;
     private Set<FunctionalityEnum> functionalities;
 
