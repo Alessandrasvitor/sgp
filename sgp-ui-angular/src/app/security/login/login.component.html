@@ -22,7 +22,7 @@
           </div>
           <div *ngIf="createNewPwd" class="field">
             <label>Confirmar Nova Senha</label>
-            <p-password required id="passwordConfirm" [(ngModel)]="user.password"></p-password>
+            <p-password required id="passwordConfirm" [(ngModel)]="password"></p-password>
             <small *ngIf="user.password !== password" class="p-error">A senhas não são compatíveis.</small>
           </div>
         <ng-template pTemplate="footer">          

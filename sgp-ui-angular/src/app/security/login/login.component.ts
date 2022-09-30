@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { User } from 'src/app/shared/class/user';
+import { User } from 'src/app/shared/class/classes';
 import { ErrorService } from 'src/app/shared/service/error.service';
 import { SecurityService } from '../security.service';
 
@@ -21,44 +21,42 @@ export class LoginComponent implements OnInit {
     private router: Router,
   ) { }
 
-  ngOnInit() {
-
-  }
+  ngOnInit() { }
 
   login() {
     let newPassword = false;
-    if(this.user.password === "bh123456") {
+    if(this.user.password === "123456") {
       newPassword = true;
     }
 
     this.securityService.login(this.user)
-      .then(response => {
-        /*
+      .then((response: any) => {
         if(newPassword) {
+          this.user = response.user;
+          this.cleanPassword();
           this.createNewPwd = true;
         } else {
-          localStorage.setItem('userLogin', JSON.stringify(response));
-          this.router.navigate(['/user']);
-          //this.router.navigate(['/'+this.user.init]);
-        }*/
-        localStorage.setItem('userLogin', JSON.stringify(response));
-        this.router.navigate(['/user']);
+          localStorage.setItem('userLogin', JSON.stringify(response.user));
+          this.router.navigate(['/'+response.user.startView]);
+        }
       })
       .catch(erro => {
         this.errorService.handle(erro);
       });
-
   }
 
   createPwd() {
-    if(this.password !== this.user.password) {
-
-
+    if(this.password === this.user.password) {
+      this.securityService.changePassword(this.password, this.user.id).subscribe(() => {
+        this.cleanPassword();
+        this.createNewPwd = false;
+      });
     }
-    this.createNewPwd = false;
+  }
 
-
-
+  cleanPassword() {
+    this.user.password = undefined;
+    this.password = undefined;
   }
 
 

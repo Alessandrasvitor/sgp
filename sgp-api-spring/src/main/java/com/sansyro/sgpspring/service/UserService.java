@@ -19,7 +19,8 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    private String PASSWORD_DEFAULT = "bh1234";
+    private String PASSWORD_DEFAULT = "123456";
+    private String VIEW_DEFAULT = "instituition";
 
     public List<User> list() {
         return userRepository.findAll();
@@ -45,6 +46,7 @@ public class UserService {
         validateUserNull(user);
         validateUserDuplicate(user.getEmail());
         user.setUserHashCode(getNewHashCode());
+        user.setStartView(VIEW_DEFAULT);
         user.setPassword(validatePassword(user.getPassword(), user.getUserHashCode()));
         return userRepository.save(user);
     }
@@ -53,6 +55,7 @@ public class UserService {
         validateUserNull(user.mapperEntity());
         User userUpdate = getById(id);
         userUpdate.setName(user.getName());
+        userUpdate.setStartView(user.getStartView());
         userUpdate.setEmail(user.getEmail());
         return userRepository.save(userUpdate);
     }
@@ -83,6 +86,9 @@ public class UserService {
         }
         if(GeralUtil.stringNullOrEmpty(user.getEmail())){
             throw new ServiceException("Email do usuário é obrigatório");
+        }
+        if(GeralUtil.stringNullOrEmpty(user.getStartView())){
+            throw new ServiceException("Página inicial do usuário é obrigatória");
         }
     }
 

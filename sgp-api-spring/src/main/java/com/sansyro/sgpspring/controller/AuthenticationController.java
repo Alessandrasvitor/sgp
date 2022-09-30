@@ -32,7 +32,7 @@ public class AuthenticationController {
     public ResponseEntity login(@RequestBody @Validated UserRequest request){
         try {
             User user = authenticationService.login(request);
-            return ResponseEntity.ok(TokenResponse.builder().type("Bearer").token(user.getToken()).build());
+            return ResponseEntity.ok(TokenResponse.builder().user(user.mapperDTP()).type("Bearer").token(user.getToken()).build());
         } catch (ServiceException | UsernameNotFoundException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e){
@@ -44,6 +44,16 @@ public class AuthenticationController {
     public ResponseEntity logout(@PathVariable Long id){
         try {
             authenticationService.logout(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/changePassword/{id}")
+    public ResponseEntity changePassword(@PathVariable Long id, @RequestBody @Validated UserRequest request){
+        try {
+            userService.updatePassword(id, request.getPassword());
             return ResponseEntity.ok().build();
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
