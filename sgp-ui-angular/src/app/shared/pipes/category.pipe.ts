@@ -35,11 +35,11 @@ export class CategoryPipe implements PipeTransform {
                 return 'Saúde';
             case 'SEXUALIDADE':
                 return 'Sexualidade';
-            case 'CONCURSOS':
-                return 'Concursos';
+            case 'CONCURSO':
+                return 'Concurso';
             case 'OUTROS':
                 return 'Outros';
-            default: 
+            default:
                 return '-';
         }
     }

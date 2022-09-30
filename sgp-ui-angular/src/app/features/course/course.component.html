@@ -1,4 +1,4 @@
-<div>    
+<div>
 
   <p-fieldset legend="Cursos">
       <div *ngIf="!viewEdit">
@@ -6,12 +6,12 @@
               <div class="p-toolbar-group-left">
                   <p-button label="New" icon="pi pi-plus" (click)="new()"></p-button>
               </div>
-              
+
               <div class="p-toolbar-group-right">
                   <p-button label="Download" icon="pi pi-download" (click)="exportExcel()" styleClass="p-button-success"></p-button>
               </div>
           </p-toolbar>
-  
+
           <p-table [value]="courses" responsiveLayout="scroll">
               <ng-template pTemplate="header">
                   <tr>
@@ -33,7 +33,7 @@
                       <td>{{course.category | category}}</td>
                       <td>{{course.instituition.name}}</td>
                       <td>{{course.priority}}</td>
-                      <td>                        
+                      <td>
                           {{course.notation}}
                           <!--p-rating [ngModel]=({{course.quantity}}) (readonly)="getTrue()" [cancel]="false"></-p-rating -->
                       </td>
@@ -62,8 +62,8 @@
               </div>
               <div class="field col-12">
                   <label>Instituição</label>
-                  <p-dropdown *ngIf="editation" [options]="instituitions" optionValue="id"  [(ngModel)]="course.instituition" 
-                  optionLabel="name" emptyFilterMessage="Nenhum dado encontrado"></p-dropdown>
+                  <p-dropdown *ngIf="editation" [options]="instituitions" optionValue="id"  [(ngModel)]="course.idInstituition"
+                  optionLabel="name" emptyFilterMessage="Nenhum dado encontrado" optionValue="id"></p-dropdown>
                   <input *ngIf="!editation" type="text" disabled pInputText [(ngModel)]="course.instituition.name" />
               </div>
           </div>

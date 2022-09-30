@@ -11,10 +11,10 @@ export enum CategoriaEnum {
     INFORMATICA,
     MODA_BELEZA,
     MUSICA,
-    OUTRAS,
     SAUDE,
-    SEXUAKIDADE,
-    CONCURSO
+    SEXUALIDADE,
+    CONCURSO,
+    OUTROS
 }
 
 export enum StatusEnum {

@@ -53,9 +53,11 @@ export class CourseComponent implements OnInit {
     });
   }
 
-  getStatus() {    
-    Object.values(CategoriaEnum).forEach( category => {
-      this.categories.push({value: category, label: (new CategoryPipe).transform(category) });
+  getStatus() {
+    Object.values(CategoriaEnum).forEach( (category: any) => {
+      if(isNaN(category)) {
+        this.categories.push({value: category, label: (new CategoryPipe).transform(category) });
+      }
     });
   }
 
