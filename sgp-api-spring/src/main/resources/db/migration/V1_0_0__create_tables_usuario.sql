@@ -16,8 +16,8 @@ create table functionality_user (
 );
 
 INSERT INTO user (name, email, password, user_hash_code, start_view) VALUES
-     ('Super Admin', 'sansyro@email.com', '123456', '123456', 'instituitions'),
-     ('Visitante', 'email@email.com', '123456', '123456', 'instituitions');
+     ('Super Admin', 'sansyro@email.com', '123456', '123456', 'instituition'),
+     ('Visitante', 'email@email.com', '123456', '123456', 'instituition');
 
 INSERT INTO functionality_user (user_id, functionality) VALUES
   ((SELECT u.id FROM user u WHERE u.email = 'sansyro@email.com' ), 'BASIC'),

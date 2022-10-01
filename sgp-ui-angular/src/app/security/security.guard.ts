@@ -15,34 +15,21 @@ export class SecurityGuard implements CanActivate {
 
   canActivate(next: ActivatedRouteSnapshot) {
 
-    /*
-    if (this.auth.isLoggedIn !== true) {
-      console.log('Navegação com access token inválido.');
+    const user = JSON.parse(localStorage.getItem('userLogin')+'');
+    if (!user) {
       this.router.navigate(['/login']);
       return false;
     }
-    let route = next.routeConfig.path;
-    if (route.indexOf('/') >= 0) {
-      route = JSON.parse(JSON.stringify(route.slice(0, route.indexOf('/')) + 's'));
+
+    let route = next.routeConfig?.path;
+    if(!route || route === 'instituition') {
+      return true;
     }
-    if (route === 'produtos' || route === 'veiculos' || route === 'imoveis') {
-      let loja;
-      this.configService.lojaLocalStorage().then(res => {
-        loja = res;
-        if (route.toUpperCase() === loja.negocio || (route.toUpperCase() === 'PRODUTOS' && loja.negocio === 'OUTROS')) {
-          route = 'produtos';
-        } else {
-          route = 'outros';
-        }
-      });
-    }
-    if(route === 'rede') {
-      route = 'configuracoes';
-    }
-    if (!this.configService.validarAcessoTela(route.toUpperCase())) {
+
+    if(user.functionalities.filter((func: any) => func === route?.toUpperCase()).length <= 0) {
       this.router.navigate(['/pagina-nao-encontrada']);
     }
-    */
+
     return true;
   }
 

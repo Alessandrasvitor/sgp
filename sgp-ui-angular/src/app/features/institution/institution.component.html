@@ -1,17 +1,17 @@
-<div>    
+<div>
 
-    <p-fieldset legend="institutions">
+    <p-fieldset legend="Institutions">
         <div *ngIf="!viewEdit">
             <p-toolbar>
                 <div class="p-toolbar-group-left">
                     <p-button label="New" icon="pi pi-plus" (click)="new()"></p-button>
                 </div>
-                
+
                 <div class="p-toolbar-group-right">
                     <p-button label="Download" icon="pi pi-download" (click)="exportExcel()" styleClass="p-button-success"></p-button>
                 </div>
             </p-toolbar>
-    
+
             <p-table [value]="institutions" responsiveLayout="scroll">
                 <ng-template pTemplate="header">
                     <tr>
@@ -25,14 +25,14 @@
                     <tr>
                         <td>{{institution.name}}</td>
                         <td>{{institution.address}}</td>
-                        <td>                        
+                        <td>
                             {{institution.quantity}}
                             <!--p-rating [ngModel]=({{institution.quantity}}) (readonly)="getTrue()" [cancel]="false"></-p-rating -->
                         </td>
                         <td>
-                            <p-button icon="pi pi-pencil" (click)="edit(institution)"></p-button>
+                            <p-button *ngIf="permission" icon="pi pi-pencil" (click)="edit(institution)"></p-button>
                             <p-button icon="pi pi-eye" (click)="view(institution)" styleClass="p-button-secondary"></p-button>
-                            <p-button icon="pi pi-trash" (click)="confirmDelete(institution)" styleClass="p-button-danger"></p-button>
+                            <p-button *ngIf="permission" icon="pi pi-trash" (click)="confirmDelete(institution)" styleClass="p-button-danger"></p-button>
                         </td>
                     </tr>
                 </ng-template>

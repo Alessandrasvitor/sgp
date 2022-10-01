@@ -24,4 +24,5 @@ create table course (
 );
 
 INSERT INTO functionality_user (user_id, functionality) VALUES
+  ((SELECT u.id FROM user u WHERE u.email = 'sansyro@email.com' ), 'INSTITUITION'),
   ((SELECT u.id FROM user u WHERE u.email = 'sansyro@email.com' ), 'COURSE');

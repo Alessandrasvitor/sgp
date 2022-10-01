@@ -1,12 +1,12 @@
 
-
 <!-- Toolbar -->
-<div class="toolbar" role="banner">
-  
+<div class="toolbar" role="banner" *ngIf="isLogged">
+  <app-nav-bar></app-nav-bar>
 </div>
-
+<br>
 <div class="content" role="main">
   <router-outlet></router-outlet>
 </div>
+
 <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
 <p-toast></p-toast>

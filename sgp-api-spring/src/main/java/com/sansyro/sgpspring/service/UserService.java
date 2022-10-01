@@ -61,9 +61,10 @@ public class UserService {
     }
 
     public User updatePassword(Long id, String password) {
-        User userUpdate = getById(id);
-        userUpdate.setPassword(validatePassword(password,userUpdate.getUserHashCode()));
-        return userRepository.save(userUpdate);
+        User user = getById(id);
+        user.setUserHashCode(getNewHashCode());
+        user.setPassword(validatePassword(password,user.getUserHashCode()));
+        return userRepository.save(user);
     }
 
     private String validatePassword(String password, String hash) {

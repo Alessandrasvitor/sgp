@@ -13,10 +13,10 @@ const routes: Routes = [
   { path: 'page-not-found', component: PageNotFoundComponent },
   { path: 'reset-pwd', component: ResetPwdComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'users', component: UserComponent, canActivate: [SecurityGuard] },
-  { path: 'courses', component: CourseComponent, canActivate: [SecurityGuard] },
-  { path: 'instituitions', component: InstitutionComponent, canActivate: [SecurityGuard] },
-  { path: '**', redirectTo: 'login' },
+  { path: 'user', component: UserComponent, canActivate: [SecurityGuard] },
+  { path: 'course', component: CourseComponent, canActivate: [SecurityGuard] },
+  { path: 'instituition', component: InstitutionComponent, canActivate: [SecurityGuard] },
+  { path: '**', redirectTo: 'instituition' },
 ];
 
 @NgModule({

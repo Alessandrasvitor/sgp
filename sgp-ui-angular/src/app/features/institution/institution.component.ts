@@ -4,7 +4,6 @@ import { ExcelService } from 'src/app/shared/service/excel.service';
 import { InstituitionService } from './instituition.service';
 
 @Component({
-  selector: 'app-institution',
   templateUrl: './institution.component.html',
   styleUrls: ['./institution.component.css']
 })
@@ -17,6 +16,8 @@ export class InstitutionComponent implements OnInit {
   title: any;
   editation = false;
   labelCancel = 'Cancelar';
+  permission = false;
+  user = JSON.parse(localStorage.getItem('userLogin')+'');
 
   constructor(
     private service: InstituitionService,
@@ -27,6 +28,14 @@ export class InstitutionComponent implements OnInit {
   ngOnInit() {
     this.loading = true;
     this.updateView();
+    this.validaPermission();
+  }
+
+  validaPermission() {
+    if(this.user && this.user.functionalities && this.user.functionalities.filter((func: any) => func === 'INSTITUITION').length > 0) {
+      this.permission = true;
+    }
+
   }
 
   updateView() {

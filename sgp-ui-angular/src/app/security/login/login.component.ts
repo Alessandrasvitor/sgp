@@ -5,7 +5,6 @@ import { ErrorService } from 'src/app/shared/service/error.service';
 import { SecurityService } from '../security.service';
 
 @Component({
-  selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })

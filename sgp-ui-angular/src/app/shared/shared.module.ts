@@ -1,11 +1,28 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SharedComponent } from './shared.component';
+import { NavBarComponent } from './nav-bar/nav-bar.component';
+import { MenubarModule } from 'primeng/menubar';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
+import { PipesModule } from './pipes/pipes.module';
+import { SplitButtonModule } from 'primeng/splitbutton';
 
 @NgModule({
   imports: [
-    CommonModule
+    CommonModule,
+    BrowserModule,
+    FormsModule,
+    BrowserAnimationsModule,
+    MenubarModule,
+    SplitButtonModule,
+    PipesModule
   ],
-  declarations: [SharedComponent]
+  declarations: [
+    NavBarComponent
+  ],
+  exports: [
+    NavBarComponent
+  ]
 })
 export class SharedModule { }

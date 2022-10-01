@@ -4,6 +4,7 @@ public enum FunctionalityEnum {
 
     BASIC,
     COURSE,
+    INSTITUITION,
     USER;
 
 }

@@ -7,7 +7,6 @@ import { CourseService } from './course.service';
 import { CategoryPipe } from './../../shared/pipes/category.pipe';
 
 @Component({
-  selector: 'app-course',
   templateUrl: './course.component.html',
   styleUrls: ['./course.component.css']
 })

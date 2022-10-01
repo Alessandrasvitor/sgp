@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from './../../environments/environment';
-import { HttpClient, HttpHandler, HttpHeaders, HttpRequest } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
 
 @Injectable({
@@ -12,9 +12,9 @@ export class SecurityService {
 
   jwtPayload: any;
 
-  constructor( 
+  constructor(
     private http: HttpClient,
-	private messageService: MessageService
+	  private messageService: MessageService
   ) { }
 
 	login(user: any): Promise<void> {
@@ -32,12 +32,12 @@ export class SecurityService {
 			});
 	}
 
-	cleanToken() {
-		localStorage.removeItem('token');
+	cleanLocalStorege() {
+    localStorage.clear();
 	}
-  
+
 	logout(id: number) {
-		this.jwtPayload = null;
+    this.cleanLocalStorege();
 		return this.http.put(this.url + '/logout/'+ id, {
 			headers: {
 				session: localStorage.getItem('token'),
@@ -49,22 +49,12 @@ export class SecurityService {
 		return this.http.put(this.url + '/changePassword/'+id, {password: pwd});
 	}
 
-	intercept(req: HttpRequest<any>, next: HttpHandler) {
-
-		if (localStorage.getItem('token')) {
-		  req = req.clone({
-			setHeaders: {
-			  Authorization: sessionStorage.getItem('beares') + ' ' + localStorage.getItem('token')
-			}
-		  })
-		}
-	
-		return next.handle(req);
-	
-	  }
-
-	  getAuthorizated() {
+  getAuthorizated() {
 		return {headers: new HttpHeaders().set('Authorization', `Bearer ${localStorage.getItem('token')}`)};
-	  }
+  }
+
+  isLogged() {
+    return localStorage.getItem('userLogin') ? true: false;
+  }
 
 }
