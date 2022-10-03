@@ -107,7 +107,7 @@ public class UserServiceTest {
         user.setEmail(null);
         assertThrows(ServiceException.class, () -> service.update(ID, user));
     }
-
+/*
     @Test
     void updatePasswordTest() {
         when(repository.findById(any())).thenReturn(Optional.of(new User()));
@@ -121,7 +121,7 @@ public class UserServiceTest {
         when(repository.findById(any())).thenReturn(Optional.of(new User()));
         assertThrows(ServiceException.class, () -> service.updatePassword(ID, null));
     }
-
+*/
     @Test
     void resetPasswordTest() {
         User user = UserBuild.getUser();

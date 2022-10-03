@@ -17,7 +17,6 @@ public class UserRequest {
     private String email;
     private String startView;
     private String password;
-    private FunctionalityEnum init;
     private Set<FunctionalityEnum> functionalities;
 
     public User mapperEntity() {

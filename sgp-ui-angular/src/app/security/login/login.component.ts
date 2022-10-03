@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { MessageService } from 'primeng/api';
 import { User } from 'src/app/shared/class/classes';
 import { ErrorService } from 'src/app/shared/service/error.service';
 import { SecurityService } from '../security.service';
@@ -11,15 +10,13 @@ import { SecurityService } from '../security.service';
 })
 export class LoginComponent implements OnInit {
 
-  user: User = new User();
-  createNewPwd = false;
   password: string | undefined;
+  user: User = new User();
 
   constructor(
     private securityService: SecurityService,
     private errorService: ErrorService,
-    private router: Router,
-    private messageService: MessageService
+    private router: Router
   ) { }
 
   ngOnInit() { }
@@ -33,9 +30,7 @@ export class LoginComponent implements OnInit {
     this.securityService.login(this.user)
       .then((response: any) => {
         if(newPassword) {
-          this.user = response.user;
-          this.cleanPassword();
-          this.createNewPwd = true;
+          this.resetPws(response.user.email);
         } else {
           localStorage.setItem('userLogin', JSON.stringify(response.user));
           this.router.navigate(['/'+response.user.startView]);
@@ -46,28 +41,13 @@ export class LoginComponent implements OnInit {
       });
   }
 
-  redirect(init: string) {
-    if(init) {
-      const route = init.toLowerCase();
-      this.router.navigate(['/'+route]);
-      return;
-    }
-    this.router.navigate(['/course']);
+  register() {
+    this.router.navigate(['/register']);
   }
 
-  createPwd() {
-    if(this.password === this.user.password) {
-      this.securityService.changePassword(this.password, this.user.id).subscribe(() => {
-        this.cleanPassword();
-        this.createNewPwd = false;
-      });
-    }
+  resetPws(email: any) {
+    localStorage.setItem('email', email);
+    this.router.navigate(['/reset-pwd']);
   }
-
-  cleanPassword() {
-    this.user.password = undefined;
-    this.password = undefined;
-  }
-
 
 }

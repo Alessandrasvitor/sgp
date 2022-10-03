@@ -9,31 +9,62 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 })
 export class SecurityService {
 
-  private url = `${environment.apiUrl}/auth`;
-  private jwtHelper: JwtHelperService | undefined;
+	private url = `${environment.apiUrl}/auth`;
+	private jwtHelper: JwtHelperService | undefined;
 
-  constructor(
-    private http: HttpClient,
-	  private messageService: MessageService
-  ) { }
+	constructor(
+		private http: HttpClient,
+		private messageService: MessageService
+	) { }
 
 	login(user: any): Promise<void> {
 		return this.http.post(this.url + '/login', { email: user.email, password: user.password }).toPromise()
 			.then((response: any) => {
-				localStorage.setItem('token', response.token);
+				this.saveLocalStorege(response);
 				return response;
 			})
 			.catch((response: any) => {
-				if (response.status === 401 && response.statusText === 'Unauthorized') {
-					this.messageService.add({ severity: 'error', summary: 'Acesso não autorizado !', detail: 'Usuário e/ou senha incorretos.' });
-					return Promise.reject('Acesso não autorizado (usuário e/ou senha incorretos).');
-				}
-				return Promise.reject(response);
+				return this.createHandle(response);
 			});
 	}
 
+	register(user: any): Promise<void> {
+		return this.http.post(this.url + '/register', user).toPromise()
+			.then((response: any) => {
+				this.saveLocalStorege(response);
+				return response;
+			})
+			.catch((response: any) => {
+				return this.createHandle(response);
+			});
+	}
+
+	changePassword(pwd: any, id: any) {
+		return this.http.put(this.url + '/changePassword/'+id, {password: pwd}).toPromise()
+			.then((response: any) => {
+				this.saveLocalStorege(response);
+				return response;
+			})
+			.catch((response: any) => {
+				return this.createHandle(response);
+			});
+	}
+
+	saveLocalStorege(response: any) {
+		localStorage.setItem('token', response.token);
+		localStorage.setItem('userLogin', JSON.stringify(response.user));
+	}
+
+	createHandle(error: any) {
+		if (error.status === 401 && error.statusText === 'Unauthorized') {
+			this.messageService.add({ severity: 'error', summary: 'Acesso não autorizado !', detail: 'Usuário e/ou senha incorretos.' });
+			return Promise.reject('Acesso não autorizado (usuário e/ou senha incorretos).');
+		}
+		return Promise.reject(error);
+	}
+
 	cleanLocalStorege() {
-    localStorage.clear();
+    	localStorage.clear();
 	}
 
 	logout(id: number) {
@@ -60,12 +91,8 @@ export class SecurityService {
 		return !token || this.jwtHelper.isTokenExpired(token);
 	}
 
-	changePassword(pwd: any, id: any) {
-		return this.http.put(this.url + '/changePassword/'+id, {password: pwd});
-	}
-
-  getAuthorizated() {
+	getAuthorizated() {
 		return {headers: new HttpHeaders().set('Authorization', `Bearer ${localStorage.getItem('token')}`)};
-  }
+	}
 
 }

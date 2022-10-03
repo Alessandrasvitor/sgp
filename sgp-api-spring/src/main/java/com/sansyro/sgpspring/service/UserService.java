@@ -11,6 +11,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,10 +44,12 @@ public class UserService {
     }
 
     public User save(User user) {
+        user.setStartView(FunctionalityEnum.BASIC.getPage());
         validateUserNull(user);
         validateUserDuplicate(user.getEmail());
-        user.setUserHashCode(getNewHashCode());
-        user.setStartView(FunctionalityEnum.BASIC.getPage());
+        user.setUserHashCode(GeralUtil.getNewHashCode());
+        user.setFunctionalities(new HashSet<>());
+        user.getFunctionalities().add(FunctionalityEnum.BASIC);
         user.setPassword(validatePassword(user.getPassword(), user.getUserHashCode()));
         return userRepository.save(user);
     }
@@ -54,17 +57,10 @@ public class UserService {
     public User update(Long id, UserRequest user) {
         validateUserNull(user.mapperEntity());
         User userUpdate = getById(id);
-        userUpdate.setName(user.getName());
         userUpdate.setStartView(user.getStartView());
+        userUpdate.setName(user.getName());
         userUpdate.setEmail(user.getEmail());
         return userRepository.save(userUpdate);
-    }
-
-    public User updatePassword(Long id, String password) {
-        User user = getById(id);
-        user.setUserHashCode(getNewHashCode());
-        user.setPassword(validatePassword(password,user.getUserHashCode()));
-        return userRepository.save(user);
     }
 
     private String validatePassword(String password, String hash) {
@@ -91,10 +87,6 @@ public class UserService {
         if(GeralUtil.stringNullOrEmpty(user.getStartView())){
             throw new ServiceException("Página inicial do usuário é obrigatória");
         }
-    }
-
-    private String getNewHashCode() {
-        return RandomStringUtils.randomAlphabetic(10);
     }
 
     public void resetPassword(Long id) {
