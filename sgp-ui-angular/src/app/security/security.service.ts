@@ -77,7 +77,7 @@ export class SecurityService {
 	}
 
 	isLogged() {
-		let hasToken = localStorage.getItem('token') == null;
+		let hasToken = localStorage.getItem('token') !== null;
 
 		if (hasToken) {
 			hasToken = !this.isAccessToken();
