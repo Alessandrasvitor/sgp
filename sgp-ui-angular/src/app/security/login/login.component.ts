@@ -10,14 +10,13 @@ import { SecurityService } from '../security.service';
 })
 export class LoginComponent implements OnInit {
 
-  user: User = new User();
-  createNewPwd = false;
   password: string | undefined;
+  user: User = new User();
 
   constructor(
     private securityService: SecurityService,
     private errorService: ErrorService,
-    private router: Router,
+    private router: Router
   ) { }
 
   ngOnInit() { }
@@ -31,9 +30,7 @@ export class LoginComponent implements OnInit {
     this.securityService.login(this.user)
       .then((response: any) => {
         if(newPassword) {
-          this.user = response.user;
-          this.cleanPassword();
-          this.createNewPwd = true;
+          this.resetPws(response.user.email);
         } else {
           localStorage.setItem('userLogin', JSON.stringify(response.user));
           this.router.navigate(['/'+response.user.startView]);
@@ -44,19 +41,13 @@ export class LoginComponent implements OnInit {
       });
   }
 
-  createPwd() {
-    if(this.password === this.user.password) {
-      this.securityService.changePassword(this.password, this.user.id).subscribe(() => {
-        this.cleanPassword();
-        this.createNewPwd = false;
-      });
-    }
+  register() {
+    this.router.navigate(['/register']);
   }
 
-  cleanPassword() {
-    this.user.password = undefined;
-    this.password = undefined;
+  resetPws(email: any) {
+    localStorage.setItem('email', email);
+    this.router.navigate(['/reset-pwd']);
   }
-
 
 }

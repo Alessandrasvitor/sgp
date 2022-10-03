@@ -1,10 +1,19 @@
 package com.sansyro.sgpspring.constants;
 
+import lombok.Getter;
+
+@Getter
 public enum FunctionalityEnum {
 
-    BASIC,
-    COURSE,
-    INSTITUITION,
-    USER;
+    BASIC("instituition"),
+    COURSE("course"),
+    INSTITUITION("instituition"),
+    USER("user");
+
+    private String page;
+
+    FunctionalityEnum(String page) {
+        this.page = page;
+    }
 
 }

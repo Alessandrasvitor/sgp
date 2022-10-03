@@ -50,11 +50,21 @@ public class AuthenticationController {
         }
     }
 
-    @PutMapping("/changePassword/{id}")
-    public ResponseEntity changePassword(@PathVariable Long id, @RequestBody @Validated UserRequest request){
+    @PostMapping("/register")
+    public ResponseEntity register(@RequestBody @Validated UserRequest request){
         try {
-            userService.updatePassword(id, request.getPassword());
-            return ResponseEntity.ok().build();
+            User user = authenticationService.register(request);
+            return ResponseEntity.ok(TokenResponse.builder().user(user.mapperDTP()).type("Bearer").token(user.getToken()).build());
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/changePassword")
+    public ResponseEntity changePassword(@RequestBody @Validated UserRequest request){
+        try {
+            User user = authenticationService.updatePassword(request);
+            return ResponseEntity.ok(TokenResponse.builder().user(user.mapperDTP()).type("Bearer").token(user.getToken()).build());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

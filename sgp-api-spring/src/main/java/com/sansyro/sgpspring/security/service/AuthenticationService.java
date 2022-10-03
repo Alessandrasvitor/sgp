@@ -1,8 +1,12 @@
 package com.sansyro.sgpspring.security.service;
 
+import com.sansyro.sgpspring.constants.FunctionalityEnum;
 import com.sansyro.sgpspring.entity.User;
 import com.sansyro.sgpspring.entity.dto.UserRequest;
+import com.sansyro.sgpspring.exception.ServiceException;
 import com.sansyro.sgpspring.repository.UserRepository;
+import com.sansyro.sgpspring.service.UserService;
+import com.sansyro.sgpspring.util.GeralUtil;
 import com.sansyro.sgpspring.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +21,8 @@ public class AuthenticationService implements UserDetailsService {
 
     @Autowired
     private UserRepository repository;
+    @Autowired
+    private UserService service;
 
     @Autowired
     private TokenService tokenService;
@@ -36,12 +42,16 @@ public class AuthenticationService implements UserDetailsService {
         if(user.getPassword().equals("123456") && user.getPassword().equals(userRequest.getPassword())) {
             return returnUser(user);
         }
-        StringBuilder password = new StringBuilder(userRequest.getPassword()).append(user.getUserHashCode());
-        String passwordCripto = SecurityUtil.bCryptPasswordEncoder().encode(password.toString());
-        if(SecurityUtil.bCryptPasswordEncoder().matches(passwordCripto, user.getPassword())) {
+        if(validPassword(user.getPassword(), user.getUserHashCode(), userRequest.getPassword())) {
             throw new UsernameNotFoundException("Usuário ou senha não encontrado");
         }
         return returnUser(user);
+    }
+
+    private Boolean validPassword(String UserPassword, String UserHashCode, String requestPassword) {
+        StringBuilder password = new StringBuilder(requestPassword).append(UserHashCode);
+        String passwordCripto = SecurityUtil.bCryptPasswordEncoder().encode(password.toString());
+        return SecurityUtil.bCryptPasswordEncoder().matches(passwordCripto, UserPassword);
     }
 
     private User returnUser(User user) {
@@ -57,6 +67,33 @@ public class AuthenticationService implements UserDetailsService {
             user.setToken(null);
             repository.save(user);
         }
+    }
+
+    public User register(UserRequest request) {
+        User user = request.mapperEntity();
+        user.setToken(tokenService.generateToken(user));
+        repository.save(user);
+        return user;
+    }
+
+    public User updatePassword(UserRequest request) {
+        User user = service.getByEmail(request.getEmail());
+
+        if(validPassword(user.getPassword(), user.getUserHashCode(), request.getPassword())) {
+            throw new UsernameNotFoundException("Usuário ou senha não encontrado");
+        }
+        user.setUserHashCode(GeralUtil.getNewHashCode());
+        user.setPassword(validatedPassword(request.getPassword(), user.getUserHashCode()));
+        user.setToken(tokenService.generateToken(user));
+        return repository.save(user);
+    }
+
+    private String validatedPassword(String password, String hash) {
+        if(GeralUtil.stringNullOrEmpty(password)){
+            throw new ServiceException("A Senha do usuário é obrigatória");
+        }
+        StringBuilder newPassword = new StringBuilder(password).append(hash);
+        return  SecurityUtil.bCryptPasswordEncoder().encode(newPassword.toString());
     }
 
 }

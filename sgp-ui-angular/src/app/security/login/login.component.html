@@ -4,30 +4,32 @@
     <div class="login align-content-center">
       <p-card>
         <ng-template pTemplate="header">
-          <h2 *ngIf="!createNewPwd" class="align-items-center">
-            Login
-          </h2>
-          <h2 *ngIf="createNewPwd" class="align-items-center">
-            Criar nova senha
-          </h2>
+          <br>
+          <div class="text-center">
+            <h2>
+              Login
+            </h2>
+          </div>
         </ng-template>
           <div class="field">
             <label>Email</label>
-            <input required type="text" pInputText [(ngModel)]="user.email" />
+            <input #email required type="text" pInputText [(ngModel)]="user.email" />
           </div>
           <div class="field">
-            <label *ngIf="!createNewPwd">Senha</label>
-            <label *ngIf="createNewPwd">Nova Senha</label>
+            <label>Senha</label>
             <p-password required [(ngModel)]="user.password" [toggleMask]="true"></p-password>
           </div>
-          <div *ngIf="createNewPwd" class="field">
-            <label>Confirmar Nova Senha</label>
-            <p-password required id="passwordConfirm" [(ngModel)]="password"></p-password>
-            <small *ngIf="user.password !== password" class="p-error">A senhas não são compatíveis.</small>
+          <div class="flex flex-row">
+
+            <div class="flex-row">
+              <p-button label="Esqueci minha senha" (click)="resetPws('')" styleClass="p-button-link"></p-button>
+            </div>
+            <div  class="text-right">
+              <p-button label="Cadastre-se" (click)="register()" styleClass="p-button-link"></p-button>
+            </div>
           </div>
-        <ng-template pTemplate="footer">          
-          <button pButton *ngIf="!createNewPwd" (click)="login()" type="button" label="Login" ></button>
-          <button pButton *ngIf="createNewPwd" (click)="createPwd()" type="button" label="Atualizar" ></button>
+          <ng-template pTemplate="footer">
+            <button pButton (click)="login()" type="button" label="Login" ></button>
         </ng-template>
     </p-card>
     </div>
