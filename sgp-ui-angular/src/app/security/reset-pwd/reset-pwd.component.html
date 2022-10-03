@@ -1,3 +1,36 @@
-<p>
-  reset-pwd works!
-</p>
+<div class="grid p-fluid">
+  <div class="col-4"></div>
+  <div class="col-4">
+    <div class="login align-content-center">
+      <p-card>
+        <ng-template pTemplate="header">
+          <h2 class="align-items-center">
+            Atualizar senha
+          </h2>
+        </ng-template>
+          <div class="field">
+            <label>Email</label>
+            <input type="text" pInputText [(ngModel)]="user.email" />
+          </div>
+          <div class="field">
+            <label>Senha antiga</label>
+            <p-password required [(ngModel)]="user.password" [toggleMask]="true"></p-password>
+          </div>
+          <div class="field">
+            <label>Nova Senha</label>
+            <p-password required [(ngModel)]="user.password" [toggleMask]="true"></p-password>
+          </div>
+          <div class="field">
+            <label>Confirmar Nova Senha</label>
+            <p-password required id="passwordConfirm" [(ngModel)]="password"></p-password>
+            <small *ngIf="user.password !== password" class="p-error">A senhas não são compatíveis.</small>
+          </div>
+        <ng-template pTemplate="footer">
+          <button pButton (click)="createPwd()" type="button" label="Confirmar" ></button>
+        </ng-template>
+    </p-card>
+    </div>
+  </div>
+  
+</div>
+
