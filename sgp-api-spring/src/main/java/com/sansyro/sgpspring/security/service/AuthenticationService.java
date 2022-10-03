@@ -1,8 +1,10 @@
 package com.sansyro.sgpspring.security.service;
 
+import com.sansyro.sgpspring.constants.FunctionalityEnum;
 import com.sansyro.sgpspring.entity.User;
 import com.sansyro.sgpspring.entity.dto.UserRequest;
 import com.sansyro.sgpspring.repository.UserRepository;
+import com.sansyro.sgpspring.service.UserService;
 import com.sansyro.sgpspring.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +19,8 @@ public class AuthenticationService implements UserDetailsService {
 
     @Autowired
     private UserRepository repository;
+    @Autowired
+    private UserService service;
 
     @Autowired
     private TokenService tokenService;
@@ -57,6 +61,14 @@ public class AuthenticationService implements UserDetailsService {
             user.setToken(null);
             repository.save(user);
         }
+    }
+
+    public User register(UserRequest request) {
+        User user = request.mapperEntity();
+        user = service.save(user);
+        user.setToken(tokenService.generateToken(user));
+        repository.save(user);
+        return user;
     }
 
 }

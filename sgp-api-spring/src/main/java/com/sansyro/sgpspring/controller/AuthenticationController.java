@@ -50,6 +50,16 @@ public class AuthenticationController {
         }
     }
 
+    @PostMapping("/register")
+    public ResponseEntity register(@RequestBody @Validated UserRequest request){
+        try {
+            User user = authenticationService.register(request);
+            return ResponseEntity.ok(TokenResponse.builder().user(user.mapperDTP()).type("Bearer").token(user.getToken()).build());
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
     @PutMapping("/changePassword/{id}")
     public ResponseEntity changePassword(@PathVariable Long id, @RequestBody @Validated UserRequest request){
         try {

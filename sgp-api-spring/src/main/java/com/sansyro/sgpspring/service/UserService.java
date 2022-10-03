@@ -1,5 +1,6 @@
 package com.sansyro.sgpspring.service;
 
+import com.sansyro.sgpspring.constants.FunctionalityEnum;
 import com.sansyro.sgpspring.entity.User;
 import com.sansyro.sgpspring.entity.dto.UserRequest;
 import com.sansyro.sgpspring.exception.ServiceException;
@@ -20,7 +21,6 @@ public class UserService {
     private UserRepository userRepository;
 
     private String PASSWORD_DEFAULT = "123456";
-    private String VIEW_DEFAULT = "instituition";
 
     public List<User> list() {
         return userRepository.findAll();
@@ -46,7 +46,7 @@ public class UserService {
         validateUserNull(user);
         validateUserDuplicate(user.getEmail());
         user.setUserHashCode(getNewHashCode());
-        user.setStartView(VIEW_DEFAULT);
+        user.setStartView(FunctionalityEnum.BASIC.getPage());
         user.setPassword(validatePassword(user.getPassword(), user.getUserHashCode()));
         return userRepository.save(user);
     }
@@ -57,7 +57,6 @@ public class UserService {
         userUpdate.setName(user.getName());
         userUpdate.setStartView(user.getStartView());
         userUpdate.setEmail(user.getEmail());
-        userUpdate.setInit(user.getInit());
         return userRepository.save(userUpdate);
     }
 

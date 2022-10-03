@@ -47,9 +47,6 @@ public class User implements UserDetails {
     @Column(name="start_view")
     private String startView;
 
-    @Enumerated(EnumType.STRING)
-    private FunctionalityEnum init;
-
     @ElementCollection(targetClass = FunctionalityEnum.class, fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name="functionality_user", joinColumns = @JoinColumn(name = "user_id"))
