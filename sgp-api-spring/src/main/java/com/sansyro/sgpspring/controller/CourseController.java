@@ -1,6 +1,5 @@
 package com.sansyro.sgpspring.controller;
 
-import com.sansyro.sgpspring.entity.Course;
 import com.sansyro.sgpspring.entity.dto.CourseRequest;
 import com.sansyro.sgpspring.exception.ServiceException;
 import com.sansyro.sgpspring.service.CourseService;
@@ -14,7 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/course")
-@PreAuthorize("hasAuthority('BASIC')")
+@CrossOrigin(origins = "*")
+@PreAuthorize("hasAuthority('COURSE')")
 @OpenAPIDefinition(info = @Info(title = "Sistema de gestão de entreteinimento", version = "1.0", description = ""))
 public class CourseController {
 
@@ -65,7 +65,7 @@ public class CourseController {
     }
 
     @ResponseBody
-    @PatchMapping("{id}")
+    @PutMapping("finish/{id}")
     public ResponseEntity finish(@PathVariable Long id, @RequestBody CourseRequest course) {
         try {
             return ResponseEntity.ok().body(courseService.finish(id, course.getNotation()));

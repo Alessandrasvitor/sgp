@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum FunctionalityEnum {
 
-    BASIC("instituition"),
+    BASIC("home"),
     COURSE("course"),
     INSTITUITION("instituition"),
     USER("user");

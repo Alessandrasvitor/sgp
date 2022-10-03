@@ -42,7 +42,7 @@ public class CourseService {
         validateNotNull(request);
         //validateDuplicate(course);
         Course course = request.mapperEntity();
-        request.setStatus(StatusEnum.PENDING);
+        course.setStatus(StatusEnum.PENDING);
         course.setInstituition(instituitionService.getById(request.getIdInstituition()));
         course.setUser(userService.getById(request.getIdUser()));
         course.setPriority(5);
@@ -68,6 +68,7 @@ public class CourseService {
 
     public Course finish(Long id, float notation) {
         Course course = getById(id);
+        course.setNotation(notation);
         if(notation < 7) {
             course.setStatus(StatusEnum.FAIL);
         } else {

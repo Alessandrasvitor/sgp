@@ -6,7 +6,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 
-import { FeaturesComponent } from './features.component';
 import { InstitutionComponent } from './institution/institution.component';
 import { CourseComponent } from './course/course.component';
 import { PipesModule } from '../shared/pipes/pipes.module';
@@ -22,10 +21,11 @@ import { MessageModule } from 'primeng/message';
 import { MessagesModule } from 'primeng/messages';
 import { PasswordModule } from 'primeng/password';
 import { DropdownModule } from 'primeng/dropdown';
+import { DialogModule } from 'primeng/dialog';
+import { InputNumberModule } from 'primeng/inputnumber';
 
 @NgModule({
   declarations: [
-    FeaturesComponent,
     InstitutionComponent,
     CourseComponent
   ],
@@ -48,6 +48,8 @@ import { DropdownModule } from 'primeng/dropdown';
     MessageModule,
     PipesModule,
     InputTextModule,
+    DialogModule,
+    InputNumberModule,
     DropdownModule
   ],
   providers: [ ],
