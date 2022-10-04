@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/instituition")
-@PreAuthorize("hasAuthority('BASIC')")
+@PreAuthorize("hasAuthority('HOME')")
 @OpenAPIDefinition(info = @Info(title = "Sistema de gestão de entreteinimento", version = "1.0", description = ""))
 public class InstituitionController {
 

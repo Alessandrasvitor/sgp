@@ -67,6 +67,18 @@ public class UserController {
     }
 
     @ResponseBody
+    @PutMapping("functionalities/{id}")
+    public ResponseEntity updateFunctionalities(@PathVariable Long id, @RequestBody UserRequest userRequest) {
+        try {
+            return ResponseEntity.ok().body(userService.updateFunctionalities(id, userRequest).mapperDTP());
+        } catch (ServiceException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @ResponseBody
     @GetMapping("/password/{id}")
     public ResponseEntity getWithPassword(@PathVariable Long id) {
         try {

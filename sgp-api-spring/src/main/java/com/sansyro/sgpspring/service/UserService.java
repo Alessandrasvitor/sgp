@@ -44,23 +44,29 @@ public class UserService {
     }
 
     public User save(User user) {
-        user.setStartView(FunctionalityEnum.BASIC.getPage());
+        user.setStartView(FunctionalityEnum.HOME.getPage());
         validateUserNull(user);
         validateUserDuplicate(user.getEmail());
         user.setUserHashCode(GeralUtil.getNewHashCode());
         user.setFunctionalities(new HashSet<>());
-        user.getFunctionalities().add(FunctionalityEnum.BASIC);
+        user.getFunctionalities().add(FunctionalityEnum.HOME);
         user.setPassword(validatePassword(user.getPassword(), user.getUserHashCode()));
         return userRepository.save(user);
     }
 
-    public User update(Long id, UserRequest user) {
-        validateUserNull(user.mapperEntity());
-        User userUpdate = getById(id);
-        userUpdate.setStartView(user.getStartView());
-        userUpdate.setName(user.getName());
-        userUpdate.setEmail(user.getEmail());
-        return userRepository.save(userUpdate);
+    public User update(Long id, UserRequest request) {
+        validateUserNull(request.mapperEntity());
+        User user = getById(id);
+        user.setStartView(request.getStartView());
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        return userRepository.save(user);
+    }
+
+    public User updateFunctionalities(Long id, UserRequest request) {
+        User user = getById(id);
+        user.setFunctionalities(request.getFunctionalities());
+        return userRepository.save(user);
     }
 
     private String validatePassword(String password, String hash) {
@@ -91,8 +97,7 @@ public class UserService {
 
     public void resetPassword(Long id) {
         User user = getById(id);
-        StringBuilder password = new StringBuilder(PASSWORD_DEFAULT).append(user.getUserHashCode());
-        user.setPassword(password.toString());
+        user.setPassword(PASSWORD_DEFAULT);
         userRepository.save(user);
     }
 
