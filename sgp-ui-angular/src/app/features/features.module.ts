@@ -9,6 +9,8 @@ import { RouterModule } from '@angular/router';
 import { InstitutionComponent } from './institution/institution.component';
 import { CourseComponent } from './course/course.component';
 import { PipesModule } from '../shared/pipes/pipes.module';
+import { HomeComponent } from './home/home.component';
+import { UserComponent } from './user/user.component';
 
 import { TableModule } from 'primeng/table';
 import { FieldsetModule } from 'primeng/fieldset';
@@ -23,14 +25,19 @@ import { PasswordModule } from 'primeng/password';
 import { DropdownModule } from 'primeng/dropdown';
 import { DialogModule } from 'primeng/dialog';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { ImageModule } from 'primeng/image';
+import { PickListModule } from 'primeng/picklist';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 @NgModule({
   declarations: [
     InstitutionComponent,
-    CourseComponent
+    CourseComponent,
+    HomeComponent,
+    UserComponent
   ],
   imports: [
-    CommonModule,
+  CommonModule,
     BrowserModule,
     FormsModule,
     BrowserAnimationsModule,
@@ -50,7 +57,11 @@ import { InputNumberModule } from 'primeng/inputnumber';
     InputTextModule,
     DialogModule,
     InputNumberModule,
-    DropdownModule
+    DropdownModule,
+    MessageModule,
+    ImageModule,
+    PickListModule,
+    MultiSelectModule
   ],
   providers: [ ],
   exports: [ PipesModule ]
