@@ -28,6 +28,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { ImageModule } from 'primeng/image';
 import { PickListModule } from 'primeng/picklist';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { TooltipModule } from 'primeng/tooltip';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,8 @@ import { MultiSelectModule } from 'primeng/multiselect';
     MessageModule,
     ImageModule,
     PickListModule,
-    MultiSelectModule
+    MultiSelectModule,
+    TooltipModule
   ],
   providers: [ ],
   exports: [ PipesModule ]

@@ -7,7 +7,6 @@ import com.sansyro.sgpspring.exception.ServiceException;
 import com.sansyro.sgpspring.repository.UserRepository;
 import com.sansyro.sgpspring.util.GeralUtil;
 import com.sansyro.sgpspring.util.SecurityUtil;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

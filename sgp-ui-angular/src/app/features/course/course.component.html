@@ -20,7 +20,7 @@
                         <th>Status</th>
                         <th>Categoria</th>
                         <th>Prioridade</th>
-                        <th>Ações</th>
+                        <th width="20%">Ações</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-course>
@@ -32,15 +32,21 @@
                         <td>{{course.priority}}</td>            
                         <td>
                             <button pButton type="button" icon="pi pi-pencil" (click)="edit(course)" 
-                                class="p-button-raised p-button-rounded"></button>
-                            <button *ngIf="course.status != 'FINISH' && course.status != 'PROGRESS'" pButton type="button" icon="pi pi-caret-right" (click)="start(course.id)" 
-                                class="p-button-raised p-button-help p-button-rounded"></button>
-                            <button *ngIf="course.status === 'PROGRESS'" pButton type="button" icon="pi pi-stop" (click)="finishDialog(course.id)" 
-                                class="p-button-raised p-button-help p-button-rounded"></button>
-                            <button pButton type="button" icon="pi pi-eye" (click)="view(course)" 
-                                class="p-button-raised p-button-secondary p-button-rounded"></button>
+                                class="p-button-raised p-button-rounded" pTooltip="Editar"
+                                tooltipPosition="bottom"></button>
+                            <button *ngIf="course.status != 'FINISH' && course.status != 'PROGRESS'" pButton
+                                type="button" icon="pi pi-caret-right" (click)="start(course.id)" 
+                                class="p-button-raised p-button-help p-button-rounded" pTooltip="Iniciar Curso"
+                                tooltipPosition="bottom"></button>
+                            <button *ngIf="course.status === 'PROGRESS'" pButton type="button" icon="pi pi-stop"
+                                (click)="finishDialog(course.id)" class="p-button-raised p-button-help p-button-rounded"
+                                pTooltip="Finalizar Curso" tooltipPosition="bottom"></button>
+                            <button pButton type="button" icon="pi pi-eye" (click)="view(course)"
+                                class="p-button-raised p-button-secondary p-button-rounded" pTooltip="Visualizar"
+                                tooltipPosition="bottom"></button>
                             <button pButton type="button" icon="pi pi-trash" (click)="confirmDelete(course)" 
-                                class="p-button-raised p-button-danger p-button-rounded"></button>
+                                class="p-button-raised p-button-danger p-button-rounded" pTooltip="Deletar"
+                                tooltipPosition="bottom"></button>
                         </td>
                     </tr>
                 </ng-template>

@@ -3,6 +3,7 @@ import { environment } from './../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,8 @@ export class SecurityService {
 
 	constructor(
 		private http: HttpClient,
-		private messageService: MessageService
+		private messageService: MessageService,
+		private router: Router
 	) { }
 
 	login(user: any): Promise<void> {
@@ -40,7 +42,7 @@ export class SecurityService {
 	}
 
 	changePassword(pwd: any, id: any) {
-		return this.http.put(this.url + '/changePassword/'+id, {password: pwd}).toPromise()
+		return this.http.put(this.url + '/change-password/'+id, {password: pwd}).toPromise()
 			.then((response: any) => {
 				this.saveLocalStorege(response);
 				return response;
@@ -76,19 +78,39 @@ export class SecurityService {
 		});
 	}
 
-	isLogged() {
-		let hasToken = localStorage.getItem('token') !== null;
-
-		if (hasToken) {
-			hasToken = !this.isAccessToken();
-		}
-		return hasToken;
-	}
-
-	isAccessToken() {
+	validateAccessToken() {
 		this.jwtHelper = new JwtHelperService();
 		const token = localStorage.getItem('token');
-		return !token || this.jwtHelper.isTokenExpired(token);
+		if(token) {
+			this.isJwtExpired(token, this.jwtHelper);
+		} else {
+			this.router.navigate(['/login']);
+		}
+	}
+
+	isJwtExpired(token: any, jwtHelper: JwtHelperService) {
+		if(jwtHelper.isTokenExpired(token)) {
+			const date = new Date();
+			date.setMinutes(date.getMinutes() - 11);
+			const dateExpiration = jwtHelper.getTokenExpirationDate(token);
+			if(dateExpiration && dateExpiration < date) {
+				this.router.navigate(['/login']);
+			} else {
+				this.updateToken();
+			}
+		}
+	}
+
+	updateToken() {
+		const emailUser = JSON.parse(localStorage.getItem("userLogin")+'').email;
+		return this.http.post(this.url + '/update-token', { email: emailUser }).toPromise()
+			.then((response: any) => {
+				this.saveLocalStorege(response);
+				return response;
+			})
+			.catch((response: any) => {
+				return this.createHandle(response);
+			});
 	}
 
 	getAuthorizated() {

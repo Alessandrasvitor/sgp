@@ -1,6 +1,5 @@
 package com.sansyro.sgpspring.security.service;
 
-import com.sansyro.sgpspring.constants.FunctionalityEnum;
 import com.sansyro.sgpspring.entity.User;
 import com.sansyro.sgpspring.entity.dto.UserRequest;
 import com.sansyro.sgpspring.exception.ServiceException;
@@ -84,6 +83,13 @@ public class AuthenticationService implements UserDetailsService {
         }
         user.setUserHashCode(GeralUtil.getNewHashCode());
         user.setPassword(validatedPassword(request.getPassword(), user.getUserHashCode()));
+        user.setToken(tokenService.generateToken(user));
+        return repository.save(user);
+    }
+
+    public User updateToken(UserRequest request) {
+        User user = service.getByEmail(request.getEmail());
+
         user.setToken(tokenService.generateToken(user));
         return repository.save(user);
     }

@@ -21,6 +21,8 @@ export class SecurityGuard implements CanActivate {
       return false;
     }
 
+    this.security.validateAccessToken();
+
     let route = next.routeConfig?.path;
     if(!route || route === 'instituition') {
       return true;

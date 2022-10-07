@@ -18,25 +18,30 @@
                       <th>Nome</th>
                       <th>Email</th>
                       <th>Tela Inicial</th>
-                      <th>Ações</th>
+                      <th width="20%">Ações</th>
                   </tr>
               </ng-template>
               <ng-template pTemplate="body" let-user>
                   <tr>
                       <td>{{user.name}}</td>
                       <td>{{user.email}}</td>
-                      <td>{{user.startView}}</td>          
+                      <td>{{user.startView | funcionality}}</td>          
                       <td>
                           <button pButton type="button" icon="pi pi-pencil" (click)="edit(user)" 
-                              class="p-button-raised p-button-rounded"></button>
+                            class="p-button-raised p-button-rounded" pTooltip="Editar"
+                            tooltipPosition="bottom"></button>
                           <button pButton type="button" icon="pi pi-replay" (click)="resetPwd(user.id)" 
-                              class="p-button-raised p-button-help p-button-rounded"></button>
+                            class="p-button-raised p-button-help p-button-rounded" pTooltip="Resetar Senha"
+                            tooltipPosition="bottom"></button>
                           <button pButton type="button" icon="pi pi-cog" (click)="setFunctionality(user.id)" 
-                              class="p-button-raised p-button-warning p-button-rounded"></button>
+                            class="p-button-raised p-button-warning p-button-rounded" pTooltip="Editar Funcionalidades"
+                            tooltipPosition="bottom"></button>
                           <button pButton type="button" icon="pi pi-eye" (click)="view(user)" 
-                              class="p-button-raised p-button-secondary p-button-rounded"></button>
+                            class="p-button-raised p-button-secondary p-button-rounded" pTooltip="Visualizar"
+                            tooltipPosition="bottom"></button>
                           <button pButton type="button" icon="pi pi-trash" (click)="confirmDelete(user)" 
-                              class="p-button-raised p-button-danger p-button-rounded"></button>
+                            class="p-button-raised p-button-danger p-button-rounded" pTooltip="Deletar"
+                            tooltipPosition="bottom"></button>
                       </td>
                   </tr>
               </ng-template>

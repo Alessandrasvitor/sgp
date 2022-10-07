@@ -45,7 +45,7 @@ public class UserControllerTest {
 
     @Test
     void getByIdTest() {
-        User userBuild = UserBuild.getUser();
+        User userBuild = UserBuild.getBuild();
         when(service.getById(any())).thenReturn(userBuild);
         ResponseEntity response = controller.getById(ID);
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -88,7 +88,7 @@ public class UserControllerTest {
 
     @Test
     void updateTest() {
-        User userBuild = UserBuild.getUser();
+        User userBuild = UserBuild.getBuild();
         when(service.update(any(), any())).thenReturn(userBuild);
         ResponseEntity response = controller.update(ID, new UserRequest());
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -133,7 +133,7 @@ public class UserControllerTest {
 */
     @Test
     void getWithPasswordTest() {
-        User userBuild = UserBuild.getUser();
+        User userBuild = UserBuild.getBuild();
         when(service.getById(any())).thenReturn(userBuild);
         ResponseEntity response = controller.getWithPassword(ID);
         assertEquals(HttpStatus.OK, response.getStatusCode());

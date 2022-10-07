@@ -7,7 +7,7 @@ export class FuncionalityPipe implements PipeTransform {
 
   transform(value: any, args?: any): any {
     
-      switch ( value ) {
+      switch ( value.toUpperCase() ) {
           case 'HOME':
               return 'Home';
           case 'COURSE':

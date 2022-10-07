@@ -5,7 +5,6 @@ import com.sansyro.sgpspring.entity.Course;
 import com.sansyro.sgpspring.entity.dto.CourseRequest;
 import com.sansyro.sgpspring.exception.ServiceException;
 import com.sansyro.sgpspring.repository.CourseRepository;
-import com.sansyro.sgpspring.repository.InstituitionRepository;
 import com.sansyro.sgpspring.util.GeralUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
