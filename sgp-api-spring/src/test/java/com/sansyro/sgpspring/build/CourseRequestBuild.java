@@ -12,18 +12,18 @@ public class CourseRequestBuild {
 
     public static CourseRequest getBuild() {
         return CourseRequest.builder()
-                .name(RandomStringUtils.randomAlphabetic(15))
-                .description(RandomStringUtils.randomAlphabetic(8))
-                .startDate(new Date())
-                .endDate(new Date())
-                .idUser(RandomUtils.nextLong())
-                .idInstituition(RandomUtils.nextLong())
-                .notation(RandomUtils.nextFloat())
-                .priority(RandomUtils.nextInt())
-                .status(StatusEnum.PENDING)
-                .category(CategoryEnum.INFORMATICA)
-                .finished(Boolean.FALSE)
-                .build();
+            .name(RandomStringUtils.randomAlphabetic(15))
+            .description(RandomStringUtils.randomAlphabetic(8))
+            .startDate(new Date())
+            .endDate(new Date())
+            .idUser(RandomUtils.nextLong())
+            .idInstituition(RandomUtils.nextLong())
+            .notation(Float.valueOf(8))
+            .priority(RandomUtils.nextInt())
+            .status(StatusEnum.PENDING)
+            .category(CategoryEnum.INFORMATICA)
+            .finished(Boolean.FALSE)
+            .build();
     }
 
 }

@@ -8,12 +8,12 @@ public class UserBuild {
 
     public static User getBuild() {
         return User.builder()
-                .id(RandomUtils.nextLong())
-                .email(RandomStringUtils.randomAlphabetic(8))
-                .name(RandomStringUtils.randomAlphabetic(15))
-                .password(RandomStringUtils.randomAlphabetic(8))
-                .userHashCode(RandomStringUtils.randomAlphabetic(8))
-                .build();
+            .id(RandomUtils.nextLong())
+            .email(RandomStringUtils.randomAlphabetic(8))
+            .name(RandomStringUtils.randomAlphabetic(15))
+            .password(RandomStringUtils.randomAlphabetic(8))
+            .userHashCode(RandomStringUtils.randomAlphabetic(8))
+            .build();
     }
 
 

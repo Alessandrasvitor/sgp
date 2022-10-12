@@ -68,7 +68,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    private String validatePassword(String password, String hash) {
+    public String validatePassword(String password, String hash) {
         if(GeralUtil.stringNullOrEmpty(password)){
             throw new ServiceException("A Senha do usuário é obrigatória");
         }
@@ -82,7 +82,7 @@ public class UserService {
         }
     }
 
-    private void validateUserNull(User user) {
+    public void validateUserNull(User user) {
         if(GeralUtil.stringNullOrEmpty(user.getName())){
             throw new ServiceException("Nome do usuário é obrigatório");
         }

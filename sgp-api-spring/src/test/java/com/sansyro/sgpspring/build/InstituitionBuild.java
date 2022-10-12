@@ -8,12 +8,11 @@ public class InstituitionBuild {
 
     public static Instituition getBuild() {
         return Instituition.builder()
-                .id(RandomUtils.nextLong())
-                .name(RandomStringUtils.randomAlphabetic(15))
-                .address(RandomStringUtils.randomAlphabetic(8))
-                .quantity(RandomUtils.nextFloat())
-                .build();
+            .id(RandomUtils.nextLong())
+            .name(RandomStringUtils.randomAlphabetic(15))
+            .address(RandomStringUtils.randomAlphabetic(8))
+            .quantity(RandomUtils.nextFloat())
+            .build();
     }
-
 
 }

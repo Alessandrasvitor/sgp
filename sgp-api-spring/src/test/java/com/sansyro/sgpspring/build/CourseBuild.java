@@ -12,19 +12,19 @@ public class CourseBuild {
 
     public static Course getBuild() {
         return Course.builder()
-                .id(RandomUtils.nextLong())
-                .name(RandomStringUtils.randomAlphabetic(15))
-                .description(RandomStringUtils.randomAlphabetic(8))
-                .startDate(new Date())
-                .endDate(new Date())
-                .user(UserBuild.getBuild())
-                .notation(RandomUtils.nextFloat())
-                .priority(RandomUtils.nextInt())
-                .status(StatusEnum.PENDING)
-                .category(CategoryEnum.INFORMATICA)
-                .finished(Boolean.FALSE)
-                .instituition(InstituitionBuild.getBuild())
-                .build();
+            .id(RandomUtils.nextLong())
+            .name(RandomStringUtils.randomAlphabetic(15))
+            .description(RandomStringUtils.randomAlphabetic(8))
+            .startDate(new Date())
+            .endDate(new Date())
+            .user(UserBuild.getBuild())
+            .notation(RandomUtils.nextFloat())
+            .priority(RandomUtils.nextInt())
+            .status(StatusEnum.PENDING)
+            .category(CategoryEnum.INFORMATICA)
+            .finished(Boolean.FALSE)
+            .instituition(InstituitionBuild.getBuild())
+            .build();
     }
 
 }
