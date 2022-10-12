@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+
 import { CourseComponent } from './features/course/course.component';
+import { HomeComponent } from './features/home/home.component';
 import { InstitutionComponent } from './features/institution/institution.component';
 import { UserComponent } from './features/user/user.component';
 import { LoginComponent } from './security/login/login.component';
@@ -15,10 +17,11 @@ const routes: Routes = [
   { path: 'reset-pwd', component: ResetPwdComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'home', component: HomeComponent },
   { path: 'user', component: UserComponent, canActivate: [SecurityGuard] },
   { path: 'course', component: CourseComponent, canActivate: [SecurityGuard] },
   { path: 'instituition', component: InstitutionComponent, canActivate: [SecurityGuard] },
-  { path: '**', redirectTo: 'instituition' },
+  { path: '**', redirectTo: 'home' },
 ];
 
 @NgModule({

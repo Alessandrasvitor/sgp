@@ -1,9 +1,7 @@
 package com.sansyro.sgpspring.security.service;
 
-import com.sansyro.sgpspring.constants.FunctionalityEnum;
 import com.sansyro.sgpspring.entity.User;
 import com.sansyro.sgpspring.entity.dto.UserRequest;
-import com.sansyro.sgpspring.exception.ServiceException;
 import com.sansyro.sgpspring.repository.UserRepository;
 import com.sansyro.sgpspring.service.UserService;
 import com.sansyro.sgpspring.util.GeralUtil;
@@ -71,6 +69,7 @@ public class AuthenticationService implements UserDetailsService {
 
     public User register(UserRequest request) {
         User user = request.mapperEntity();
+        user.setPassword(service.validatePassword(user.getPassword(), GeralUtil.getNewHashCode()));
         user.setToken(tokenService.generateToken(user));
         repository.save(user);
         return user;
@@ -83,17 +82,16 @@ public class AuthenticationService implements UserDetailsService {
             throw new UsernameNotFoundException("Usuário ou senha não encontrado");
         }
         user.setUserHashCode(GeralUtil.getNewHashCode());
-        user.setPassword(validatedPassword(request.getPassword(), user.getUserHashCode()));
+        user.setPassword(service.validatePassword(request.getPassword(), user.getUserHashCode()));
         user.setToken(tokenService.generateToken(user));
         return repository.save(user);
     }
 
-    private String validatedPassword(String password, String hash) {
-        if(GeralUtil.stringNullOrEmpty(password)){
-            throw new ServiceException("A Senha do usuário é obrigatória");
-        }
-        StringBuilder newPassword = new StringBuilder(password).append(hash);
-        return  SecurityUtil.bCryptPasswordEncoder().encode(newPassword.toString());
+    public User updateToken(UserRequest request) {
+        User user = service.getByEmail(request.getEmail());
+
+        user.setToken(tokenService.generateToken(user));
+        return repository.save(user);
     }
 
 }

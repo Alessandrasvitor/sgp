@@ -55,16 +55,32 @@ public class AuthenticationController {
         try {
             User user = authenticationService.register(request);
             return ResponseEntity.ok(TokenResponse.builder().user(user.mapperDTP()).type("Bearer").token(user.getToken()).build());
+        } catch (ServiceException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
-    @PutMapping("/changePassword")
+    @PutMapping("/change-password")
     public ResponseEntity changePassword(@RequestBody @Validated UserRequest request){
         try {
             User user = authenticationService.updatePassword(request);
             return ResponseEntity.ok(TokenResponse.builder().user(user.mapperDTP()).type("Bearer").token(user.getToken()).build());
+        } catch (UsernameNotFoundException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/update-token")
+    public ResponseEntity updateToken(@RequestBody @Validated UserRequest request){
+        try {
+            User user = authenticationService.updateToken(request);
+            return ResponseEntity.ok(TokenResponse.builder().user(user.mapperDTP()).type("Bearer").token(user.getToken()).build());
+        } catch (ServiceException | UsernameNotFoundException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

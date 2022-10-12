@@ -1,15 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-
 import { SecurityService } from 'src/app/security/security.service';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CourseService {
+export class UserService {
   
-  private url = `${environment.apiUrl}/course`;
+  private url = `${environment.apiUrl}/user`;
 
   constructor(
     private http: HttpClient,
@@ -32,12 +31,12 @@ export class CourseService {
 		return this.http.post(this.url, course, this.securityService.getAuthorizated());
   }
 
-  finish(notation: any, id: any) {
-    return this.http.put(this.url + '/finish/' + id, {notation: notation}, this.securityService.getAuthorizated());
+  updateFunctionalities(functionalities: any, id: any) {
+    return this.http.put(this.url + '/functionalities/' + id, {functionalities: functionalities}, this.securityService.getAuthorizated());
   }
 
-  start(id: number) {
-    return this.http.get(this.url + '/start/' + id, this.securityService.getAuthorizated());
+  resetPwd(id: any) {
+    return this.http.get(this.url + '/reset/' + id, this.securityService.getAuthorizated());
   }
 
   delete(id: any) {

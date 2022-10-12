@@ -4,22 +4,26 @@ import { CategoryPipe } from './category.pipe';
 import { StatusPipe } from './status.pipe';
 import { CapitalizedPipe } from './capitalized.pipe';
 import { MenuPipe } from './menu.pipe';
+import { FuncionalityPipe } from './funcionality.pipe';
 
 @NgModule({
   imports: [
     CommonModule
   ],
-  declarations: [
+  declarations: [	
       CategoryPipe,
       StatusPipe,
       CapitalizedPipe,
-      MenuPipe
+      MenuPipe,
+      FuncionalityPipe,
+      
    ],
    exports: [
     CategoryPipe,
     StatusPipe,
     CapitalizedPipe,
-    MenuPipe
+    MenuPipe,
+    FuncionalityPipe
    ]
 })
 export class PipesModule { }

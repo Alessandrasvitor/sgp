@@ -5,7 +5,6 @@ import com.sansyro.sgpspring.entity.Course;
 import com.sansyro.sgpspring.entity.dto.CourseRequest;
 import com.sansyro.sgpspring.exception.ServiceException;
 import com.sansyro.sgpspring.repository.CourseRepository;
-import com.sansyro.sgpspring.repository.InstituitionRepository;
 import com.sansyro.sgpspring.util.GeralUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,7 +41,7 @@ public class CourseService {
         validateNotNull(request);
         //validateDuplicate(course);
         Course course = request.mapperEntity();
-        request.setStatus(StatusEnum.PENDING);
+        course.setStatus(StatusEnum.PENDING);
         course.setInstituition(instituitionService.getById(request.getIdInstituition()));
         course.setUser(userService.getById(request.getIdUser()));
         course.setPriority(5);
@@ -68,6 +67,7 @@ public class CourseService {
 
     public Course finish(Long id, float notation) {
         Course course = getById(id);
+        course.setNotation(notation);
         if(notation < 7) {
             course.setStatus(StatusEnum.FAIL);
         } else {

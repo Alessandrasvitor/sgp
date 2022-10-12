@@ -11,9 +11,9 @@ export class MenuPipe implements PipeTransform {
         return {label: 'Usuários', icon: 'pi pi-users', routerLink: '/user'};
       case 'COURSE':
         return {label: 'Curso', icon: 'pi pi-book', routerLink: '/course'};
-      case 'BASIC':
+      case 'INSTITUITION':
         return {label: 'Instituição', icon: 'pi pi-globe', routerLink: '/instituition'};
-    }
+  }
   }
 
 }
