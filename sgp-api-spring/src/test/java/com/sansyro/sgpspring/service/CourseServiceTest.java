@@ -2,6 +2,7 @@ package com.sansyro.sgpspring.service;
 
 import com.sansyro.sgpspring.build.CourseBuild;
 import com.sansyro.sgpspring.build.CourseRequestBuild;
+import com.sansyro.sgpspring.build.UserBuild;
 import com.sansyro.sgpspring.entity.Course;
 import com.sansyro.sgpspring.entity.Instituition;
 import com.sansyro.sgpspring.entity.User;
@@ -19,8 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)

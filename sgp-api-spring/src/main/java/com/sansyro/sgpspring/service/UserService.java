@@ -8,6 +8,7 @@ import com.sansyro.sgpspring.repository.UserRepository;
 import com.sansyro.sgpspring.util.GeralUtil;
 import com.sansyro.sgpspring.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -23,7 +24,7 @@ public class UserService {
     private String PASSWORD_DEFAULT = "123456";
 
     public List<User> list() {
-        return userRepository.findAll();
+        return userRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
     }
 
     public User getById(Long id) {

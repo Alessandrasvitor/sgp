@@ -53,16 +53,16 @@
             </p-table>
         </div>
         <div *ngIf="viewEdit">
-            <div class="grid p-fluid">
-                <div class="field col-12">
+            <div class="p-fluid flex flex-column">
+                <div class="field">
                     <label>Nome</label>
                     <input required type="text" [disabled]="!editation" pInputText [(ngModel)]="course.name" />
                 </div>
-                <div class="field col-12">
+                <div class="field">
                     <label>Descrição</label>
                     <textarea class="col-12" [rows]="5" [cols]="30" [disabled]="!editation" pInputTextarea [(ngModel)]="course.description"></textarea>
                 </div>
-                <div class="col-12">
+                <div class="flex flex-row">
                     <div class="field col-6">
                         <label>Categoria</label>
                         <p-dropdown [options]="categories" [(ngModel)]="course.category" [disabled]="!editation"></p-dropdown>

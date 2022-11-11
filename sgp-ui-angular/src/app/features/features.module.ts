@@ -29,13 +29,15 @@ import { ImageModule } from 'primeng/image';
 import { PickListModule } from 'primeng/picklist';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TooltipModule } from 'primeng/tooltip';
+import { BetComponent } from './bet/bet.component';
 
 @NgModule({
   declarations: [
     InstitutionComponent,
     CourseComponent,
     HomeComponent,
-    UserComponent
+    UserComponent,
+    BetComponent
   ],
   imports: [
   CommonModule,

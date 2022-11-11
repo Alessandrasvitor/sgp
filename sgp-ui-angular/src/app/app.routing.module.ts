@@ -10,6 +10,7 @@ import { PageNotFoundComponent } from './security/page-not-found/page-not-found.
 import { RegisterComponent } from './security/register/register.component';
 import { ResetPwdComponent } from './security/reset-pwd/reset-pwd.component';
 import { SecurityGuard } from './security/security.guard';
+import { BetComponent } from './features/bet/bet.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'redirect', pathMatch: 'full' },
@@ -21,12 +22,13 @@ const routes: Routes = [
   { path: 'user', component: UserComponent, canActivate: [SecurityGuard] },
   { path: 'course', component: CourseComponent, canActivate: [SecurityGuard] },
   { path: 'instituition', component: InstitutionComponent, canActivate: [SecurityGuard] },
+  { path: 'bet', component: BetComponent, canActivate: [SecurityGuard] },
   { path: '**', redirectTo: 'home' },
 ];
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes)
+  RouterModule.forRoot(routes)
   ],
   exports: [RouterModule]
 })

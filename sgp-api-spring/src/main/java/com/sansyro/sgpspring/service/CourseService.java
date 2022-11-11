@@ -7,6 +7,7 @@ import com.sansyro.sgpspring.exception.ServiceException;
 import com.sansyro.sgpspring.repository.CourseRepository;
 import com.sansyro.sgpspring.util.GeralUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -26,7 +27,7 @@ public class CourseService {
     private UserService userService;
 
     public List<Course> list() {
-        return courseRepository.findAll();
+        return courseRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
     }
 
     public Course getById(Long id) {
@@ -39,8 +40,8 @@ public class CourseService {
 
     public Course save(CourseRequest request) {
         validateNotNull(request);
-        //validateDuplicate(course);
         Course course = request.mapperEntity();
+        validateDuplicate(course);
         course.setStatus(StatusEnum.PENDING);
         course.setInstituition(instituitionService.getById(request.getIdInstituition()));
         course.setUser(userService.getById(request.getIdUser()));
@@ -48,12 +49,19 @@ public class CourseService {
         return courseRepository.save(course);
     }
 
+    private void validateDuplicate(Course course) {
+        Course courseDuplicated = courseRepository.findByName(course.getName());
+        if(courseDuplicated != null && courseDuplicated.getId() != course.getId()) {
+            throw new ServiceException("Curso já existe na base de dados.");
+        }
+    }
+
     public Course update(Long id, CourseRequest request) {
         validateNotNull(request);
-        //validateDuplicate(course.getAddress());
         Course course = getById(id);
-        course.mapperRequest(request);
+        validateDuplicate(course);
         course.setInstituition(instituitionService.getById(request.getIdInstituition()));
+        course.mapperRequest(request);
         course.setUser(userService.getById(request.getIdUser()));
         return courseRepository.save(course);
     }
