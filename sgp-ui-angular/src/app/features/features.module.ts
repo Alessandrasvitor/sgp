@@ -11,6 +11,7 @@ import { CourseComponent } from './course/course.component';
 import { PipesModule } from '../shared/pipes/pipes.module';
 import { HomeComponent } from './home/home.component';
 import { UserComponent } from './user/user.component';
+import { BetComponent } from './bet/bet.component';
 
 import { TableModule } from 'primeng/table';
 import { FieldsetModule } from 'primeng/fieldset';
@@ -29,7 +30,7 @@ import { ImageModule } from 'primeng/image';
 import { PickListModule } from 'primeng/picklist';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TooltipModule } from 'primeng/tooltip';
-import { BetComponent } from './bet/bet.component';
+import { CalendarModule } from 'primeng/calendar';
 
 @NgModule({
   declarations: [
@@ -65,7 +66,8 @@ import { BetComponent } from './bet/bet.component';
     ImageModule,
     PickListModule,
     MultiSelectModule,
-    TooltipModule
+    TooltipModule,
+    CalendarModule
   ],
   providers: [ ],
   exports: [ PipesModule ]

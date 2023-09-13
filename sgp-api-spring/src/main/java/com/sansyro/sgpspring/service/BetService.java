@@ -2,6 +2,7 @@ package com.sansyro.sgpspring.service;
 
 import com.sansyro.sgpspring.constants.TypeBetEnum;
 import com.sansyro.sgpspring.entity.Bet;
+import com.sansyro.sgpspring.entity.dto.BetResponse;
 import com.sansyro.sgpspring.exception.ServiceException;
 import com.sansyro.sgpspring.repository.BetRepository;
 import com.sansyro.sgpspring.util.GeralUtil;
@@ -19,6 +20,9 @@ public class BetService {
     @Autowired
     private BetRepository betRepository;
 
+    @Autowired
+    private UserService userService;
+
     public List<Bet> list() {
         return betRepository.findAll(Sort.by(Sort.Direction.ASC, "betDate"));
     }
@@ -33,18 +37,21 @@ public class BetService {
 
     public Bet save(Bet bet) {
         validateNotNull(bet);
+        bet.setUser(userService.getById(bet.getUser().getId()));
         return betRepository.save(bet);
     }
 
     public Bet update(Long id, Bet bet) {
         validateNotNull(bet);
         Bet betUpdate = getById(id);
+        betUpdate.setType(bet.getType());
         betUpdate.setBet(bet.getBet());
         betUpdate.setBetDate(bet.getBetDate());
         betUpdate.setLucre(bet.getLucre());
         betUpdate.setResult(bet.getResult());
         betUpdate.setResultDate(bet.getResultDate());
         betUpdate.setPaidOut(bet.getPaidOut());
+        betUpdate.setUser(userService.getById(bet.getUser().getId()));
 
         return betRepository.save(betUpdate);
     }

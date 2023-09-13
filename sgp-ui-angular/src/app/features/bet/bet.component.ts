@@ -104,6 +104,7 @@ export class BetComponent implements OnInit {
 
   save() {
     this.loading = true;
+    this.bet.user = this.user;
     if(this.bet.id) {
       this.service.put(this.bet).subscribe((response: any) => {
         this.updateView();

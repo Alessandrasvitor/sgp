@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/bet")
-@PreAuthorize("hasAuthority('HOME')")
+@PreAuthorize("hasAuthority('BET')")
 @OpenAPIDefinition(info = @Info(title = "Sistema de gestão de entreteinimento", version = "1.0", description = ""))
 public class BetController {
 
@@ -24,14 +24,14 @@ public class BetController {
     @ResponseBody
     @GetMapping()
     public ResponseEntity list() {
-        return ResponseEntity.ok().body(betService.list());
+        return ResponseEntity.ok().body(betService.list().stream().map(Bet::mapperDTP).toList());
     }
 
     @ResponseBody
     @GetMapping("/{id}")
     public ResponseEntity getById(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok().body(betService.getById(id));
+            return ResponseEntity.ok().body(betService.getById(id).mapperDTP());
         } catch (ServiceException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e){
@@ -53,10 +53,10 @@ public class BetController {
     }
 
     @ResponseBody
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public ResponseEntity update(@PathVariable Long id, @RequestBody Bet bet) {
         try {
-            return ResponseEntity.ok().body(betService.update(id, bet));
+            return ResponseEntity.ok().body(betService.update(id, bet).mapperDTP());
         } catch (ServiceException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e){
@@ -65,7 +65,7 @@ public class BetController {
     }
 
     @ResponseBody
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable Long id) {
         try {
             betService.delete(id);
@@ -78,7 +78,7 @@ public class BetController {
     }
 
     @ResponseBody
-    @DeleteMapping("gerar")
+    @DeleteMapping("/gerar")
     public ResponseEntity gerar() {
         try {
             return ResponseEntity.ok().body(betService.gerar());

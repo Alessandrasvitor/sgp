@@ -1,5 +1,7 @@
 package com.sansyro.sgpspring.entity;
 
+import com.sansyro.sgpspring.entity.dto.BetResponse;
+import com.sansyro.sgpspring.entity.dto.UserResponse;
 import lombok.*;
 
 import javax.persistence.*;
@@ -35,5 +37,19 @@ public class Bet {
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
+
+    public BetResponse mapperDTP() {
+        return BetResponse.builder()
+                .id(id)
+                .type(type)
+                .bet(bet)
+                .betDate(betDate)
+                .result(result)
+                .resultDate(resultDate)
+                .paidOut(paidOut)
+                .lucre(lucre)
+                .user(user.mapperDTP())
+        .build();
+    }
 
 }
