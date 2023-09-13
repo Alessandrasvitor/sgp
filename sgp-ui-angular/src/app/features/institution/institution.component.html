@@ -30,13 +30,13 @@
                             <!--p-rating [ngModel]=({{institution.quantity}}) (readonly)="getTrue()" [cancel]="false"></-p-rating -->
                         </td>
                         <td>
-                            <button pButton type="button" icon="pi pi-pencil" (click)="edit(user)" 
+                            <button pButton type="button" icon="pi pi-pencil" (click)="edit(institution)" 
                                 class="p-button-raised p-button-rounded" pTooltip="Editar"
                                 tooltipPosition="bottom"></button>
-                            <button pButton type="button" icon="pi pi-eye" (click)="view(user)" 
+                            <button pButton type="button" icon="pi pi-eye" (click)="view(institution)" 
                                 class="p-button-raised p-button-secondary p-button-rounded" pTooltip="Visualizar"
                                 tooltipPosition="bottom"></button>
-                            <button pButton type="button" icon="pi pi-trash" (click)="confirmDelete(user)" 
+                            <button pButton type="button" icon="pi pi-trash" (click)="confirmDelete(institution)" 
                                 class="p-button-raised p-button-danger p-button-rounded" pTooltip="Deletar"
                                 tooltipPosition="bottom"></button>
                         </td>
