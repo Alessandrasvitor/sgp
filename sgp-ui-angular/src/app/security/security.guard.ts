@@ -21,13 +21,15 @@ export class SecurityGuard implements CanActivate {
       return false;
     }
 
+    this.security.validateAccessToken();
+
     let route = next.routeConfig?.path;
     if(!route || route === 'instituition') {
       return true;
     }
 
     if(user.functionalities.filter((func: any) => func === route?.toUpperCase()).length <= 0) {
-      this.router.navigate(['/pagina-nao-encontrada']);
+      this.router.navigate(['/page-not-found']);
     }
 
     return true;

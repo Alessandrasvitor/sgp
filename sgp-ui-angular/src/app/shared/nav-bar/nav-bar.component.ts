@@ -11,7 +11,7 @@ import { MenuPipe } from '../pipes/menu.pipe';
 })
 export class NavBarComponent implements OnInit {
 
-  items: MenuItem[] = [{label: 'Home', icon: 'pi pi-fw pi-home'}];
+  items: MenuItem[] = [{label: 'Home', icon: 'pi pi-fw pi-home', routerLink: '/home'}];
   itemsUser: MenuItem[] = [];
   user: any = JSON.parse(localStorage.getItem('userLogin')+'');
 
@@ -29,7 +29,6 @@ export class NavBarComponent implements OnInit {
           this.items.push(item);
         }
       });
-      this.items[0].routerLink = '/instituition';
       this.itemsUser.push({
         label: 'Logout',
         icon: 'pi pi-power-off',
@@ -42,7 +41,6 @@ export class NavBarComponent implements OnInit {
     this.securityService.logout(this.user.id).subscribe(() => {
       this.router.navigate(['/login']);
     });
-
   }
 
 }

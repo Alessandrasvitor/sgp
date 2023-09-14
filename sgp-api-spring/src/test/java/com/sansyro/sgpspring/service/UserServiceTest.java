@@ -71,7 +71,7 @@ public class UserServiceTest {
 
     @Test
     void saveTest() {
-        User user = UserBuild.getUser();
+        User user = UserBuild.getBuild();
         when(repository.save(any())).thenReturn(user);
         service.save(user);
         verify(repository, times(1)).save(any());
@@ -79,17 +79,24 @@ public class UserServiceTest {
 
     @Test
     void saveWithErrorTest() {
-        User user = UserBuild.getUser();
+        User user = UserBuild.getBuild();
         when(repository.findByEmail(any())).thenReturn(new User());
         assertThrows(ServiceException.class, () -> service.save(user));
         verify(repository, times(1)).findByEmail(any());
     }
 
     @Test
+    void saveWithErrorNotPasswordTest() {
+        User user = UserBuild.getBuild();
+        user.setPassword(null);
+        assertThrows(ServiceException.class, () -> service.save(user));
+    }
+
+    @Test
     void updateTest() {
-        UserRequest user = UserRequestBuild.getUser();
+        UserRequest user = UserRequestBuild.getBuild();
         when(repository.findById(any())).thenReturn(Optional.of(new User()));
-        when(repository.save(any())).thenReturn(UserBuild.getUser());
+        when(repository.save(any())).thenReturn(UserBuild.getBuild());
         User userSafe = service.update(ID, user);
         verify(repository, times(1)).save(any());
         assertNotNull(userSafe.getId());
@@ -103,33 +110,35 @@ public class UserServiceTest {
 
     @Test
     void updateWithErrorEmailTest() {
-        UserRequest user = UserRequestBuild.getUser();
+        UserRequest user = UserRequestBuild.getBuild();
         user.setEmail(null);
         assertThrows(ServiceException.class, () -> service.update(ID, user));
     }
 
     @Test
-    void updatePasswordTest() {
-        when(repository.findById(any())).thenReturn(Optional.of(new User()));
-        when(repository.save(any())).thenReturn(new User());
-        service.updatePassword(ID, RandomStringUtils.randomAlphabetic(8));
-        verify(repository, times(1)).save(any());
-    }
-
-    @Test
-    void updatePasswordWithErrorTest() {
-        when(repository.findById(any())).thenReturn(Optional.of(new User()));
-        assertThrows(ServiceException.class, () -> service.updatePassword(ID, null));
+    void updateWithErrorStartViewTest() {
+        UserRequest user = UserRequestBuild.getBuild();
+        user.setStartView(null);
+        assertThrows(ServiceException.class, () -> service.update(ID, user));
     }
 
     @Test
     void resetPasswordTest() {
-        User user = UserBuild.getUser();
+        User user = UserBuild.getBuild();
         when(repository.findById(any())).thenReturn(Optional.of(user));
         when(repository.save(any())).thenReturn(user);
         service.resetPassword(ID);
         verify(repository, times(1)).save(any());
-        assertEquals(user.getPassword(), "bh1234"+user.getUserHashCode());
+        assertEquals(user.getPassword(), "123456");
+    }
+
+    @Test
+    void updateFunctionalitiesTest() {
+        User user = UserBuild.getBuild();
+        when(repository.findById(any())).thenReturn(Optional.of(user));
+        when(repository.save(any())).thenReturn(user);
+        assertNotNull(service.updateFunctionalities(ID, new UserRequest()));
+        verify(repository, times(1)).findById(any());
     }
 
 }

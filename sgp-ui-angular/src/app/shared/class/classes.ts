@@ -1,8 +1,8 @@
 
 export class User {
-    id: number | undefined;
+    id: number | undefined | null;
     name: string | undefined;
-    email: string | undefined;
+    email: string | undefined | null;
     password: string | undefined;
     token: string | undefined;
     init: string | undefined;

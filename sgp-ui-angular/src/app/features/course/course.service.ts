@@ -32,8 +32,8 @@ export class CourseService {
 		return this.http.post(this.url, course, this.securityService.getAuthorizated());
   }
 
-  finish(notation: any, id: number) {
-    return this.http.patch(this.url + '/' + id, {notation: notation}, this.securityService.getAuthorizated());
+  finish(notation: any, id: any) {
+    return this.http.put(this.url + '/finish/' + id, {notation: notation}, this.securityService.getAuthorizated());
   }
 
   start(id: number) {

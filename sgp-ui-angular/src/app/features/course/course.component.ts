@@ -21,6 +21,8 @@ export class CourseComponent implements OnInit {
   editation = false;
   labelCancel = 'Cancelar';
   categories: any = [];
+  user: any = {};
+  displayDialog = false;
 
   constructor(
     private service: CourseService,
@@ -31,6 +33,7 @@ export class CourseComponent implements OnInit {
 
   ngOnInit() {
     this.loading = true;
+    this.user = JSON.parse(localStorage.getItem('userLogin')+'');
     this.getInstituitions();
     this.getStatus();
     this.updateView();
@@ -65,10 +68,11 @@ export class CourseComponent implements OnInit {
     this.editation = false;
     this.course = {};
     this.viewEdit = false;
+    this.displayDialog = false;
     this.labelCancel = 'Cancelar';
   }
 
-  new() {
+  create() {
     this.title = 'Cadastrar';
     this.course = {};
     this.editation = true;
@@ -104,6 +108,29 @@ export class CourseComponent implements OnInit {
     });
   }
 
+  start(id: any) {
+    this.service.start(id).subscribe(() => {
+      this.updateView();
+    },
+    error => {
+      this.close();
+    });
+  }
+
+  finishDialog(id: any) {
+    this.course.id = id;
+    this.displayDialog = true;
+  }
+
+  finish() {
+    this.service.finish(this.course.notation, this.course.id).subscribe(() => {
+      this.updateView();
+    },
+    error => {
+      this.close();
+    });
+  }
+
   delete(id: any) {
     this.service.delete(id).subscribe(() => {
       this.updateView();
@@ -120,14 +147,15 @@ export class CourseComponent implements OnInit {
         this.updateView();
       },
       error => {
-        this.close();
+        //this.close();
       });
     } else {
+      this.course.idUser = this.user.id; 
       this.service.post(this.course).subscribe((response: any) => {
         this.updateView();
       },
       error => {
-        this.close();
+        //this.close();
       });
     }
   }

@@ -6,10 +6,11 @@ import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 
-import { FeaturesComponent } from './features.component';
 import { InstitutionComponent } from './institution/institution.component';
 import { CourseComponent } from './course/course.component';
 import { PipesModule } from '../shared/pipes/pipes.module';
+import { HomeComponent } from './home/home.component';
+import { UserComponent } from './user/user.component';
 
 import { TableModule } from 'primeng/table';
 import { FieldsetModule } from 'primeng/fieldset';
@@ -22,15 +23,24 @@ import { MessageModule } from 'primeng/message';
 import { MessagesModule } from 'primeng/messages';
 import { PasswordModule } from 'primeng/password';
 import { DropdownModule } from 'primeng/dropdown';
+import { DialogModule } from 'primeng/dialog';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { ImageModule } from 'primeng/image';
+import { PickListModule } from 'primeng/picklist';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { TooltipModule } from 'primeng/tooltip';
+import { BetComponent } from './bet/bet.component';
 
 @NgModule({
   declarations: [
-    FeaturesComponent,
     InstitutionComponent,
-    CourseComponent
+    CourseComponent,
+    HomeComponent,
+    UserComponent,
+    BetComponent
   ],
   imports: [
-    CommonModule,
+  CommonModule,
     BrowserModule,
     FormsModule,
     BrowserAnimationsModule,
@@ -48,7 +58,14 @@ import { DropdownModule } from 'primeng/dropdown';
     MessageModule,
     PipesModule,
     InputTextModule,
-    DropdownModule
+    DialogModule,
+    InputNumberModule,
+    DropdownModule,
+    MessageModule,
+    ImageModule,
+    PickListModule,
+    MultiSelectModule,
+    TooltipModule
   ],
   providers: [ ],
   exports: [ PipesModule ]

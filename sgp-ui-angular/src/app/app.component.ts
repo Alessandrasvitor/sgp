@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { SecurityService } from './security/security.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -7,24 +7,15 @@ import { SecurityService } from './security/security.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  isLogged = false;
-  interval: any;
-  constructor( private securityService: SecurityService ) {}
+  constructor( private router: Router ) {}
 
-  ngOnInit(): void {
-    this.interval = setInterval(() => {
-      if(this.securityService.isLogged()) {
-        this.isLogged = true;
-      } else {
-        this.isLogged = false;
-      }
-    }, 1000);
+  ngOnInit(): void { }
+
+  ifConectView() {
+    return this.router.url !== '/login' &&
+            this.router.url !== '/page-not-found' &&
+            this.router.url !== '/reset-pwd' &&
+            this.router.url !== '/register';
   }
-
-
-
-
-
-
 
 }

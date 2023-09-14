@@ -10,11 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
+@CrossOrigin(origins = "*")
 @PreAuthorize("hasAuthority('USER')")
 @OpenAPIDefinition(info = @Info(title = "Sistema de gestão de entreteinimento", version = "1.0", description = ""))
 public class UserController {
@@ -66,10 +69,10 @@ public class UserController {
     }
 
     @ResponseBody
-    @PatchMapping("{id}")
-    public ResponseEntity updatePassword(@PathVariable Long id, @RequestBody String senha) {
+    @PutMapping("functionalities/{id}")
+    public ResponseEntity updateFunctionalities(@PathVariable Long id, @RequestBody UserRequest userRequest) {
         try {
-            return ResponseEntity.ok().body(userService.updatePassword(id, senha).mapperDTP());
+            return ResponseEntity.ok().body(userService.updateFunctionalities(id, userRequest).mapperDTP());
         } catch (ServiceException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e){
@@ -106,9 +109,12 @@ public class UserController {
     @GetMapping("/info")
     public ResponseEntity getUserDetails() {
         try {
-            String details = "User: " + SecurityContextHolder.getContext().getAuthentication().getPrincipal() + "<br/>" +
-                    "User Authorities: " + SecurityContextHolder.getContext().getAuthentication().getAuthorities() + "<br/>" +
-                    "Detalhes: " + SecurityContextHolder.getContext().getAuthentication().getDetails();
+
+            SecurityContext context = SecurityContextHolder.getContext();
+            Authentication authentication = context.getAuthentication();
+            String details = "User: " + authentication.getPrincipal() + "<br/>" +
+                    "User Authorities: " + authentication.getAuthorities() + "<br/>" +
+                    "Detalhes: " + authentication.getDetails();
             return ResponseEntity.ok().body(details);
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

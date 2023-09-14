@@ -23,3 +23,10 @@ export enum StatusEnum {
     PENDING,
     PROGRESS
 }
+
+export enum FuncionalityEnum {
+    HOME,
+    COURSE,
+    INSTITUITION,
+    USER
+}

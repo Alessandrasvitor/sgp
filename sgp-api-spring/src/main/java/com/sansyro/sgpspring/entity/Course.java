@@ -17,7 +17,7 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(name="course")
-public class Course {
+public class Course implements Cloneable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,6 +53,11 @@ public class Course {
         this.toBuilder().id(this.id).category(request.getCategory()).notation(request.getNotation()).endDate(request.getEndDate())
                 .status(request.getStatus()).priority(request.getPriority()).startDate(request.getStartDate())
                 .description(request.getDescription()).finished(request.getFinished()).name(request.getName()).build();
+    }
+
+    @Override
+    public Course clone() throws CloneNotSupportedException {
+        return (Course) super.clone();
     }
 
 }

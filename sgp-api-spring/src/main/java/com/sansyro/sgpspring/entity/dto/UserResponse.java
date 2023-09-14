@@ -16,6 +16,7 @@ public class UserResponse {
     private String name;
     private String startView;
     private String email;
+    private FunctionalityEnum init;
     private Set<FunctionalityEnum> functionalities;
 
 }
