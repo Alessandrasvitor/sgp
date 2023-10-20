@@ -169,7 +169,12 @@ export class UserComponent implements OnInit {
   }
 
   exportExcel() {
-    this.excelService.exportAsExcelFile(this.users, 'Usuários');
+    this.service.list().subscribe((response: any) => {
+      this.excelService.exportAsExcelFile(response, 'Usuários');
+    },
+    error => {
+      this.close();
+    });
   }
 
 }

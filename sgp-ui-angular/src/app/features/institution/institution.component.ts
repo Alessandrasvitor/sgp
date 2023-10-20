@@ -121,7 +121,12 @@ export class InstitutionComponent implements OnInit {
   }
 
   exportExcel() {
-    this.excelService.exportAsExcelFile(this.institutions, 'instituições');
+    this.service.list().subscribe((response: any) => {
+      this.excelService.exportAsExcelFile(response, 'Instituições');
+    },
+    error => {
+      this.close();
+    });
   }
 
 }

@@ -122,7 +122,12 @@ export class BetComponent implements OnInit {
   }
 
   exportExcel() {
-    this.excelService.exportAsExcelFile(this.bets, 'Apostas');
+    this.service.list().subscribe((response: any) => {
+      this.excelService.exportAsExcelFile(response, 'Apostas');
+    },
+    error => {
+      this.close();
+    });
   }
 
 }

@@ -16,8 +16,12 @@ export class CourseService {
     private securityService: SecurityService
   ) { }
 
-  list() {
-		return this.http.get(this.url, this.securityService.getAuthorizated());
+  listAll() {
+		return this.http.get(this.url + '/all', this.securityService.getAuthorizated());
+  }
+  
+  list(pageable: any) {
+		return this.http.get(this.url + '?page=' + pageable.page + '&size=' + pageable.size, this.securityService.getAuthorizated());
   }
 
   get(id: number) {

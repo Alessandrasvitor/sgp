@@ -2,7 +2,6 @@ package com.sansyro.sgpspring.build;
 
 import com.sansyro.sgpspring.constants.CategoryEnum;
 import com.sansyro.sgpspring.constants.StatusEnum;
-import com.sansyro.sgpspring.entity.dto.CourseRequest;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 

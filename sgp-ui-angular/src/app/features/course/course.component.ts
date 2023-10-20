@@ -23,6 +23,7 @@ export class CourseComponent implements OnInit {
   categories: any = [];
   user: any = {};
   displayDialog = false;
+  pageable: any = {page: 0, size: 2};
 
   constructor(
     private service: CourseService,
@@ -40,7 +41,7 @@ export class CourseComponent implements OnInit {
   }
 
   updateView() {
-    this.service.list().subscribe((response: any) => {
+    this.service.list(this.pageable).subscribe((response: any) => {
       this.courses = response;
       this.close();
     },
@@ -161,7 +162,12 @@ export class CourseComponent implements OnInit {
   }
 
   exportExcel() {
-    this.excelService.exportAsExcelFile(this.courses, 'Cursos');
+    this.service.listAll().subscribe((response: any) => {
+      this.excelService.exportAsExcelFile(response, 'Cursos');
+    },
+    error => {
+      this.close();
+    });
   }
 
 }
