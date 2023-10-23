@@ -1,7 +1,6 @@
 package com.sansyro.sgpspring.security.service;
 
 import com.sansyro.sgpspring.entity.User;
-import com.sansyro.sgpspring.entity.dto.UserRequest;
 import com.sansyro.sgpspring.repository.UserRepository;
 import com.sansyro.sgpspring.service.UserService;
 import com.sansyro.sgpspring.util.GeralUtil;
@@ -29,19 +28,19 @@ public class AuthenticationService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = repository.findByEmail(username);
         if(user == null) {
-            throw new UsernameNotFoundException("User not found");
+            throw new UsernameNotFoundException("Usuário ou senha inválido");
         }
         return user;
     }
 
-    public User login(UserRequest userRequest) throws UsernameNotFoundException {
+    public User login(User userRequest) throws UsernameNotFoundException {
         User user = (User) loadUserByUsername(userRequest.getEmail());
 
         if(user.getPassword().equals("123456") && user.getPassword().equals(userRequest.getPassword())) {
             return returnUser(user);
         }
         if(validPassword(user.getPassword(), user.getUserHashCode(), userRequest.getPassword())) {
-            throw new UsernameNotFoundException("Usuário ou senha não encontrado");
+            throw new UsernameNotFoundException("Usuário ou senha inválido");
         }
         return returnUser(user);
     }
@@ -67,15 +66,14 @@ public class AuthenticationService implements UserDetailsService {
         }
     }
 
-    public User register(UserRequest request) {
-        User user = request.mapperEntity();
+    public User register(User user) {
         user.setPassword(service.validatePassword(user.getPassword(), GeralUtil.getNewHashCode()));
         user.setToken(tokenService.generateToken(user));
         repository.save(user);
         return user;
     }
 
-    public User updatePassword(UserRequest request) {
+    public User updatePassword(User request) {
         User user = service.getByEmail(request.getEmail());
 
         if(validPassword(user.getPassword(), user.getUserHashCode(), request.getPassword())) {
@@ -87,7 +85,7 @@ public class AuthenticationService implements UserDetailsService {
         return repository.save(user);
     }
 
-    public User updateToken(UserRequest request) {
+    public User updateToken(User request) {
         User user = service.getByEmail(request.getEmail());
 
         user.setToken(tokenService.generateToken(user));

@@ -1,19 +1,24 @@
 package com.sansyro.sgpspring.entity.dto;
 
-import com.sansyro.sgpspring.constants.CategoryEnum;
-import com.sansyro.sgpspring.constants.StatusEnum;
 import com.sansyro.sgpspring.entity.Course;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
+
+import static java.util.Objects.isNull;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
 @Setter
-public class CourseResponse {
+public class CourseDTO {
 
+    private Long id;
     private String name;
     private String description;
     private Date startDate;
@@ -26,8 +31,10 @@ public class CourseResponse {
     private Long idInstituition;
     private Long idUser;
 
-    public CourseResponse mapper(Course course) {
-        return CourseResponse.builder()
+    public static CourseDTO mapper(Course course) {
+        if(isNull(course)) return null;
+        return CourseDTO.builder()
+                .id(course.getId())
                 .name(course.getName())
                 .description(course.getDescription())
                 .startDate(course.getStartDate())

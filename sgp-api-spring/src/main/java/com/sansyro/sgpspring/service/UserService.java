@@ -2,12 +2,14 @@ package com.sansyro.sgpspring.service;
 
 import com.sansyro.sgpspring.constants.FunctionalityEnum;
 import com.sansyro.sgpspring.entity.User;
-import com.sansyro.sgpspring.entity.dto.UserRequest;
+import com.sansyro.sgpspring.entity.dto.UserDTO;
 import com.sansyro.sgpspring.exception.ServiceException;
 import com.sansyro.sgpspring.repository.UserRepository;
 import com.sansyro.sgpspring.util.GeralUtil;
 import com.sansyro.sgpspring.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +26,11 @@ public class UserService {
     private String PASSWORD_DEFAULT = "123456";
 
     public List<User> list() {
-        return userRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
+        return (List<User>) userRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
+    }
+
+    public Page<User> list(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 
     public User getById(Long id) {
@@ -54,8 +60,8 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User update(Long id, UserRequest request) {
-        validateUserNull(request.mapperEntity());
+    public User update(Long id, UserDTO request) {
+        validateUserNull(User.mapper(request));
         User user = getById(id);
         user.setStartView(request.getStartView());
         user.setName(request.getName());
@@ -63,7 +69,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User updateFunctionalities(Long id, UserRequest request) {
+    public User updateFunctionalities(Long id, UserDTO request) {
         User user = getById(id);
         user.setFunctionalities(request.getFunctionalities());
         return userRepository.save(user);

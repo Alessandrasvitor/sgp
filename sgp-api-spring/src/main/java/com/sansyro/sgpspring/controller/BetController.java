@@ -6,6 +6,9 @@ import com.sansyro.sgpspring.service.BetService;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,9 +25,17 @@ public class BetController {
     private BetService betService;
 
     @ResponseBody
-    @GetMapping()
+    @GetMapping("/all")
     public ResponseEntity list() {
         return ResponseEntity.ok().body(betService.list());
+    }
+
+    @ResponseBody
+    @GetMapping()
+    public ResponseEntity list(@PageableDefault(sort = "betDate",
+            direction = Sort.Direction.ASC,
+            size = 5) Pageable pageable) {
+        return ResponseEntity.ok().body(betService.list(pageable));
     }
 
     @ResponseBody

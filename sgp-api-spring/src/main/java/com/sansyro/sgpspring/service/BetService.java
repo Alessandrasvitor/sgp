@@ -6,6 +6,8 @@ import com.sansyro.sgpspring.exception.ServiceException;
 import com.sansyro.sgpspring.repository.BetRepository;
 import com.sansyro.sgpspring.util.GeralUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +22,11 @@ public class BetService {
     private BetRepository betRepository;
 
     public List<Bet> list() {
-        return betRepository.findAll(Sort.by(Sort.Direction.ASC, "betDate"));
+        return (List<Bet>) betRepository.findAll(Sort.by(Sort.Direction.ASC, "betDate"));
+    }
+
+    public Page<Bet> list(Pageable pageable) {
+        return betRepository.findAll(pageable);
     }
 
     public Bet getById(Long id) {

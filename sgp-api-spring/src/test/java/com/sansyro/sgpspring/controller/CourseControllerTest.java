@@ -1,9 +1,9 @@
 package com.sansyro.sgpspring.controller;
 
 import com.sansyro.sgpspring.build.CourseBuild;
-import com.sansyro.sgpspring.build.CourseRequestBuild;
+import com.sansyro.sgpspring.build.CourseDTOBuild;
 import com.sansyro.sgpspring.entity.Course;
-import com.sansyro.sgpspring.entity.dto.CourseRequest;
+import com.sansyro.sgpspring.entity.dto.CourseDTO;
 import com.sansyro.sgpspring.exception.ServiceException;
 import com.sansyro.sgpspring.service.CourseService;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +21,9 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
@@ -35,16 +37,16 @@ public class CourseControllerTest {
     @Mock
     private CourseService service;
 
-    private Long ID = 1L;
+    private final Long ID = 1L;
+
+    private CourseDTO courseDTOBuild;
 
     private Course courseBuild;
 
-    private CourseRequest courseRequestBuild;
-
     @BeforeEach
     void setUp() {
+        courseDTOBuild = CourseDTOBuild.getBuild();
         courseBuild = CourseBuild.getBuild();
-        courseRequestBuild = CourseRequestBuild.getBuild();
     }
 
     @Test
@@ -79,43 +81,42 @@ public class CourseControllerTest {
 
     @Test
     void saveTest() {
-        ResponseEntity response = controller.save(courseRequestBuild);
+        ResponseEntity response = controller.save(courseDTOBuild);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 
     @Test
     void saveWithBadRequestTest() {
         doThrow(new ServiceException()).when(service).save(any());
-        ResponseEntity response = controller.save(courseRequestBuild);
+        ResponseEntity response = controller.save(courseDTOBuild);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
     void saveWithErrorTest() {
         doThrow(new RuntimeException()).when(service).save(any());
-        ResponseEntity response = controller.save(courseRequestBuild);
+        ResponseEntity response = controller.save(courseDTOBuild);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 
     @Test
     void updateTest() {
-        Course courseBuild = CourseBuild.getBuild();
         when(service.update(anyLong(), any())).thenReturn(courseBuild);
-        ResponseEntity response = controller.update(ID, new CourseRequest());
+        ResponseEntity response = controller.update(ID, new CourseDTO());
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
     void updateWithBadRequestTest() {
         when(service.update(anyLong(), any())).thenThrow(new ServiceException());
-        ResponseEntity response = controller.update(ID, new CourseRequest());
+        ResponseEntity response = controller.update(ID, new CourseDTO());
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
     void updateWithErrorTest() {
         when(service.update(anyLong(), any())).thenThrow(new RuntimeException());
-        ResponseEntity response = controller.update(ID, new CourseRequest());
+        ResponseEntity response = controller.update(ID, new CourseDTO());
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 
@@ -164,7 +165,7 @@ public class CourseControllerTest {
     @Test
     void finishTest() {
         when(service.finish(anyLong(), anyFloat())).thenReturn(courseBuild);
-        ResponseEntity response = controller.finish(ID, courseRequestBuild);
+        ResponseEntity response = controller.finish(ID, courseDTOBuild);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
     }
@@ -172,14 +173,14 @@ public class CourseControllerTest {
     @Test
     void finishWithErrorTest() {
         when(service.finish(anyLong(), anyFloat())).thenThrow(new RuntimeException());
-        ResponseEntity response = controller.finish(ID, courseRequestBuild);
+        ResponseEntity response = controller.finish(ID, courseDTOBuild);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 
     @Test
     void finishWithBadRequestTest() {
         when(service.finish(anyLong(), anyFloat())).thenThrow(new ServiceException());
-        ResponseEntity response = controller.finish(ID, courseRequestBuild);
+        ResponseEntity response = controller.finish(ID, courseDTOBuild);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ConfirmationService } from 'primeng/api';
 import { ExcelService } from 'src/app/shared/service/excel.service';
-import { InstituitionService } from '../institution/instituition.service';
 import { UserService } from './user.service';
 import { FuncionalityEnum } from 'src/app/shared/class/enums.enum';
 import { FuncionalityPipe } from 'src/app/shared/pipes/funcionality.pipe';
@@ -24,6 +23,7 @@ export class UserComponent implements OnInit {
   functionalities: any = [];
   userLogin: any = JSON.parse(localStorage.getItem('userLogin')+'');
   displayDialog = false;
+  pageable: any = {page: 0, size: 3, totalPages: 0, totalElements: 0};
 
   constructor(
     private service: UserService,
@@ -40,14 +40,20 @@ export class UserComponent implements OnInit {
   }
 
   updateView() {
-    this.service.list().subscribe((response: any) => {
-      this.users = response;
+    this.service.list(this.pageable).subscribe((response: any) => {
+      this.users = response.content;
+      this.pageable.totalPages = response.totalPages;
+      this.pageable.totalElements = response.totalElements;
       this.close();
     },
     error => {
       this.close();
       this.errorService.handle(error);
     });
+  }
+
+  onPageChange(event: any) {
+    this.updateView();
   }
 
   getInitView() {
@@ -168,8 +174,9 @@ export class UserComponent implements OnInit {
     }
   }
 
+
   exportExcel() {
-    this.service.list().subscribe((response: any) => {
+    this.service.listAll().subscribe((response: any) => {
       this.excelService.exportAsExcelFile(response, 'Usuários');
     },
     error => {

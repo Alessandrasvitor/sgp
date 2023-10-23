@@ -6,6 +6,9 @@ import com.sansyro.sgpspring.service.InstituitionService;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,9 +25,17 @@ public class InstituitionController {
     private InstituitionService instituitionService;
 
     @ResponseBody
-    @GetMapping()
+    @GetMapping("/all")
     public ResponseEntity list() {
         return ResponseEntity.ok().body(instituitionService.list());
+    }
+
+    @ResponseBody
+    @GetMapping()
+    public ResponseEntity list(@PageableDefault(sort = "name",
+            direction = Sort.Direction.ASC,
+            size = 5) Pageable pageable) {
+        return ResponseEntity.ok().body(instituitionService.list(pageable));
     }
 
     @ResponseBody
@@ -53,7 +64,7 @@ public class InstituitionController {
     }
 
     @ResponseBody
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public ResponseEntity update(@PathVariable Long id, @RequestBody Instituition instituition) {
         try {
             return ResponseEntity.ok().body(instituitionService.update(id, instituition));
@@ -65,7 +76,7 @@ public class InstituitionController {
     }
 
     @ResponseBody
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable Long id) {
         try {
             instituitionService.delete(id);

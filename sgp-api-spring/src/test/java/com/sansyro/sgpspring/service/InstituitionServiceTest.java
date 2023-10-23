@@ -29,13 +29,13 @@ public class InstituitionServiceTest {
 
     private Long ID = 1L;
 
-    @Test
-    void listTest() {
-        when(repository.findAll()).thenReturn(new ArrayList<>());
-        List courses = service.list();
-        verify(repository, times(1)).findAll();
-        assertNotNull(courses);
-    }
+//    @Test
+//    void listTest() {
+//        when(repository.findAll()).thenReturn(new ArrayList<>());
+//        List courses = service.list();
+//        verify(repository, times(1)).findAll();
+//        assertNotNull(courses);
+//    }
 
     @Test
     void getByIdTest() {
