@@ -2,7 +2,7 @@ package com.sansyro.sgpspring.controller;
 
 import com.sansyro.sgpspring.entity.User;
 import com.sansyro.sgpspring.entity.dto.TokenResponse;
-import com.sansyro.sgpspring.entity.dto.UserRequest;
+import com.sansyro.sgpspring.entity.dto.UserDTO;
 import com.sansyro.sgpspring.exception.ServiceException;
 import com.sansyro.sgpspring.security.service.AuthenticationService;
 import com.sansyro.sgpspring.service.UserService;
@@ -13,6 +13,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import static com.sansyro.sgpspring.constants.StringConstaint.BEARER;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -29,10 +31,10 @@ public class AuthenticationController {
     private AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody @Validated UserRequest request){
+    public ResponseEntity login(@RequestBody @Validated User request){
         try {
             User user = authenticationService.login(request);
-            return ResponseEntity.ok(TokenResponse.builder().user(user.mapperDTP()).type("Bearer").token(user.getToken()).build());
+            return ResponseEntity.ok(TokenResponse.builder().user(UserDTO.mapper(user)).type(BEARER).token(user.getToken()).build());
         } catch (ServiceException | UsernameNotFoundException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e){
@@ -51,10 +53,10 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody @Validated UserRequest request){
+    public ResponseEntity register(@RequestBody @Validated User request){
         try {
             User user = authenticationService.register(request);
-            return ResponseEntity.ok(TokenResponse.builder().user(user.mapperDTP()).type("Bearer").token(user.getToken()).build());
+            return ResponseEntity.ok(TokenResponse.builder().user(UserDTO.mapper(user)).type(BEARER).token(user.getToken()).build());
         } catch (ServiceException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e){
@@ -63,10 +65,10 @@ public class AuthenticationController {
     }
 
     @PutMapping("/change-password")
-    public ResponseEntity changePassword(@RequestBody @Validated UserRequest request){
+    public ResponseEntity changePassword(@RequestBody @Validated User request){
         try {
             User user = authenticationService.updatePassword(request);
-            return ResponseEntity.ok(TokenResponse.builder().user(user.mapperDTP()).type("Bearer").token(user.getToken()).build());
+            return ResponseEntity.ok(TokenResponse.builder().user(UserDTO.mapper(user)).type(BEARER).token(user.getToken()).build());
         } catch (UsernameNotFoundException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e){
@@ -75,10 +77,10 @@ public class AuthenticationController {
     }
 
     @PostMapping("/update-token")
-    public ResponseEntity updateToken(@RequestBody @Validated UserRequest request){
+    public ResponseEntity updateToken(@RequestBody @Validated User request){
         try {
             User user = authenticationService.updateToken(request);
-            return ResponseEntity.ok(TokenResponse.builder().user(user.mapperDTP()).type("Bearer").token(user.getToken()).build());
+            return ResponseEntity.ok(TokenResponse.builder().user(UserDTO.mapper(user)).type(BEARER).token(user.getToken()).build());
         } catch (ServiceException | UsernameNotFoundException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e){

@@ -15,8 +15,12 @@ export class UserService {
     private securityService: SecurityService
   ) { }
 
-  list() {
+  listAll() {
 		return this.http.get(this.url, this.securityService.getAuthorizated());
+  }
+
+  list(pageable:  any) {
+		return this.http.get(this.url + '?page=' + pageable.page + '&size=' + pageable.size, this.securityService.getAuthorizated());
   }
 
   get(id: number) {

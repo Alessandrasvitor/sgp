@@ -14,6 +14,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Optional;
 
+import static com.sansyro.sgpspring.constants.StringConstaint.AUTHORIZATION;
+import static com.sansyro.sgpspring.constants.StringConstaint.BEARER;
+import static java.util.Objects.isNull;
+
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     private final TokenService tokenService;
@@ -46,11 +50,11 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private String getTokenFromHeader(HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
-        if(token == null || token.isEmpty() || !token.startsWith("Bearer ")) {
+        String token = request.getHeader(AUTHORIZATION);
+        if(isNull(token) || !token.startsWith(BEARER)) {
             return null;
         }
-        return token.substring(7, token.length());
+        return token.substring(7);
     }
 
 }

@@ -19,6 +19,7 @@ export class BetComponent implements OnInit {
   labelCancel = 'Cancelar';
   permission = false;
   user = JSON.parse(localStorage.getItem('userLogin')+'');
+  pageable: any = {page: 0, size: 3, totalPages: 0, totalElements: 0};
 
   constructor(
     private service: BetService,
@@ -40,8 +41,10 @@ export class BetComponent implements OnInit {
   }
 
   updateView() {
-    this.service.list().subscribe((response: any) => {
-      this.bets = response;
+    this.service.list(this.pageable).subscribe((response: any) => {
+      this.bets = response.content;
+      this.pageable.totalPages = response.totalPages;
+      this.pageable.totalElements = response.totalElements;
       this.close();
     },
     error => {
@@ -122,7 +125,12 @@ export class BetComponent implements OnInit {
   }
 
   exportExcel() {
-    this.excelService.exportAsExcelFile(this.bets, 'Apostas');
+    this.service.listAll().subscribe((response: any) => {
+      this.excelService.exportAsExcelFile(response, 'Apostas');
+    },
+    error => {
+      this.close();
+    });
   }
 
 }

@@ -5,11 +5,15 @@ import com.sansyro.sgpspring.exception.ServiceException;
 import com.sansyro.sgpspring.repository.InstituitionRepository;
 import com.sansyro.sgpspring.util.GeralUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
+import static com.sansyro.sgpspring.constants.StringConstaint.NAME;
 
 @Service
 public class InstituitionService {
@@ -18,7 +22,10 @@ public class InstituitionService {
     private InstituitionRepository instituitionRepository;
 
     public List<Instituition> list() {
-        return instituitionRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
+        return (List<Instituition>) instituitionRepository.findAll(Sort.by(Sort.Direction.ASC, NAME));
+    }
+    public Page<Instituition> list(Pageable pageable) {
+        return instituitionRepository.findAll(pageable);
     }
 
     public Instituition getById(Long id) {

@@ -1,0 +1,4 @@
+<div class="card flex justify-content-center">
+  <p-paginator [first]="pageable.first" [rows]="pageable.size" [totalRecords]="pageable.totalElements" (onPageChange)="onPageChange($event)"
+  [showCurrentPageReport]="true" currentPageReportTemplate="{first} - {last} de {totalRecords}" [rowsPerPageOptions]="[3, 5, 10]"></p-paginator>
+</div>

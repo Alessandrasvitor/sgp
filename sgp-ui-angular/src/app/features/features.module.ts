@@ -11,6 +11,8 @@ import { CourseComponent } from './course/course.component';
 import { PipesModule } from '../shared/pipes/pipes.module';
 import { HomeComponent } from './home/home.component';
 import { UserComponent } from './user/user.component';
+import { BetComponent } from './bet/bet.component';
+import { SharedModule } from "../shared/shared.module";
 
 import { TableModule } from 'primeng/table';
 import { FieldsetModule } from 'primeng/fieldset';
@@ -29,45 +31,47 @@ import { ImageModule } from 'primeng/image';
 import { PickListModule } from 'primeng/picklist';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TooltipModule } from 'primeng/tooltip';
-import { BetComponent } from './bet/bet.component';
+import { PaginatorModule } from 'primeng/paginator';
 
 @NgModule({
-  declarations: [
-    InstitutionComponent,
-    CourseComponent,
-    HomeComponent,
-    UserComponent,
-    BetComponent
-  ],
-  imports: [
-  CommonModule,
-    BrowserModule,
-    FormsModule,
-    BrowserAnimationsModule,
-    TableModule,
-    ButtonModule,
-    FieldsetModule,
-    ToolbarModule,
-    RatingModule,    
-    HttpClientModule,
-    PasswordModule,
-    InputTextModule,
-    RouterModule,
-    CardModule,
-    MessagesModule,
-    MessageModule,
-    PipesModule,
-    InputTextModule,
-    DialogModule,
-    InputNumberModule,
-    DropdownModule,
-    MessageModule,
-    ImageModule,
-    PickListModule,
-    MultiSelectModule,
-    TooltipModule
-  ],
-  providers: [ ],
-  exports: [ PipesModule ]
+    declarations: [
+        InstitutionComponent,
+        CourseComponent,
+        HomeComponent,
+        UserComponent,
+        BetComponent
+    ],
+    providers: [],
+    exports: [PipesModule],
+    imports: [
+        CommonModule,
+        BrowserModule,
+        FormsModule,
+        BrowserAnimationsModule,
+        TableModule,
+        ButtonModule,
+        FieldsetModule,
+        ToolbarModule,
+        RatingModule,
+        HttpClientModule,
+        PasswordModule,
+        InputTextModule,
+        RouterModule,
+        CardModule,
+        MessagesModule,
+        MessageModule,
+        PipesModule,
+        InputTextModule,
+        DialogModule,
+        InputNumberModule,
+        DropdownModule,
+        MessageModule,
+        ImageModule,
+        PickListModule,
+        MultiSelectModule,
+        TooltipModule,
+        PaginatorModule,
+        SharedModule
+    ]
 })
 export class FeaturesModule { }

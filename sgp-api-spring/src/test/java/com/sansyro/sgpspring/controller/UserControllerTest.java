@@ -1,9 +1,9 @@
 package com.sansyro.sgpspring.controller;
 
 import com.sansyro.sgpspring.build.UserBuild;
-import com.sansyro.sgpspring.build.UserRequestBuild;
+import com.sansyro.sgpspring.build.UserDTOBuild;
 import com.sansyro.sgpspring.entity.User;
-import com.sansyro.sgpspring.entity.dto.UserRequest;
+import com.sansyro.sgpspring.entity.dto.UserDTO;
 import com.sansyro.sgpspring.exception.ServiceException;
 import com.sansyro.sgpspring.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,13 +16,8 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -40,16 +35,16 @@ public class UserControllerTest {
     @Mock
     private UserService service;
 
-    private Long ID = 1L;
+    private final Long ID = 1L;
 
     private User userBuild;
 
-    private UserRequest userRequestBuild;
+    private UserDTO dtoBuild;
 
     @BeforeEach
     void setUp() {
         userBuild = UserBuild.getBuild();
-        userRequestBuild = UserRequestBuild.getBuild();
+        dtoBuild = UserDTOBuild.getBuild();
     }
 
     @Test
@@ -106,35 +101,35 @@ public class UserControllerTest {
     void updateTest() {
         User userBuild = UserBuild.getBuild();
         when(service.update(any(), any())).thenReturn(userBuild);
-        ResponseEntity response = controller.update(ID, new UserRequest());
+        ResponseEntity response = controller.update(ID, new UserDTO());
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
     void updateWithBadRequestTest() {
         when(service.update(any(), any())).thenThrow(new ServiceException());
-        ResponseEntity response = controller.update(ID, new UserRequest());
+        ResponseEntity response = controller.update(ID, new UserDTO());
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
     void updateWithErrorTest() {
         when(service.update(any(), any())).thenThrow(new RuntimeException());
-        ResponseEntity response = controller.update(ID, new UserRequest());
+        ResponseEntity response = controller.update(ID, new UserDTO());
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 
     @Test
     void updatePasswordTest() {
         when(service.update(any(), any())).thenReturn(userBuild);
-        ResponseEntity response = controller.update(ID, userRequestBuild);
+        ResponseEntity response = controller.update(ID, dtoBuild);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
     void updateFunctionalitiesTest() {
         when(service.updateFunctionalities(any(), any())).thenReturn(userBuild);
-        ResponseEntity response = controller.updateFunctionalities(ID, userRequestBuild);
+        ResponseEntity response = controller.updateFunctionalities(ID, dtoBuild);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
     }
@@ -142,14 +137,14 @@ public class UserControllerTest {
     @Test
     void updateFunctionalitiesWithBadRequestTest() {
         when(service.updateFunctionalities(any(), any())).thenThrow(new ServiceException());
-        ResponseEntity response = controller.updateFunctionalities(ID, userRequestBuild);
+        ResponseEntity response = controller.updateFunctionalities(ID, dtoBuild);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
     void updateFunctionalitiesWithExceptionTest() {
         when(service.updateFunctionalities(any(), any())).thenThrow(new RuntimeException());
-        ResponseEntity response = controller.updateFunctionalities(ID, userRequestBuild);
+        ResponseEntity response = controller.updateFunctionalities(ID, dtoBuild);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 

@@ -16,8 +16,7 @@ export class InstitutionComponent implements OnInit {
   title: any;
   editation = false;
   labelCancel = 'Cancelar';
-  permission = false;
-  user = JSON.parse(localStorage.getItem('userLogin')+'');
+  pageable: any = {page: 0, size: 3, totalPages: 0, totalElements: 0};
 
   constructor(
     private service: InstituitionService,
@@ -28,24 +27,22 @@ export class InstitutionComponent implements OnInit {
   ngOnInit() {
     this.loading = true;
     this.updateView();
-    this.validaPermission();
-  }
-
-  validaPermission() {
-    if(this.user && this.user.functionalities && this.user.functionalities.filter((func: any) => func === 'INSTITUITION').length > 0) {
-      this.permission = true;
-    }
-
   }
 
   updateView() {
-    this.service.list().subscribe((response: any) => {
-      this.institutions = response;
+    this.service.list(this.pageable).subscribe((response: any) => {
+      this.institutions = response.content;
+      this.pageable.totalPages = response.totalPages;
+      this.pageable.totalElements = response.totalElements;
       this.close();
     },
     error => {
       this.close();
     });
+  }
+
+  onPageChange(event: any) {
+    this.updateView();
   }
 
   close() {
@@ -120,8 +117,17 @@ export class InstitutionComponent implements OnInit {
     }
   }
 
+  getRating(value: any) {
+    return value / 2;
+  }
+
   exportExcel() {
-    this.excelService.exportAsExcelFile(this.institutions, 'instituições');
+    this.service.listAll().subscribe((response: any) => {
+      this.excelService.exportAsExcelFile(response, 'Instituições');
+    },
+    error => {
+      this.close();
+    });
   }
 
 }

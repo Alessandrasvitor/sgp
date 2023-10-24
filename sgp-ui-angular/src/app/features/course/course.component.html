@@ -12,11 +12,10 @@
                 </div>
             </p-toolbar>
 
-            <p-table [value]="courses" [paginator]="true" [rows]="4" responsiveLayout="scroll">
+            <p-table [value]="courses" responsiveLayout="scroll">
                 <ng-template pTemplate="header">
                     <tr>
                         <th>Nome</th>
-                        <th>Instituição</th>
                         <th>Status</th>
                         <th>Categoria</th>
                         <th>Prioridade</th>
@@ -26,7 +25,6 @@
                 <ng-template pTemplate="body" let-course>
                     <tr>
                         <td>{{course.name}}</td>
-                        <td>{{course.instituition.name}}</td>
                         <td>{{course.status | status}}</td>
                         <td>{{course.category | category}}</td>
                         <td>{{course.priority}}</td>            
@@ -50,7 +48,15 @@
                         </td>
                     </tr>
                 </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="5">Nenhum Curso encontrado.</td>
+                    </tr>
+                </ng-template>
             </p-table>
+            <div *ngIf="pageable.totalElements > 0">
+                <app-paginator [pageable]="pageable" (OnUpdateTable)="onPageChange($event)"></app-paginator>
+            </div>
         </div>
         <div *ngIf="viewEdit">
             <div class="p-fluid flex flex-column">
@@ -71,7 +77,7 @@
                         <label>Instituição</label>
                         <p-dropdown *ngIf="editation" [options]="instituitions" optionValue="id"  [(ngModel)]="course.idInstituition"
                         optionLabel="name" emptyFilterMessage="Nenhum dado encontrado" optionValue="id"></p-dropdown>
-                        <input *ngIf="!editation" type="text" disabled pInputText [(ngModel)]="course.instituition.name" />
+                        <input *ngIf="!editation" type="text" disabled pInputText [(ngModel)]="instituition.name" />
                     </div>
                 </div>
             </div>
