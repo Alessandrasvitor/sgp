@@ -7,6 +7,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { PipesModule } from './pipes/pipes.module';
 import { SplitButtonModule } from 'primeng/splitbutton';
+import { PaginatorModule } from 'primeng/paginator';
+import { PaginatorComponent } from './components/paginator/paginator.component';
 
 @NgModule({
   imports: [
@@ -16,13 +18,16 @@ import { SplitButtonModule } from 'primeng/splitbutton';
     BrowserAnimationsModule,
     MenubarModule,
     SplitButtonModule,
-    PipesModule
+    PipesModule,
+    PaginatorModule
   ],
   declarations: [
-    NavBarComponent
+    NavBarComponent,
+    PaginatorComponent
   ],
   exports: [
-    NavBarComponent
+    NavBarComponent,
+    PaginatorComponent
   ]
 })
 export class SharedModule { }

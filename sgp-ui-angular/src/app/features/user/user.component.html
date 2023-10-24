@@ -6,7 +6,7 @@
         <p-table #dtInstituicao [value]="users" [paginator]="true" [rows]="5" responsiveLayout="scroll">
           <ng-template pTemplate="caption">
             <div class="flex">
-              <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success mr-2"  pTooltip="XLS" tooltipPosition="bottom"></button>          
+              <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success mr-2"  pTooltip="XLS" tooltipPosition="bottom"></button>
               <button type="button" pButton pRipple icon="pi pi-plus" (click)="create()" class="p-button-info ml-auto" pTooltip="CRIAR" tooltipPosition="bottom"></button>
             </div>
           </ng-template>
@@ -22,27 +22,30 @@
               <tr>
                 <td>{{user.name}}</td>
                 <td>{{user.email}}</td>
-                <td>{{user.startView | funcionality}}</td>          
+                <td>{{user.startView | funcionality}}</td>
                 <td>
-                  <button pButton type="button" icon="pi pi-pencil" (click)="edit(user)" 
+                  <button pButton type="button" icon="pi pi-pencil" (click)="edit(user)"
                     class="p-button-raised p-button-rounded" pTooltip="Editar"
                     tooltipPosition="bottom"></button>
-                  <button pButton type="button" icon="pi pi-replay" (click)="resetPwd(user.id)" 
+                  <button pButton type="button" icon="pi pi-replay" (click)="resetPwd(user.id)"
                     class="p-button-raised p-button-help p-button-rounded" pTooltip="Resetar Senha"
                     tooltipPosition="bottom"></button>
-                  <button pButton type="button" icon="pi pi-cog" (click)="setFunctionality(user.id)" 
+                  <button pButton type="button" icon="pi pi-cog" (click)="setFunctionality(user.id)"
                     class="p-button-raised p-button-warning p-button-rounded" pTooltip="Editar Funcionalidades"
                     tooltipPosition="bottom"></button>
-                  <button pButton type="button" icon="pi pi-eye" (click)="view(user)" 
+                  <button pButton type="button" icon="pi pi-eye" (click)="view(user)"
                     class="p-button-raised p-button-secondary p-button-rounded" pTooltip="Visualizar"
                     tooltipPosition="bottom"></button>
-                  <button pButton type="button" icon="pi pi-trash" (click)="confirmDelete(user)" 
+                  <button pButton type="button" icon="pi pi-trash" (click)="confirmDelete(user)"
                     class="p-button-raised p-button-danger p-button-rounded" pTooltip="Deletar"
                     tooltipPosition="bottom"></button>
                 </td>
               </tr>
             </ng-template>
           </p-table>
+          <div *ngIf="pageable.totalElements > 0">
+              <app-paginator [pageable]="pageable" (OnUpdateTable)="onPageChange($event)"></app-paginator>
+          </div>
       </div>
       <div *ngIf="viewEdit">
           <div class="grid p-fluid">
@@ -75,7 +78,7 @@
   <div class="dialog">
       <div class="grid p-fluid">
         <div  class="field col-12">
-          <p-multiSelect [options]="functionalities" [(ngModel)]="user.functionalities" optionValue="value" 
+          <p-multiSelect [options]="functionalities" [(ngModel)]="user.functionalities" optionValue="value"
           defaultLabel="Selecione uma funcionalidade" display="chip" optionLabel="label"></p-multiSelect>
         </div>
       </div>

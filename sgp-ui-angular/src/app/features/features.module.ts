@@ -12,6 +12,7 @@ import { PipesModule } from '../shared/pipes/pipes.module';
 import { HomeComponent } from './home/home.component';
 import { UserComponent } from './user/user.component';
 import { BetComponent } from './bet/bet.component';
+import { SharedModule } from "../shared/shared.module";
 
 import { TableModule } from 'primeng/table';
 import { FieldsetModule } from 'primeng/fieldset';
@@ -31,6 +32,7 @@ import { PickListModule } from 'primeng/picklist';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TooltipModule } from 'primeng/tooltip';
 import { CalendarModule } from 'primeng/calendar';
+import { PaginatorModule } from 'primeng/paginator';
 
 @NgModule({
   declarations: [
@@ -49,7 +51,7 @@ import { CalendarModule } from 'primeng/calendar';
     ButtonModule,
     FieldsetModule,
     ToolbarModule,
-    RatingModule,    
+    RatingModule,
     HttpClientModule,
     PasswordModule,
     InputTextModule,
@@ -67,6 +69,8 @@ import { CalendarModule } from 'primeng/calendar';
     PickListModule,
     MultiSelectModule,
     TooltipModule,
+    PaginatorModule,
+    SharedModule,
     CalendarModule
   ],
   providers: [ ],

@@ -1,20 +1,36 @@
 package com.sansyro.sgpspring.entity;
 
 import com.sansyro.sgpspring.constants.FunctionalityEnum;
-import com.sansyro.sgpspring.entity.dto.UserResponse;
-import com.sansyro.sgpspring.util.GeralUtil;
-import lombok.*;
+import com.sansyro.sgpspring.entity.dto.UserDTO;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Id;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.FetchType;
+import javax.persistence.Enumerated;
+import javax.persistence.EnumType;
+import javax.persistence.CollectionTable;
+import javax.persistence.JoinColumn;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
+
+import static java.util.Objects.isNull;
 
 
 @DiscriminatorValue("user")
@@ -53,18 +69,21 @@ public class User implements UserDetails {
     @Column(name = "functionality")
     private Set<FunctionalityEnum> functionalities;
 
-    public UsernamePasswordAuthenticationToken mapperAuthentication() {
-        return new UsernamePasswordAuthenticationToken(email, password, getAuthorities());
-    }
-
-    public UserResponse mapperDTP() {
-        return UserResponse.builder().id(id).startView(startView).name(name).email(email).functionalities(functionalities).build();
+    public static User mapper(UserDTO dto) {
+        if(isNull(dto)) return null;
+        return User.builder()
+                .id(dto.getId())
+                .startView(dto.getStartView())
+                .name(dto.getName())
+                .email(dto.getEmail())
+                .functionalities(dto.getFunctionalities())
+                .build();
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> auths = new ArrayList<>();
-        if(functionalities == null) {
+        if(isNull(functionalities)) {
             return new ArrayList<>();
         }
         for (FunctionalityEnum functionality: functionalities) {

@@ -2,17 +2,23 @@ package com.sansyro.sgpspring.service;
 
 import com.sansyro.sgpspring.constants.TypeBetEnum;
 import com.sansyro.sgpspring.entity.Bet;
+import com.sansyro.sgpspring.entity.User;
 import com.sansyro.sgpspring.entity.dto.BetResponse;
 import com.sansyro.sgpspring.exception.ServiceException;
 import com.sansyro.sgpspring.repository.BetRepository;
 import com.sansyro.sgpspring.util.GeralUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import static java.util.Objects.nonNull;
 
 @Service
 public class BetService {
@@ -24,7 +30,19 @@ public class BetService {
     private UserService userService;
 
     public List<Bet> list() {
-        return betRepository.findAll(Sort.by(Sort.Direction.ASC, "betDate"));
+        User user = userService.getUserLogger();
+        if(nonNull(user) && nonNull(user.getId())) {
+            return betRepository.list(user.getId());
+        }
+        return Collections.emptyList();
+    }
+
+    public Page<Bet> list(Pageable pageable) {
+        User user = userService.getUserLogger();
+        if(nonNull(user) && nonNull(user.getId())) {
+            return betRepository.list(user.getId(), pageable);
+        }
+        return new PageImpl<>(Collections.emptyList());
     }
 
     public Bet getById(Long id) {
@@ -37,7 +55,7 @@ public class BetService {
 
     public Bet save(Bet bet) {
         validateNotNull(bet);
-        bet.setUser(userService.getById(bet.getUser().getId()));
+        bet.setUser(userService.getUserLogger());
         return betRepository.save(bet);
     }
 

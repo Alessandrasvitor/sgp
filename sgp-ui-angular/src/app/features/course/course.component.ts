@@ -17,12 +17,13 @@ export class CourseComponent implements OnInit {
   course: any = {};
   courses: any = [];
   instituitions: any = [];
+  instituition: any = {};
   title: any;
   editation = false;
   labelCancel = 'Cancelar';
   categories: any = [];
-  user: any = {};
   displayDialog = false;
+  pageable: any = {page: 0, size: 3, totalPages: 0, totalElements: 0};
 
   constructor(
     private service: CourseService,
@@ -33,15 +34,16 @@ export class CourseComponent implements OnInit {
 
   ngOnInit() {
     this.loading = true;
-    this.user = JSON.parse(localStorage.getItem('userLogin')+'');
     this.getInstituitions();
     this.getStatus();
     this.updateView();
   }
 
   updateView() {
-    this.service.list().subscribe((response: any) => {
-      this.courses = response;
+    this.service.list(this.pageable).subscribe((response: any) => {
+      this.courses = response.content;
+      this.pageable.totalPages = response.totalPages;
+      this.pageable.totalElements = response.totalElements;
       this.close();
     },
     error => {
@@ -49,8 +51,12 @@ export class CourseComponent implements OnInit {
     });
   }
 
+  onPageChange(event: any) {
+    this.updateView();
+  }
+
   getInstituitions() {
-    this.instituitionservice.list().subscribe( response => {
+    this.instituitionservice.listAll().subscribe( response => {
       this.instituitions = response;
     });
   }
@@ -83,14 +89,24 @@ export class CourseComponent implements OnInit {
     this.title = 'Editar';
     this.editation = true;
     this.course = course;
+    this.getInstituition();
     this.viewEdit = true;
   }
 
   view(course: any) {
     this.title = 'Visualizar';
     this.course = course;
+    this.getInstituition();
     this.viewEdit = true;
     this.labelCancel = 'Voltar';
+  }
+
+  getInstituition() {
+    this.instituitions.forEach((element: any) => {
+      if(element.id === this.course.idInstituition) {
+        this.instituition = element;
+      }
+    });
   }
 
   confirmDelete(course: any) {
@@ -147,21 +163,25 @@ export class CourseComponent implements OnInit {
         this.updateView();
       },
       error => {
-        //this.close();
+        this.close();
       });
     } else {
-      this.course.idUser = this.user.id; 
       this.service.post(this.course).subscribe((response: any) => {
         this.updateView();
       },
       error => {
-        //this.close();
+        this.close();
       });
     }
   }
 
   exportExcel() {
-    this.excelService.exportAsExcelFile(this.courses, 'Cursos');
+    this.service.listAll().subscribe((response: any) => {
+      this.excelService.exportAsExcelFile(response, 'Cursos');
+    },
+    error => {
+      this.close();
+    });
   }
 
 }

@@ -6,7 +6,7 @@
             <p-table #dtInstituicao [value]="institutions" [paginator]="true" [rows]="5" responsiveLayout="scroll">
                 <ng-template pTemplate="caption">
                     <div class="flex">
-                        <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success mr-2"  pTooltip="XLS" tooltipPosition="bottom"></button>          
+                        <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success mr-2"  pTooltip="XLS" tooltipPosition="bottom"></button>
                         <button type="button" pButton pRipple icon="pi pi-plus" (click)="new()" class="p-button-info ml-auto" pTooltip="CRIAR" tooltipPosition="bottom"></button>
                     </div>
                 </ng-template>
@@ -26,19 +26,27 @@
                             <p-rating [ngModel]="institution.quantity/2" [readonly]="true" [cancel]="false"></p-rating>
                         </td>
                         <td>
-                            <button pButton type="button" icon="pi pi-pencil" (click)="edit(institution)" 
+                            <button pButton type="button" icon="pi pi-pencil" (click)="edit(institution)"
                                 class="p-button-raised p-button-rounded" pTooltip="Editar"
                                 tooltipPosition="bottom"></button>
-                            <button pButton type="button" icon="pi pi-eye" (click)="view(institution)" 
+                            <button pButton type="button" icon="pi pi-eye" (click)="view(institution)"
                                 class="p-button-raised p-button-secondary p-button-rounded" pTooltip="Visualizar"
                                 tooltipPosition="bottom"></button>
-                            <button pButton type="button" icon="pi pi-trash" (click)="confirmDelete(institution)" 
+                            <button pButton type="button" icon="pi pi-trash" (click)="confirmDelete(institution)"
                                 class="p-button-raised p-button-danger p-button-rounded" pTooltip="Deletar"
                                 tooltipPosition="bottom"></button>
                         </td>
                     </tr>
                 </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="4">Nenhuma Instituição de ensino encontrada.</td>
+                    </tr>
+                </ng-template>
             </p-table>
+            <div *ngIf="pageable.totalElements > 0">
+                <app-paginator [pageable]="pageable" (OnUpdateTable)="onPageChange($event)"></app-paginator>
+            </div>
         </div>
         <div *ngIf="viewEdit">
             <div class="grid p-fluid">
