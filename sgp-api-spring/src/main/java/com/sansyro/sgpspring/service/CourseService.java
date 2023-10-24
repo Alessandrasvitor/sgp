@@ -3,20 +3,23 @@ package com.sansyro.sgpspring.service;
 import com.sansyro.sgpspring.constants.CategoryEnum;
 import com.sansyro.sgpspring.constants.StatusEnum;
 import com.sansyro.sgpspring.entity.Course;
+import com.sansyro.sgpspring.entity.User;
 import com.sansyro.sgpspring.entity.dto.CourseDTO;
 import com.sansyro.sgpspring.exception.ServiceException;
 import com.sansyro.sgpspring.repository.CourseRepository;
 import com.sansyro.sgpspring.util.GeralUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @Service
@@ -31,15 +34,20 @@ public class CourseService {
     @Autowired
     private UserService userService;
 
-    public CourseService() {
-    }
-
     public List<Course> list() {
-        return (List<Course>) courseRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
+        User user = userService.getUserLogger();
+        if(nonNull(user) && nonNull(user.getId())) {
+            return courseRepository.list(user.getId());
+        }
+        return Collections.emptyList();
     }
 
     public Page<Course> list(Pageable pageable) {
-        return courseRepository.findAll(pageable);
+        User user = userService.getUserLogger();
+        if(nonNull(user) && nonNull(user.getId())) {
+            return courseRepository.list(user.getId(), pageable);
+        }
+        return new PageImpl<>(Collections.emptyList());
     }
 
     public Course getById(Long id) {
@@ -52,11 +60,11 @@ public class CourseService {
 
     public Course save(CourseDTO dto) {
         validateNotNull(dto);
+        dto.setStatus(StatusEnum.PENDING.name());
         Course course = Course.mapper(dto);
         validateDuplicate(course);
-        course.setStatus(StatusEnum.PENDING);
         course.setInstituition(instituitionService.getById(dto.getIdInstituition()));
-        course.setUser(userService.getById(dto.getIdUser()));
+        course.setUser(userService.getUserLogger());
         course.setPriority(5);
         return courseRepository.save(course);
     }
@@ -96,7 +104,6 @@ public class CourseService {
             course.setStatus(StatusEnum.FINISH);
             course.setStartDate(new Date());
         }
-
         return courseRepository.save(course);
     }
 
@@ -108,16 +115,13 @@ public class CourseService {
         if(GeralUtil.stringNullOrEmpty(course.getName())){
             throw new ServiceException("Nome do curso é obrigatório");
         }
-        if(course.getIdUser() == null){
-            throw new ServiceException("Usuário do curso é obrigatório");
-        }
         if(GeralUtil.stringNullOrEmpty(course.getDescription())){
             throw new ServiceException("Descrição do course é obrigatória");
         }
-        if(course.getCategory() == null){
+        if(isNull(course.getCategory())){
             throw new ServiceException("Categoria do course é obrigatória");
         }
-        if(course.getIdInstituition() == null){
+        if(isNull(course.getIdInstituition())){
             throw new ServiceException("Instituição do course é obrigatória");
         }
     }

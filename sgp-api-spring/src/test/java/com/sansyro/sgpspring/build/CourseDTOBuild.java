@@ -16,7 +16,6 @@ public class CourseDTOBuild {
             .description(RandomStringUtils.randomAlphabetic(8))
             .startDate(new Date())
             .endDate(new Date())
-            .idUser(RandomUtils.nextLong())
             .idInstituition(RandomUtils.nextLong())
             .notation(Float.valueOf(8))
             .priority(RandomUtils.nextInt())

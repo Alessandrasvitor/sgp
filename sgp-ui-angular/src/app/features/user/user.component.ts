@@ -21,7 +21,6 @@ export class UserComponent implements OnInit {
   viewInit: any = [];
   labelCancel = 'Cancelar';
   functionalities: any = [];
-  userLogin: any = JSON.parse(localStorage.getItem('userLogin')+'');
   displayDialog = false;
   pageable: any = {page: 0, size: 3, totalPages: 0, totalElements: 0};
 

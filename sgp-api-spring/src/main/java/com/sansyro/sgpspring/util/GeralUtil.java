@@ -6,10 +6,12 @@ import org.apache.commons.lang3.RandomUtils;
 import java.util.HashSet;
 import java.util.Set;
 
+import static java.util.Objects.isNull;
+
 public class GeralUtil {
 
     public static Boolean stringNullOrEmpty(String valor ){
-        return valor == null || valor.isEmpty() || valor.length() == 0;
+        return isNull(valor) || valor.isEmpty() || valor.length() == 0;
     }
 
     public static String getNewHashCode() {

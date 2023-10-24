@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 
+import static com.sansyro.sgpspring.constants.StringConstaint.NAME;
+
 @RestController
 @RequestMapping("/course")
 @CrossOrigin(origins = "*")
@@ -42,7 +44,7 @@ public class CourseController {
 
     @ResponseBody
     @GetMapping()
-    public ResponseEntity list(@PageableDefault(sort = "name",
+    public ResponseEntity list(@PageableDefault(sort = NAME,
             direction = Sort.Direction.ASC,
             size = 5) Pageable pageable) {
         return ResponseEntity.ok().body(courseService.list(pageable).map(CourseDTO::mapper));

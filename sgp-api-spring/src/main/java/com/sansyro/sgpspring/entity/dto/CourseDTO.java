@@ -29,7 +29,6 @@ public class CourseDTO {
     private String category;
     private Boolean finished;
     private Long idInstituition;
-    private Long idUser;
 
     public static CourseDTO mapper(Course course) {
         if(isNull(course)) return null;
@@ -43,7 +42,6 @@ public class CourseDTO {
                 .priority(course.getPriority())
                 .status(course.getStatus().name())
                 .idInstituition(course.getInstituition().getId())
-                .idUser(course.getUser().getId())
                 .finished(course.getFinished())
                 .category(course.getCategory().name()).build();
     }

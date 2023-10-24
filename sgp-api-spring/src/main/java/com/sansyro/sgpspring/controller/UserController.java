@@ -26,6 +26,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 
+import static com.sansyro.sgpspring.constants.StringConstaint.NAME;
+
 @RestController
 @RequestMapping("/user")
 @CrossOrigin(origins = "*")
@@ -45,7 +47,7 @@ public class UserController {
 
     @ResponseBody
     @GetMapping()
-    public ResponseEntity list(@PageableDefault(sort = "name",
+    public ResponseEntity list(@PageableDefault(sort = NAME,
             direction = Sort.Direction.ASC,
             size = 5) Pageable pageable) {
         return ResponseEntity.ok().body(userService.list(pageable).map(UserDTO::mapper));

@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import static com.sansyro.sgpspring.constants.StringConstaint.NAME;
+
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/instituition")
@@ -32,7 +34,7 @@ public class InstituitionController {
 
     @ResponseBody
     @GetMapping()
-    public ResponseEntity list(@PageableDefault(sort = "name",
+    public ResponseEntity list(@PageableDefault(sort = NAME,
             direction = Sort.Direction.ASC,
             size = 5) Pageable pageable) {
         return ResponseEntity.ok().body(instituitionService.list(pageable));

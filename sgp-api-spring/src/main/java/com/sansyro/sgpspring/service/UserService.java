@@ -11,11 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+
+import static com.sansyro.sgpspring.constants.StringConstaint.*;
+import static java.util.Objects.isNull;
 
 @Service
 public class UserService {
@@ -23,10 +27,8 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    private String PASSWORD_DEFAULT = "123456";
-
     public List<User> list() {
-        return (List<User>) userRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
+        return (List<User>) userRepository.findAll(Sort.by(Sort.Direction.ASC, NAME));
     }
 
     public Page<User> list(Pageable pageable) {
@@ -38,13 +40,13 @@ public class UserService {
         if(userOp.isPresent()) {
             return userOp.get();
         }
-        throw new ServiceException("Usuário não encontrado");
+        throw new ServiceException(MSG_USER_NOT_FOUND);
     }
 
     public User getByEmail(String email) {
         User user = userRepository.findByEmail(email);
         if(user == null) {
-            throw new ServiceException("Usuário não encontrado");
+            throw new ServiceException(MSG_USER_NOT_FOUND);
         }
         return user;
     }
@@ -56,7 +58,7 @@ public class UserService {
         user.setUserHashCode(GeralUtil.getNewHashCode());
         user.setFunctionalities(new HashSet<>());
         user.getFunctionalities().add(FunctionalityEnum.HOME);
-        user.setPassword(validatePassword(user.getPassword(), user.getUserHashCode()));
+        user.setPassword(PASSWORD_DEFAULT);
         return userRepository.save(user);
     }
 
@@ -79,8 +81,7 @@ public class UserService {
         if(GeralUtil.stringNullOrEmpty(password)){
             throw new ServiceException("A Senha do usuário é obrigatória");
         }
-        StringBuilder newPassword = new StringBuilder(password).append(hash);
-        return  SecurityUtil.bCryptPasswordEncoder().encode(newPassword.toString());
+        return  SecurityUtil.bCryptPasswordEncoder().encode(password + hash);
     }
 
     private void validateUserDuplicate(String email) {
@@ -90,6 +91,9 @@ public class UserService {
     }
 
     public void validateUserNull(User user) {
+        if(isNull(user)) {
+            throw new ServiceException("Campos obrigatórios não preenchidos");
+        }
         if(GeralUtil.stringNullOrEmpty(user.getName())){
             throw new ServiceException("Nome do usuário é obrigatório");
         }
@@ -105,6 +109,15 @@ public class UserService {
         User user = getById(id);
         user.setPassword(PASSWORD_DEFAULT);
         userRepository.save(user);
+    }
+
+    public User getUserLogger() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof User) {
+            return ((User)principal);
+        } else {
+            return null;
+        }
     }
 
 }

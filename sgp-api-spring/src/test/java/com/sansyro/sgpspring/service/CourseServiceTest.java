@@ -3,7 +3,6 @@ package com.sansyro.sgpspring.service;
 import com.sansyro.sgpspring.build.CourseBuild;
 import com.sansyro.sgpspring.build.CourseDTOBuild;
 import com.sansyro.sgpspring.entity.Course;
-import com.sansyro.sgpspring.entity.Instituition;
 import com.sansyro.sgpspring.entity.User;
 import com.sansyro.sgpspring.entity.dto.CourseDTO;
 import com.sansyro.sgpspring.exception.ServiceException;
@@ -18,8 +17,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.any;
 
 @ExtendWith(MockitoExtension.class)
 public class CourseServiceTest {
@@ -47,7 +50,7 @@ public class CourseServiceTest {
 
 //    @Test
 //    void listTest() {
-//        when(repository.findAll()).thenReturn(Collections.emptyList());
+//        when(repository.findAll()).thenReturn(new PageImpl<>(Collections.emptyList()));
 //        List courses = service.list();
 //        verify(repository, times(1)).findAll();
 //        assertNotNull(courses);

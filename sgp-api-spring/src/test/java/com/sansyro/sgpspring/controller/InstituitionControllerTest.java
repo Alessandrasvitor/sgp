@@ -33,7 +33,7 @@ public class InstituitionControllerTest {
     @Mock
     private InstituitionService service;
 
-    private Long ID = 1L;
+    private final Long ID = 1L;
 
     private Instituition instituitionBuild;
 

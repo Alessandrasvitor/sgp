@@ -16,8 +16,6 @@ export class InstitutionComponent implements OnInit {
   title: any;
   editation = false;
   labelCancel = 'Cancelar';
-  permission = false;
-  user = JSON.parse(localStorage.getItem('userLogin')+'');
   pageable: any = {page: 0, size: 3, totalPages: 0, totalElements: 0};
 
   constructor(
@@ -29,14 +27,6 @@ export class InstitutionComponent implements OnInit {
   ngOnInit() {
     this.loading = true;
     this.updateView();
-    this.validaPermission();
-  }
-
-  validaPermission() {
-    if(this.user && this.user.functionalities && this.user.functionalities.filter((func: any) => func === 'INSTITUITION').length > 0) {
-      this.permission = true;
-    }
-
   }
 
   updateView() {

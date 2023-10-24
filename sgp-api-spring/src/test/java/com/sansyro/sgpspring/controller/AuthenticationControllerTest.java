@@ -39,7 +39,7 @@ public class AuthenticationControllerTest {
     @Mock
     private AuthenticationService authenticationService;
 
-    private Long ID = 1L;
+    private final Long ID = 1L;
 
     private User userBuild;
 

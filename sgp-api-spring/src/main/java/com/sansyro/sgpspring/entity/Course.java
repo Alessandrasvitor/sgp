@@ -57,7 +57,7 @@ public class Course implements Cloneable {
     @JoinColumn(name = "instituition_id", referencedColumnName = "id")
     private Instituition instituition;
 
-    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 

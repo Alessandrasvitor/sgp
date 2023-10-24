@@ -1,0 +1,15 @@
+br\com\sansyro\entity\Course$CourseBuilder.class
+br\com\sansyro\resource\CourseResource.class
+br\com\sansyro\entity\Instituition.class
+br\com\sansyro\constaint\CategoryEnum.class
+br\com\sansyro\MyEntity.class
+br\com\sansyro\resource\InstituitionResource.class
+br\com\sansyro\constaint\StatusEnum.class
+br\com\sansyro\entity\dto\CourseDTO.class
+br\com\sansyro\entity\Course.class
+META-INF\panache-archive.marker
+br\com\sansyro\GreetingResource.class
+br\com\sansyro\util\GeralUtil.class
+br\com\sansyro\entity\Instituition$InstituitionBuilder.class
+br\com\sansyro\service\InstituitionService.class
+br\com\sansyro\exception\ServiceException.class

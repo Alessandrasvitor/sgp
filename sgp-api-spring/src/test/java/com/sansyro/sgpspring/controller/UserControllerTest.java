@@ -35,7 +35,7 @@ public class UserControllerTest {
     @Mock
     private UserService service;
 
-    private Long ID = 1L;
+    private final Long ID = 1L;
 
     private User userBuild;
 

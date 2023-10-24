@@ -13,12 +13,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static com.sansyro.sgpspring.constants.StringConstaint.PASSWORD_DEFAULT;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
@@ -29,11 +33,11 @@ public class UserServiceTest {
     @Mock
     private UserRepository repository;
 
-    private Long ID = 1L;
+    private final Long ID = 1L;
 
 //    @Test
 //    void listTest() {
-//        when(repository.findAll()).thenReturn(new ArrayList<>());
+//        when(repository.findAll()).thenReturn(new PageImpl<>(Collections.emptyList()));
 //        List users = service.list();
 //        verify(repository, times(1)).findAll();
 //        assertNotNull(users);
@@ -129,7 +133,7 @@ public class UserServiceTest {
         when(repository.save(any())).thenReturn(user);
         service.resetPassword(ID);
         verify(repository, times(1)).save(any());
-        assertEquals(user.getPassword(), "123456");
+        assertEquals(user.getPassword(), PASSWORD_DEFAULT);
     }
 
     @Test

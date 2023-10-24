@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import static com.sansyro.sgpspring.constants.StringConstaint.MSG_USER_INVALID;
+import static com.sansyro.sgpspring.constants.StringConstaint.PASSWORD_DEFAULT;
+
 @Service
 public class AuthenticationService implements UserDetailsService {
 
@@ -28,7 +31,7 @@ public class AuthenticationService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = repository.findByEmail(username);
         if(user == null) {
-            throw new UsernameNotFoundException("Usuário ou senha inválido");
+            throw new UsernameNotFoundException(MSG_USER_INVALID);
         }
         return user;
     }
@@ -36,11 +39,11 @@ public class AuthenticationService implements UserDetailsService {
     public User login(User userRequest) throws UsernameNotFoundException {
         User user = (User) loadUserByUsername(userRequest.getEmail());
 
-        if(user.getPassword().equals("123456") && user.getPassword().equals(userRequest.getPassword())) {
+        if(user.getPassword().equals(PASSWORD_DEFAULT) && user.getPassword().equals(userRequest.getPassword())) {
             return returnUser(user);
         }
         if(validPassword(user.getPassword(), user.getUserHashCode(), userRequest.getPassword())) {
-            throw new UsernameNotFoundException("Usuário ou senha inválido");
+            throw new UsernameNotFoundException(MSG_USER_INVALID);
         }
         return returnUser(user);
     }
@@ -77,7 +80,7 @@ public class AuthenticationService implements UserDetailsService {
         User user = service.getByEmail(request.getEmail());
 
         if(validPassword(user.getPassword(), user.getUserHashCode(), request.getPassword())) {
-            throw new UsernameNotFoundException("Usuário ou senha não encontrado");
+            throw new UsernameNotFoundException(MSG_USER_INVALID);
         }
         user.setUserHashCode(GeralUtil.getNewHashCode());
         user.setPassword(service.validatePassword(request.getPassword(), user.getUserHashCode()));

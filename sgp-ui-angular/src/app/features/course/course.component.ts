@@ -22,7 +22,6 @@ export class CourseComponent implements OnInit {
   editation = false;
   labelCancel = 'Cancelar';
   categories: any = [];
-  user: any = {};
   displayDialog = false;
   pageable: any = {page: 0, size: 3, totalPages: 0, totalElements: 0};
 
@@ -35,7 +34,6 @@ export class CourseComponent implements OnInit {
 
   ngOnInit() {
     this.loading = true;
-    this.user = JSON.parse(localStorage.getItem('userLogin')+'');
     this.getInstituitions();
     this.getStatus();
     this.updateView();
@@ -165,15 +163,14 @@ export class CourseComponent implements OnInit {
         this.updateView();
       },
       error => {
-        //this.close();
+        this.close();
       });
     } else {
-      this.course.idUser = this.user.id; 
       this.service.post(this.course).subscribe((response: any) => {
         this.updateView();
       },
       error => {
-        //this.close();
+        this.close();
       });
     }
   }
