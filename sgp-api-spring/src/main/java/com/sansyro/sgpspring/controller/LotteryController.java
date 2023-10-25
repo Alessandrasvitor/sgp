@@ -1,8 +1,9 @@
 package com.sansyro.sgpspring.controller;
 
-import com.sansyro.sgpspring.entity.Bet;
+import com.sansyro.sgpspring.constants.TypeLotteryEnum;
+import com.sansyro.sgpspring.entity.dto.LotteryDTO;
 import com.sansyro.sgpspring.exception.ServiceException;
-import com.sansyro.sgpspring.service.BetService;
+import com.sansyro.sgpspring.service.LotteryService;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,33 +26,33 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping("/bet")
-@PreAuthorize("hasAuthority('HOME')")
+@RequestMapping("/lottery")
+@PreAuthorize("hasAuthority('LOTTERY')")
 @OpenAPIDefinition(info = @Info(title = "Sistema de gestão de entreteinimento", version = "1.0", description = ""))
-public class BetController {
+public class LotteryController {
 
     @Autowired
-    private BetService betService;
+    private LotteryService lotteryService;
 
     @ResponseBody
     @GetMapping("/all")
     public ResponseEntity list() {
-        return ResponseEntity.ok().body(betService.list());
+        return ResponseEntity.ok().body(lotteryService.list().stream().map(LotteryDTO::mapper).toList());
     }
 
     @ResponseBody
     @GetMapping()
-    public ResponseEntity list(@PageableDefault(sort = "betDate",
+    public ResponseEntity list(@PageableDefault(sort = "lotteryDate",
             direction = Sort.Direction.ASC,
             size = 5) Pageable pageable) {
-        return ResponseEntity.ok().body(betService.list(pageable));
+        return ResponseEntity.ok().body(lotteryService.list(pageable).map(LotteryDTO::mapper));
     }
 
     @ResponseBody
     @GetMapping("/{id}")
     public ResponseEntity getById(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok().body(betService.getById(id));
+            return ResponseEntity.ok().body(LotteryDTO.mapper(lotteryService.getById(id)));
         } catch (ServiceException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e){
@@ -61,10 +62,9 @@ public class BetController {
 
     @ResponseBody
     @PostMapping()
-    public ResponseEntity save(@RequestBody Bet bet) {
+    public ResponseEntity save(@RequestBody LotteryDTO lottery) {
         try {
-            betService.save(bet);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            return ResponseEntity.status(HttpStatus.CREATED).body(LotteryDTO.mapper(lotteryService.save(lottery)));
         } catch (ServiceException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e){
@@ -73,10 +73,10 @@ public class BetController {
     }
 
     @ResponseBody
-    @PutMapping("{id}")
-    public ResponseEntity update(@PathVariable Long id, @RequestBody Bet bet) {
+    @PutMapping("/{id}")
+    public ResponseEntity update(@PathVariable Long id, @RequestBody LotteryDTO lottery) {
         try {
-            return ResponseEntity.ok().body(betService.update(id, bet));
+            return ResponseEntity.ok().body(LotteryDTO.mapper(lotteryService.update(id, lottery)));
         } catch (ServiceException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e){
@@ -85,10 +85,10 @@ public class BetController {
     }
 
     @ResponseBody
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable Long id) {
         try {
-            betService.delete(id);
+            lotteryService.delete(id);
             return ResponseEntity.ok().build();
         } catch (ServiceException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -98,10 +98,10 @@ public class BetController {
     }
 
     @ResponseBody
-    @DeleteMapping("gerar")
-    public ResponseEntity gerar() {
+    @GetMapping("/generate/{typeLottery}")
+    public ResponseEntity generate(@PathVariable String typeLottery) {
         try {
-            return ResponseEntity.ok().body(betService.gerar());
+            return ResponseEntity.ok().body(LotteryDTO.mapper(lotteryService.generate(TypeLotteryEnum.valueOf(typeLottery))));
         } catch (ServiceException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e){

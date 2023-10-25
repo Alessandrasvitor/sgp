@@ -7,7 +7,7 @@ import com.sansyro.sgpspring.entity.User;
 import com.sansyro.sgpspring.entity.dto.CourseDTO;
 import com.sansyro.sgpspring.exception.ServiceException;
 import com.sansyro.sgpspring.repository.CourseRepository;
-import com.sansyro.sgpspring.util.GeralUtil;
+import com.sansyro.sgpspring.util.GeneralUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -112,10 +112,10 @@ public class CourseService {
     }
 
     private void validateNotNull(CourseDTO course) {
-        if(GeralUtil.stringNullOrEmpty(course.getName())){
+        if(GeneralUtil.stringNullOrEmpty(course.getName())){
             throw new ServiceException("Nome do curso é obrigatório");
         }
-        if(GeralUtil.stringNullOrEmpty(course.getDescription())){
+        if(GeneralUtil.stringNullOrEmpty(course.getDescription())){
             throw new ServiceException("Descrição do course é obrigatória");
         }
         if(isNull(course.getCategory())){

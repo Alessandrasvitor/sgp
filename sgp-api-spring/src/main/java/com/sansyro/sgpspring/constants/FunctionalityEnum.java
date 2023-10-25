@@ -8,7 +8,7 @@ public enum FunctionalityEnum {
     HOME("home"),
     COURSE("course"),
     INSTITUITION("instituition"),
-    BET("bet"),
+    LOTTERY("lottery"),
     USER("user");
 
     private String page;

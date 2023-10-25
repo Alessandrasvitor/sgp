@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import static com.sansyro.sgpspring.constants.StringConstaint.PASSWORD_DEFAULT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -107,23 +108,23 @@ public class AuthenticationControllerTest {
 
     @Test
     void changePasswordTest() {
-        when(authenticationService.updatePassword(any())).thenReturn(userBuild);
-        ResponseEntity response = controller.changePassword(userBuild);
+        when(authenticationService.updatePassword(anyString(), any())).thenReturn(userBuild);
+        ResponseEntity response = controller.changePassword(PASSWORD_DEFAULT, userBuild);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
     }
 
     @Test
     void changePasswordWithErrorTest() {
-        when(authenticationService.updatePassword(any())).thenThrow(RuntimeException.class);
-        ResponseEntity response = controller.changePassword(userBuild);
+        when(authenticationService.updatePassword(anyString(), any())).thenThrow(RuntimeException.class);
+        ResponseEntity response = controller.changePassword(PASSWORD_DEFAULT, userBuild);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 
     @Test
     void changePasswordWithBadRequestTest() {
-        when(authenticationService.updatePassword(any())).thenThrow(UsernameNotFoundException.class);
-        ResponseEntity response = controller.changePassword(userBuild);
+        when(authenticationService.updatePassword(anyString(), any())).thenThrow(UsernameNotFoundException.class);
+        ResponseEntity response = controller.changePassword(PASSWORD_DEFAULT, userBuild);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 

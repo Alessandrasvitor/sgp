@@ -2,16 +2,14 @@
 
     <p-fieldset legend="Institutions">
         <div *ngIf="!viewEdit">
-            <p-toolbar>
-                <div class="p-toolbar-group-left">
-                    <p-button label="New" icon="pi pi-plus" (click)="new()"></p-button>
-                </div>
 
-                <div class="p-toolbar-group-right">
-                    <p-button label="Download" icon="pi pi-download" (click)="exportExcel()" styleClass="p-button-success"></p-button>
-                </div>
-            </p-toolbar>
-            <p-table [value]="institutions" responsiveLayout="scroll">
+            <p-table #dtInstituicao [value]="institutions" responsiveLayout="scroll">
+                <ng-template pTemplate="caption">
+                    <div class="flex">
+                        <button type="button" pButton pRipple icon="pi pi-plus" (click)="create()" class="p-button-info mr-2"  pTooltip="CRIAR" tooltipPosition="bottom"></button>          
+                        <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success ml-auto" pTooltip="XLS" tooltipPosition="bottom"></button>
+                    </div>
+                </ng-template>
                 <ng-template pTemplate="header">
                     <tr>
                         <th width="30">Nome</th>
@@ -24,15 +22,17 @@
                     <tr>
                         <td>{{institution.name}}</td>
                         <td>{{institution.address}}</td>
-                        <td>{{institution.quantity}}</td>
                         <td>
-                            <button pButton type="button" icon="pi pi-pencil" (click)="edit(institution)" 
+                            <p-rating [ngModel]="institution.quantity/2" [readonly]="true" [cancel]="false"></p-rating>
+                        </td>
+                        <td>
+                            <button pButton type="button" icon="pi pi-pencil" (click)="edit(institution)"
                                 class="p-button-raised p-button-rounded" pTooltip="Editar"
                                 tooltipPosition="bottom"></button>
-                            <button pButton type="button" icon="pi pi-eye" (click)="view(institution)" 
+                            <button pButton type="button" icon="pi pi-eye" (click)="view(institution)"
                                 class="p-button-raised p-button-secondary p-button-rounded" pTooltip="Visualizar"
                                 tooltipPosition="bottom"></button>
-                            <button pButton type="button" icon="pi pi-trash" (click)="confirmDelete(institution)" 
+                            <button pButton type="button" icon="pi pi-trash" (click)="confirmDelete(institution)"
                                 class="p-button-raised p-button-danger p-button-rounded" pTooltip="Deletar"
                                 tooltipPosition="bottom"></button>
                         </td>
@@ -42,7 +42,7 @@
                     <tr>
                         <td colspan="4">Nenhuma Instituição de ensino encontrada.</td>
                     </tr>
-                </ng-template>                
+                </ng-template>
             </p-table>
             <div *ngIf="pageable.totalElements > 0">
                 <app-paginator [pageable]="pageable" (OnUpdateTable)="onPageChange($event)"></app-paginator>

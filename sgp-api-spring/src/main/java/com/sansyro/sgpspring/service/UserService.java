@@ -5,7 +5,7 @@ import com.sansyro.sgpspring.entity.User;
 import com.sansyro.sgpspring.entity.dto.UserDTO;
 import com.sansyro.sgpspring.exception.ServiceException;
 import com.sansyro.sgpspring.repository.UserRepository;
-import com.sansyro.sgpspring.util.GeralUtil;
+import com.sansyro.sgpspring.util.GeneralUtil;
 import com.sansyro.sgpspring.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -55,7 +55,7 @@ public class UserService {
         user.setStartView(FunctionalityEnum.HOME.getPage());
         validateUserNull(user);
         validateUserDuplicate(user.getEmail());
-        user.setUserHashCode(GeralUtil.getNewHashCode());
+        user.setUserHashCode(GeneralUtil.getNewHashCode());
         user.setFunctionalities(new HashSet<>());
         user.getFunctionalities().add(FunctionalityEnum.HOME);
         user.setPassword(PASSWORD_DEFAULT);
@@ -78,8 +78,11 @@ public class UserService {
     }
 
     public String validatePassword(String password, String hash) {
-        if(GeralUtil.stringNullOrEmpty(password)){
+        if(GeneralUtil.stringNullOrEmpty(password)){
             throw new ServiceException("A Senha do usuário é obrigatória");
+        }
+        if(PASSWORD_DEFAULT.equals(password)){
+            throw new ServiceException("A Senha não pode ser igual a: "+PASSWORD_DEFAULT);
         }
         return  SecurityUtil.bCryptPasswordEncoder().encode(password + hash);
     }
@@ -94,13 +97,13 @@ public class UserService {
         if(isNull(user)) {
             throw new ServiceException("Campos obrigatórios não preenchidos");
         }
-        if(GeralUtil.stringNullOrEmpty(user.getName())){
+        if(GeneralUtil.stringNullOrEmpty(user.getName())){
             throw new ServiceException("Nome do usuário é obrigatório");
         }
-        if(GeralUtil.stringNullOrEmpty(user.getEmail())){
+        if(GeneralUtil.stringNullOrEmpty(user.getEmail())){
             throw new ServiceException("Email do usuário é obrigatório");
         }
-        if(GeralUtil.stringNullOrEmpty(user.getStartView())){
+        if(GeneralUtil.stringNullOrEmpty(user.getStartView())){
             throw new ServiceException("Página inicial do usuário é obrigatória");
         }
     }

@@ -1,5 +1,5 @@
 
-create table user (
+create table IF NOT EXISTS user (
      id int(4) AUTO_INCREMENT PRIMARY KEY,
      name varchar(50) not null,
      email varchar(100) not null UNIQUE,
@@ -9,7 +9,7 @@ create table user (
      token  varchar(255)
 );
 
-create table functionality_user (
+create table IF NOT EXISTS functionality_user (
      user_id int(4) not null,
      functionality varchar(50) not null,
     FOREIGN KEY (user_id) REFERENCES user(id)

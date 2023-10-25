@@ -1,5 +1,6 @@
 package com.sansyro.sgpspring.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sansyro.sgpspring.constants.CategoryEnum;
 import com.sansyro.sgpspring.constants.StatusEnum;
 import com.sansyro.sgpspring.entity.dto.CourseDTO;
@@ -57,6 +58,7 @@ public class Course implements Cloneable {
     @JoinColumn(name = "instituition_id", referencedColumnName = "id")
     private Instituition instituition;
 
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
