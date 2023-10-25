@@ -13,8 +13,8 @@ export class MenuPipe implements PipeTransform {
         return {label: 'Curso', icon: 'pi pi-book', routerLink: '/course'};
       case 'INSTITUITION':
         return {label: 'Instituição', icon: 'pi pi-globe', routerLink: '/instituition'};
-      case 'BET':
-        return {label: 'Apostas', icon: 'pi pi-dollar', routerLink: '/bet'};
+      case 'LOTTERY':
+        return {label: 'Loterias', icon: 'pi pi-dollar', routerLink: '/lottery'};
     }
   }
 

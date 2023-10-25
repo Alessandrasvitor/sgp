@@ -64,10 +64,10 @@ public class AuthenticationController {
         }
     }
 
-    @PutMapping("/change-password")
-    public ResponseEntity changePassword(@RequestBody @Validated User request){
+    @PutMapping("/change-password/{oldPassword}")
+    public ResponseEntity changePassword(@PathVariable String oldPassword, @RequestBody @Validated User request){
         try {
-            User user = authenticationService.updatePassword(request);
+            User user = authenticationService.updatePassword(oldPassword, request);
             return ResponseEntity.ok(TokenResponse.builder().user(UserDTO.mapper(user)).type(BEARER).token(user.getToken()).build());
         } catch (UsernameNotFoundException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

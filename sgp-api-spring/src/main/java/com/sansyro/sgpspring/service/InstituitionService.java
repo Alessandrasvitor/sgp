@@ -3,7 +3,7 @@ package com.sansyro.sgpspring.service;
 import com.sansyro.sgpspring.entity.Instituition;
 import com.sansyro.sgpspring.exception.ServiceException;
 import com.sansyro.sgpspring.repository.InstituitionRepository;
-import com.sansyro.sgpspring.util.GeralUtil;
+import com.sansyro.sgpspring.util.GeneralUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -57,10 +57,10 @@ public class InstituitionService {
     }
 
     private void validateNotNull(Instituition instituition) {
-        if(GeralUtil.stringNullOrEmpty(instituition.getName())){
+        if(GeneralUtil.stringNullOrEmpty(instituition.getName())){
             throw new ServiceException("Nome da instituição é obrigatório");
         }
-        if(GeralUtil.stringNullOrEmpty(instituition.getAddress())){
+        if(GeneralUtil.stringNullOrEmpty(instituition.getAddress())){
             throw new ServiceException("Endereço da instituition é obrigatório");
         }
     }

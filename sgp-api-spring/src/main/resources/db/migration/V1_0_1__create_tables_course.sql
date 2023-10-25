@@ -1,12 +1,12 @@
 
-create table instituition (
+create table IF NOT EXISTS instituition (
      id int(4) AUTO_INCREMENT PRIMARY KEY,
      name varchar(50) not null,
      address varchar(100) not null UNIQUE,
      quantity decimal(2,1)
 );
 
-create table course (
+create table IF NOT EXISTS course (
      id int(4) AUTO_INCREMENT PRIMARY KEY,
      instituition_id int(4) not null,
      user_id int(4) not null,

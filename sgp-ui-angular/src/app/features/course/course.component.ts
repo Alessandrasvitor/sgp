@@ -35,7 +35,7 @@ export class CourseComponent implements OnInit {
   ngOnInit() {
     this.loading = true;
     this.getInstituitions();
-    this.getStatus();
+    this.getCategories();
     this.updateView();
   }
 
@@ -61,7 +61,7 @@ export class CourseComponent implements OnInit {
     });
   }
 
-  getStatus() {
+  getCategories() {
     Object.values(CategoriaEnum).forEach( (category: any) => {
       if(isNaN(category)) {
         this.categories.push({value: category, label: (new CategoryPipe).transform(category) });

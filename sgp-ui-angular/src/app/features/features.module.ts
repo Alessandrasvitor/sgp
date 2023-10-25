@@ -11,7 +11,7 @@ import { CourseComponent } from './course/course.component';
 import { PipesModule } from '../shared/pipes/pipes.module';
 import { HomeComponent } from './home/home.component';
 import { UserComponent } from './user/user.component';
-import { BetComponent } from './bet/bet.component';
+import { LotteryComponent } from './lottery/lottery.component';
 import { SharedModule } from "../shared/shared.module";
 
 import { TableModule } from 'primeng/table';
@@ -33,6 +33,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { TooltipModule } from 'primeng/tooltip';
 import { CalendarModule } from 'primeng/calendar';
 import { PaginatorModule } from 'primeng/paginator';
+import { InputMaskModule } from 'primeng/inputmask';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,7 @@ import { PaginatorModule } from 'primeng/paginator';
     CourseComponent,
     HomeComponent,
     UserComponent,
-    BetComponent
+    LotteryComponent
   ],
   imports: [
   CommonModule,
@@ -71,7 +72,8 @@ import { PaginatorModule } from 'primeng/paginator';
     TooltipModule,
     PaginatorModule,
     SharedModule,
-    CalendarModule
+    CalendarModule,
+    InputMaskModule
   ],
   providers: [ ],
   exports: [ PipesModule ]

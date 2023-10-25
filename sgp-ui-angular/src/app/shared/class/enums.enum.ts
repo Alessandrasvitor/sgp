@@ -30,3 +30,12 @@ export enum FuncionalityEnum {
     INSTITUITION,
     USER
 }
+
+export enum TypeLotteryEnum {
+    MEGA_SENA,
+    LOTOFACIL,
+    QUINA,
+    LOTOMANIA,
+    DUPLA_SENA,
+    LOTECA
+}

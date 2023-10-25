@@ -6,9 +6,9 @@ import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root'
 })
-export class BetService {
-  
-  private url = `${environment.apiUrl}/bet`;
+export class LotteryService {
+
+  private url = `${environment.apiUrl}/lottery`;
 
   constructor(
     private http: HttpClient,
@@ -17,7 +17,7 @@ export class BetService {
   }
 
   listAll() {
-		return this.http.get(this.url, this.securityService.getAuthorizated());
+		return this.http.get(this.url+'/all', this.securityService.getAuthorizated());
   }
 
   list(pageable: any) {
@@ -28,12 +28,15 @@ export class BetService {
     return this.http.get(this.url + '/' + id, this.securityService.getAuthorizated());
   }
 
-  put(bet: any) {
-    return this.http.put(this.url + '/' + bet.id, bet, this.securityService.getAuthorizated());
+  generate(type: any) {
+    return this.http.get(this.url + '/generate/'+type, this.securityService.getAuthorizated());
+  }
+  put(lottery: any) {
+    return this.http.put(this.url + '/' + lottery.id, lottery, this.securityService.getAuthorizated());
   }
 
-  post(bet: any) {
-		return this.http.post(this.url, bet, this.securityService.getAuthorizated());
+  post(lottery: any) {
+		return this.http.post(this.url, lottery, this.securityService.getAuthorizated());
   }
 
   delete(id: any) {

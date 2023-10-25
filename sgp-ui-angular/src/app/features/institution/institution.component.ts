@@ -53,7 +53,7 @@ export class InstitutionComponent implements OnInit {
     this.labelCancel = 'Cancelar';
   }
 
-  new() {
+  create() {
     this.title = 'Cadastrar';
     this.institution = {};
     this.editation = true;

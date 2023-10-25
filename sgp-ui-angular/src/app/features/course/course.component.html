@@ -3,11 +3,11 @@
     <p-fieldset legend="Cursos">
         <div *ngIf="!viewEdit">
 
-            <p-table #dtInstituicao [value]="courses" [paginator]="true" [rows]="5" responsiveLayout="scroll">
+            <p-table #dtInstituicao [value]="courses" responsiveLayout="scroll">
                 <ng-template pTemplate="caption">
                     <div class="flex">
-                        <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success mr-2"  pTooltip="XLS" tooltipPosition="bottom"></button>
-                        <button type="button" pButton pRipple icon="pi pi-plus" (click)="create()" class="p-button-info ml-auto" pTooltip="CRIAR" tooltipPosition="bottom"></button>
+                        <button type="button" pButton pRipple icon="pi pi-plus" (click)="create()" class="p-button-info mr-2"  pTooltip="CRIAR" tooltipPosition="bottom"></button>          
+                        <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success ml-auto" pTooltip="XLS" tooltipPosition="bottom"></button>
                     </div>
                 </ng-template>
                 <ng-template pTemplate="header">
@@ -90,7 +90,7 @@
 
 </div>
 
-<p-dialog header="Nota do curso" [(visible)]="displayDialog">
+<p-dialog header="Nota do curso" [(visible)]="displayDialog" [modal]="true" [style]="{ width: '30vw' }">
     <div>
         <div class="grid p-fluid">
             <div class="field col-12">

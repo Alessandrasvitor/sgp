@@ -3,7 +3,7 @@ package com.sansyro.sgpspring.security.service;
 import com.sansyro.sgpspring.entity.User;
 import com.sansyro.sgpspring.repository.UserRepository;
 import com.sansyro.sgpspring.service.UserService;
-import com.sansyro.sgpspring.util.GeralUtil;
+import com.sansyro.sgpspring.util.GeneralUtil;
 import com.sansyro.sgpspring.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -70,22 +70,28 @@ public class AuthenticationService implements UserDetailsService {
     }
 
     public User register(User user) {
-        user.setPassword(service.validatePassword(user.getPassword(), GeralUtil.getNewHashCode()));
+        user.setPassword(service.validatePassword(user.getPassword(), GeneralUtil.getNewHashCode()));
         user.setToken(tokenService.generateToken(user));
         repository.save(user);
         return user;
     }
 
-    public User updatePassword(User request) {
+    public User updatePassword(String oldPassword, User request) {
         User user = service.getByEmail(request.getEmail());
-
-        if(validPassword(user.getPassword(), user.getUserHashCode(), request.getPassword())) {
-            throw new UsernameNotFoundException(MSG_USER_INVALID);
-        }
-        user.setUserHashCode(GeralUtil.getNewHashCode());
+        validOldPassword(oldPassword, user);
+        user.setUserHashCode(GeneralUtil.getNewHashCode());
         user.setPassword(service.validatePassword(request.getPassword(), user.getUserHashCode()));
         user.setToken(tokenService.generateToken(user));
         return repository.save(user);
+    }
+
+    private void validOldPassword(String oldPassword, User user) {
+        if(PASSWORD_DEFAULT.equals(oldPassword) && PASSWORD_DEFAULT.equals(user.getPassword())) {
+            return;
+        }
+        if(validPassword(user.getPassword(), user.getUserHashCode(), oldPassword)) {
+            throw new UsernameNotFoundException(MSG_USER_INVALID);
+        }
     }
 
     public User updateToken(User request) {
