@@ -1,0 +1,44 @@
+<div class="grid p-fluid">
+  <div class="col-4"></div>
+  <div class="col-4">
+    <div class="login align-content-center">
+      <p-card>
+        <ng-template pTemplate="header">
+          <br>
+          <div class="text-center">
+            <h2>
+              Ativar Usuário
+            </h2>
+          </div>
+        </ng-template>
+        <div class="field">
+          <label>Email</label>
+          <input required type="text" pInputText [(ngModel)]="user.email" />
+        </div>
+        <div class="field">
+          <label>Senha</label>
+          <p-password required [(ngModel)]="user.password" [toggleMask]="true"></p-password>
+        </div>
+        <div class="field">
+          <label>Código Verificador</label>
+          <input required type="text" pInputText [(ngModel)]="user.checkerCode" />
+        </div>
+        <div class="flex">
+          <div *ngIf="resetActiveTime">
+            <p-progressSpinner styleClass="w-2rem h-2rem" strokeWidth="8" fill="var(--surface-ground)"
+                      animationDuration=".7s"></p-progressSpinner>
+          </div>
+          <p-button [disabled]="true" label="{{resetActiveTimer}}" 
+                      *ngIf="resetActiveTime" styleClass="p-button-link"></p-button>
+          <p-button [disabled]="!resetActive || !user.email" label="Reenviar código de verificação" 
+                      (click)="resetCheckerCode()" styleClass="p-button-link" *ngIf="!resetActiveTime"></p-button>
+        </div>
+        <ng-template pTemplate="footer">
+          <button pButton [disabled]="!user.password || !user.email || !user.checkerCode" (click)="active()" type="button" label="Ativar" ></button>
+        </ng-template>
+    </p-card>
+    </div>
+  </div>
+  
+</div>
+

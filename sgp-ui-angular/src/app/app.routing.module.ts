@@ -11,6 +11,7 @@ import { PageNotFoundComponent } from './security/page-not-found/page-not-found.
 import { RegisterComponent } from './security/register/register.component';
 import { ResetPwdComponent } from './security/reset-pwd/reset-pwd.component';
 import { SecurityGuard } from './security/security.guard';
+import { ActiveUserComponent } from './security/active-user/active-user.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'redirect', pathMatch: 'full' },
@@ -18,6 +19,7 @@ const routes: Routes = [
   { path: 'reset-pwd', component: ResetPwdComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'active-user', component: ActiveUserComponent },
   { path: 'home', component: HomeComponent, canActivate: [SecurityGuard] },
   { path: 'user', component: UserComponent, canActivate: [SecurityGuard] },
   { path: 'course', component: CourseComponent, canActivate: [SecurityGuard] },

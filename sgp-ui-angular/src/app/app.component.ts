@@ -15,6 +15,7 @@ export class AppComponent implements OnInit {
     return this.router.url !== '/login' &&
             this.router.url !== '/page-not-found' &&
             this.router.url !== '/reset-pwd' &&
+            this.router.url !== '/active-user' &&
             this.router.url !== '/register';
   }
 
