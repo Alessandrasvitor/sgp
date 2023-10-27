@@ -31,9 +31,11 @@ export class LoginComponent implements OnInit {
       .then((response: any) => {
         if(newPassword) {
           this.resetPws(response.user.email);
-        } else {
-          localStorage.setItem('userLogin', JSON.stringify(response.user));
+        } else if(response.user.flActive) {
+					this.securityService.saveLocalStorege(response);
           this.router.navigate(['/'+response.user.startView]);
+				} else {
+          this.activeUser(response.user);
         }
       })
       .catch(erro => {
@@ -43,6 +45,11 @@ export class LoginComponent implements OnInit {
 
   register() {
     this.router.navigate(['/register']);
+  }
+
+  activeUser(user: any) {
+    localStorage.setItem('user', JSON.stringify(user));
+    this.router.navigate(['/active-user']);  
   }
 
   resetPws(email: any) {

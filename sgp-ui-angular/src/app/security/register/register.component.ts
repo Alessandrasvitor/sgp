@@ -26,9 +26,8 @@ export class RegisterComponent implements OnInit {
   register() {
     if(this.password === this.user.password) {
       this.securityService.register(this.user)
-      .then((response: any) => {
-        localStorage.setItem('userLogin', JSON.stringify(response.user));
-        this.router.navigate(['/'+response.user.startView]);
+      .then(() => {
+        this.router.navigate(['/active-user']);
       })
       .catch(erro => {
         this.errorService.handle(erro);
@@ -36,6 +35,10 @@ export class RegisterComponent implements OnInit {
     } else {
       this.errorService.handle('As senhas são incompatíveis');
     }
+  }
+
+  cancel() {
+    this.router.navigate(['/login']);
   }
 
 }
