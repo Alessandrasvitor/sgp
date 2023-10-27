@@ -12,6 +12,7 @@ export class ResetPwdComponent implements OnInit {
   
   user: User = new User();
   password: string | undefined;
+  oldPassword: string | undefined;
 
   constructor(
     private router: Router,
@@ -28,14 +29,7 @@ export class ResetPwdComponent implements OnInit {
 
   createPwd() {
     if(this.password === this.user.password) {
-      this.securityService.changePassword(this.password, this.user.id)
-      .then((response: any) => {
-        localStorage.setItem('userLogin', JSON.stringify(response.user));
-        this.router.navigate(['/'+response.user.startView]);
-      })
-      .catch(erro => {
-        this.errorService.handle(erro);
-      });
+      this.securityService.changePassword(this.oldPassword, this.user);
     }
   }
 

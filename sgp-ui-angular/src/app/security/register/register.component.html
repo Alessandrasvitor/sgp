@@ -26,10 +26,13 @@
         <div class="field">
           <label>Confirmar Senha</label>
           <p-password required id="passwordConfirm" [(ngModel)]="password"></p-password>
-          <small *ngIf="user.password !== password" class="p-error">A senhas não são compatíveis.</small>
+          <small *ngIf="user.password !== password" class="p-error">As senhas não são compatíveis.</small>
         </div>
         <ng-template pTemplate="footer">
-          <button pButton (click)="register()" type="button" label="Cadastrar" ></button>
+          <div class="flex flex-row-reverse">
+            <button pButton (click)="register()" type="button" label="Cadastrar" ></button>
+            <button pButton (click)="cancel()" type="button" class="p-button-danger" label="Cancelar" ></button>
+          </div>
         </ng-template>
     </p-card>
     </div>

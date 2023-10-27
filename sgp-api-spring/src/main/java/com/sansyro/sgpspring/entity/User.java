@@ -32,7 +32,6 @@ import java.util.Set;
 
 import static java.util.Objects.isNull;
 
-
 @DiscriminatorValue("user")
 @AllArgsConstructor
 @NoArgsConstructor
@@ -54,6 +53,11 @@ public class User implements UserDetails {
     @NotNull
     //senhas padrão 123456
     private String password;
+
+    @Column(name="fl_ativo")
+    private boolean flAtivo;
+    @Column(name="checker_code")
+    private String checkerCode;
 
     @NotNull
     @Column(name="user_hash_code")

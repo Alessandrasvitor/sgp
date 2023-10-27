@@ -55,8 +55,31 @@ public class AuthenticationController {
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody @Validated User request){
         try {
-            User user = authenticationService.register(request);
+            return ResponseEntity.ok(UserDTO.mapper(authenticationService.register(request)));
+        } catch (ServiceException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/atctive")
+    public ResponseEntity active(@RequestBody @Validated User request){
+        try {
+            User user = authenticationService.activateUser(request);
             return ResponseEntity.ok(TokenResponse.builder().user(UserDTO.mapper(user)).type(BEARER).token(user.getToken()).build());
+        } catch (ServiceException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/reset-checker-code")
+    public ResponseEntity resetCheckerCode(@RequestBody @Validated User request){
+        try {
+            authenticationService.resetCheckerCode(request);
+            return ResponseEntity.ok().build();
         } catch (ServiceException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e){
@@ -67,8 +90,7 @@ public class AuthenticationController {
     @PutMapping("/change-password/{oldPassword}")
     public ResponseEntity changePassword(@PathVariable String oldPassword, @RequestBody @Validated User request){
         try {
-            User user = authenticationService.updatePassword(oldPassword, request);
-            return ResponseEntity.ok(TokenResponse.builder().user(UserDTO.mapper(user)).type(BEARER).token(user.getToken()).build());
+            return ResponseEntity.ok(UserDTO.mapper(authenticationService.updatePassword(oldPassword, request)));
         } catch (UsernameNotFoundException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e){

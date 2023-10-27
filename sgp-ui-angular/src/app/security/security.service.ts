@@ -22,7 +22,6 @@ export class SecurityService {
 	login(user: any): Promise<void> {
 		return this.http.post(this.url + '/login', { email: user.email, password: user.password }).toPromise()
 			.then((response: any) => {
-				this.saveLocalStorege(response);
 				return response;
 			})
 			.catch((response: any) => {
@@ -33,6 +32,26 @@ export class SecurityService {
 	register(user: any): Promise<void> {
 		return this.http.post(this.url + '/register', user).toPromise()
 			.then((response: any) => {
+				return response;
+			})
+			.catch((response: any) => {
+				return this.createHandle(response);
+			});
+	}
+
+	resetCheckerCode(user: any): Promise<void> {
+		return this.http.put(this.url + '/reset-checker-code', user).toPromise()
+			.then((response: any) => {
+				return response;
+			})
+			.catch((response: any) => {
+				return this.createHandle(response);
+			});
+	}
+
+	activeUser(user: any): Promise<void> {
+		return this.http.put(this.url + '/atctive', user).toPromise()
+			.then((response: any) => {
 				this.saveLocalStorege(response);
 				return response;
 			})
@@ -41,11 +60,10 @@ export class SecurityService {
 			});
 	}
 
-	changePassword(pwd: any, id: any) {
-		return this.http.put(this.url + '/change-password/'+id, {password: pwd}).toPromise()
+	changePassword(pwd: any, user: any) {
+		return this.http.put(this.url + '/change-password/'+pwd, user).toPromise()
 			.then((response: any) => {
-				this.saveLocalStorege(response);
-				return response;
+				this.router.navigate(['/active-user']);
 			})
 			.catch((response: any) => {
 				return this.createHandle(response);

@@ -4,6 +4,7 @@ import com.sansyro.sgpspring.constants.TypeLotteryEnum;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 
+import java.text.MessageFormat;
 import java.util.*;
 
 import static java.util.Objects.isNull;
@@ -14,8 +15,8 @@ public class GeneralUtil {
         return isNull(valor) || valor.isEmpty() || valor.length() == 0;
     }
 
-    public static String getNewHashCode() {
-        return RandomStringUtils.randomAlphabetic(10);
+    public static String getNewCode() {
+        return RandomStringUtils.randomAlphanumeric(10);
     }
 
     public static String getBet(TypeLotteryEnum typeLottery) {
@@ -34,6 +35,11 @@ public class GeneralUtil {
         });
 
         return bet.substring(0, bet.length() - 1);
+    }
+
+    public static String getMessageExeption(String msg, String... params) {
+        MessageFormat messageFormat = new MessageFormat(msg);
+        return messageFormat.format(params);
     }
 
 }

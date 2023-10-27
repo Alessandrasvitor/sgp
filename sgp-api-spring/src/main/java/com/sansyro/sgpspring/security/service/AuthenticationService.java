@@ -1,6 +1,9 @@
 package com.sansyro.sgpspring.security.service;
 
+import com.sansyro.sgpspring.constants.FunctionalityEnum;
+import com.sansyro.sgpspring.constants.MessageEnum;
 import com.sansyro.sgpspring.entity.User;
+import com.sansyro.sgpspring.exception.ServiceException;
 import com.sansyro.sgpspring.repository.UserRepository;
 import com.sansyro.sgpspring.service.UserService;
 import com.sansyro.sgpspring.util.GeneralUtil;
@@ -13,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static com.sansyro.sgpspring.constants.StringConstaint.MSG_USER_INVALID;
 import static com.sansyro.sgpspring.constants.StringConstaint.PASSWORD_DEFAULT;
 
 @Service
@@ -31,7 +33,7 @@ public class AuthenticationService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = repository.findByEmail(username);
         if(user == null) {
-            throw new UsernameNotFoundException(MSG_USER_INVALID);
+            throw new UsernameNotFoundException(MessageEnum.MSG_USER_INVALID.getMessage());
         }
         return user;
     }
@@ -42,22 +44,19 @@ public class AuthenticationService implements UserDetailsService {
         if(user.getPassword().equals(PASSWORD_DEFAULT) && user.getPassword().equals(userRequest.getPassword())) {
             return returnUser(user);
         }
-        if(validPassword(user.getPassword(), user.getUserHashCode(), userRequest.getPassword())) {
-            throw new UsernameNotFoundException(MSG_USER_INVALID);
-        }
+        validPassword(user.getPassword(), user.getUserHashCode(), userRequest.getPassword());
         return returnUser(user);
     }
 
-    private Boolean validPassword(String UserPassword, String UserHashCode, String requestPassword) {
-        StringBuilder password = new StringBuilder(requestPassword).append(UserHashCode);
-        String passwordCripto = SecurityUtil.bCryptPasswordEncoder().encode(password.toString());
-        return SecurityUtil.bCryptPasswordEncoder().matches(passwordCripto, UserPassword);
+    private void validPassword(String userPassword, String userHashCode, String requestPassword) {
+        if(!SecurityUtil.cryptPassword(requestPassword+userHashCode).equals(userPassword)) {
+            throw new UsernameNotFoundException(MessageEnum.MSG_USER_INVALID.getMessage());
+        }
     }
 
     private User returnUser(User user) {
         user.setToken(tokenService.generateToken(user));
-        repository.save(user);
-        return user;
+        return repository.save(user);
     }
 
     public void logout(Long id) throws UsernameNotFoundException {
@@ -69,19 +68,48 @@ public class AuthenticationService implements UserDetailsService {
         }
     }
 
-    public User register(User user) {
-        user.setPassword(service.validatePassword(user.getPassword(), GeneralUtil.getNewHashCode()));
-        user.setToken(tokenService.generateToken(user));
-        repository.save(user);
+    private User create(User userRequest) {
+        User user = service.save(userRequest);
+        user.setPassword(service.validatePassword(user.getPassword(), user.getUserHashCode()));
+        return repository.save(user);
+    }
+
+    public User register(User userRequest) {
+        User user = create(userRequest);
+        service.sendEmailCreate(user);
         return user;
+    }
+
+    public User activateUser(User userRequest) {
+        User user = (User) loadUserByUsername(userRequest.getEmail());
+        validPassword(user.getPassword(), user.getUserHashCode(), userRequest.getPassword());
+        if(!user.getCheckerCode().equalsIgnoreCase(userRequest.getCheckerCode())) {
+            throw new ServiceException(MessageEnum.MSG_CHECKER_CODE_INVALID.getMessage());
+        }
+        user.getFunctionalities().add(FunctionalityEnum.COURSE);
+        user.setToken(tokenService.generateToken(user));
+        user.setFlAtivo(Boolean.TRUE);
+        return repository.save(user);
+    }
+
+    private User updateCheckerCode(User userRequest) {
+        User user = (User) loadUserByUsername(userRequest.getEmail());
+        user.setCheckerCode(GeneralUtil.getNewCode().toUpperCase());
+        return repository.save(user);
+    }
+
+    public void resetCheckerCode(User userRequest) {
+        User user = updateCheckerCode(userRequest);
+        service.sendEmailCreate(user);
     }
 
     public User updatePassword(String oldPassword, User request) {
         User user = service.getByEmail(request.getEmail());
         validOldPassword(oldPassword, user);
-        user.setUserHashCode(GeneralUtil.getNewHashCode());
+        user.setUserHashCode(GeneralUtil.getNewCode());
         user.setPassword(service.validatePassword(request.getPassword(), user.getUserHashCode()));
-        user.setToken(tokenService.generateToken(user));
+        user.setFlAtivo(Boolean.FALSE);
+        user.setToken(null);
         return repository.save(user);
     }
 
@@ -89,9 +117,7 @@ public class AuthenticationService implements UserDetailsService {
         if(PASSWORD_DEFAULT.equals(oldPassword) && PASSWORD_DEFAULT.equals(user.getPassword())) {
             return;
         }
-        if(validPassword(user.getPassword(), user.getUserHashCode(), oldPassword)) {
-            throw new UsernameNotFoundException(MSG_USER_INVALID);
-        }
+        validPassword(user.getPassword(), user.getUserHashCode(), oldPassword);
     }
 
     public User updateToken(User request) {

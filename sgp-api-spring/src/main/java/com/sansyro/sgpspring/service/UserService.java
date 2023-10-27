@@ -1,10 +1,12 @@
 package com.sansyro.sgpspring.service;
 
 import com.sansyro.sgpspring.constants.FunctionalityEnum;
+import com.sansyro.sgpspring.constants.MessageEnum;
 import com.sansyro.sgpspring.entity.User;
 import com.sansyro.sgpspring.entity.dto.UserDTO;
 import com.sansyro.sgpspring.exception.ServiceException;
 import com.sansyro.sgpspring.repository.UserRepository;
+import com.sansyro.sgpspring.util.EmailUtil;
 import com.sansyro.sgpspring.util.GeneralUtil;
 import com.sansyro.sgpspring.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
-import static com.sansyro.sgpspring.constants.StringConstaint.*;
+import static com.sansyro.sgpspring.constants.StringConstaint.NAME;
+import static com.sansyro.sgpspring.constants.StringConstaint.PASSWORD_DEFAULT;
 import static java.util.Objects.isNull;
 
 @Service
@@ -40,26 +43,32 @@ public class UserService {
         if(userOp.isPresent()) {
             return userOp.get();
         }
-        throw new ServiceException(MSG_USER_NOT_FOUND);
+        throw new ServiceException(MessageEnum.MSG_USER_NOT_FOUND.getMessage());
     }
 
     public User getByEmail(String email) {
         User user = userRepository.findByEmail(email);
         if(user == null) {
-            throw new ServiceException(MSG_USER_NOT_FOUND);
+            throw new ServiceException(MessageEnum.MSG_USER_NOT_FOUND.getMessage());
         }
         return user;
     }
 
     public User save(User user) {
-        user.setStartView(FunctionalityEnum.HOME.getPage());
         validateUserNull(user);
+        EmailUtil.isValidEmailAddress(user.getEmail());
         validateUserDuplicate(user.getEmail());
-        user.setUserHashCode(GeneralUtil.getNewHashCode());
+        user.setUserHashCode(GeneralUtil.getNewCode());
+        user.setCheckerCode(GeneralUtil.getNewCode().toUpperCase());
         user.setFunctionalities(new HashSet<>());
         user.getFunctionalities().add(FunctionalityEnum.HOME);
-        user.setPassword(PASSWORD_DEFAULT);
         return userRepository.save(user);
+    }
+
+    public User create(User userRequest) {
+        User user = save(userRequest);
+        sendEmailCreate(user);
+        return user;
     }
 
     public User update(Long id, UserDTO request) {
@@ -84,7 +93,7 @@ public class UserService {
         if(PASSWORD_DEFAULT.equals(password)){
             throw new ServiceException("A Senha não pode ser igual a: "+PASSWORD_DEFAULT);
         }
-        return  SecurityUtil.bCryptPasswordEncoder().encode(password + hash);
+        return SecurityUtil.cryptPassword(password + hash);
     }
 
     private void validateUserDuplicate(String email) {
@@ -104,7 +113,10 @@ public class UserService {
             throw new ServiceException("Email do usuário é obrigatório");
         }
         if(GeneralUtil.stringNullOrEmpty(user.getStartView())){
-            throw new ServiceException("Página inicial do usuário é obrigatória");
+            user.setStartView(FunctionalityEnum.HOME.getPage());
+        }
+        if(GeneralUtil.stringNullOrEmpty(user.getPassword())){
+            user.setPassword(PASSWORD_DEFAULT);
         }
     }
 
@@ -121,6 +133,10 @@ public class UserService {
         } else {
             return null;
         }
+    }
+
+    public void sendEmailCreate(User user) {
+        EmailUtil.sendMail(user);
     }
 
 }

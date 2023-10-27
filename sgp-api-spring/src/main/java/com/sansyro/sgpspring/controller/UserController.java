@@ -69,7 +69,7 @@ public class UserController {
     @PostMapping()
     public ResponseEntity save(@RequestBody User user) {
         try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(UserDTO.mapper(userService.save(user)));
+            return ResponseEntity.status(HttpStatus.CREATED).body(UserDTO.mapper(userService.create(user)));
         } catch (ServiceException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e){
