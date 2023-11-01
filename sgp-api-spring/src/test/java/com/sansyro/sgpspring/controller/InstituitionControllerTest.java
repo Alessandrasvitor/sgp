@@ -10,6 +10,7 @@ import org.mockito.Mock;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class InstituitionControllerTest extends GenericControllerTest {
@@ -34,7 +35,8 @@ public class InstituitionControllerTest extends GenericControllerTest {
     void listTest() {
         try {
             mockMvc.perform(get("/instituition/all"))
-                    .andExpect(status().isOk());
+                .andDo(print())
+                .andExpect(status().isOk());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
