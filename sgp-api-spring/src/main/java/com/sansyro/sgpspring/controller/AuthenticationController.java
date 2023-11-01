@@ -3,6 +3,7 @@ package com.sansyro.sgpspring.controller;
 import com.sansyro.sgpspring.entity.User;
 import com.sansyro.sgpspring.entity.dto.TokenResponse;
 import com.sansyro.sgpspring.entity.dto.UserDTO;
+import com.sansyro.sgpspring.exception.ForbiddenException;
 import com.sansyro.sgpspring.exception.ServiceException;
 import com.sansyro.sgpspring.security.service.AuthenticationService;
 import com.sansyro.sgpspring.service.UserService;
@@ -35,10 +36,12 @@ public class AuthenticationController {
         try {
             User user = authenticationService.login(request);
             return ResponseEntity.ok(TokenResponse.builder().user(UserDTO.mapper(user)).type(BEARER).token(user.getToken()).build());
-        } catch (ServiceException | UsernameNotFoundException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (ForbiddenException e){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessageError());
+        } catch (ServiceException e){
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
         } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e);
         }
     }
 
@@ -57,7 +60,7 @@ public class AuthenticationController {
         try {
             return ResponseEntity.ok(UserDTO.mapper(authenticationService.register(request)));
         } catch (ServiceException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -69,7 +72,7 @@ public class AuthenticationController {
             User user = authenticationService.activateUser(request);
             return ResponseEntity.ok(TokenResponse.builder().user(UserDTO.mapper(user)).type(BEARER).token(user.getToken()).build());
         } catch (ServiceException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -81,7 +84,7 @@ public class AuthenticationController {
             authenticationService.resetCheckerCode(request);
             return ResponseEntity.ok().build();
         } catch (ServiceException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -91,8 +94,10 @@ public class AuthenticationController {
     public ResponseEntity changePassword(@PathVariable String oldPassword, @RequestBody @Validated User request){
         try {
             return ResponseEntity.ok(UserDTO.mapper(authenticationService.updatePassword(oldPassword, request)));
-        } catch (UsernameNotFoundException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (ForbiddenException e){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessageError());
+        } catch (ServiceException e){
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -103,8 +108,10 @@ public class AuthenticationController {
         try {
             User user = authenticationService.updateToken(request);
             return ResponseEntity.ok(TokenResponse.builder().user(UserDTO.mapper(user)).type(BEARER).token(user.getToken()).build());
-        } catch (ServiceException | UsernameNotFoundException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (ForbiddenException e){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessageError());
+        } catch (ServiceException e){
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

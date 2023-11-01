@@ -3,6 +3,7 @@ package com.sansyro.sgpspring.security.service;
 import com.sansyro.sgpspring.constants.FunctionalityEnum;
 import com.sansyro.sgpspring.constants.MessageEnum;
 import com.sansyro.sgpspring.entity.User;
+import com.sansyro.sgpspring.exception.ForbiddenException;
 import com.sansyro.sgpspring.exception.ServiceException;
 import com.sansyro.sgpspring.repository.UserRepository;
 import com.sansyro.sgpspring.service.UserService;
@@ -11,7 +12,6 @@ import com.sansyro.sgpspring.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -30,15 +30,15 @@ public class AuthenticationService implements UserDetailsService {
     private TokenService tokenService;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) {
         User user = repository.findByEmail(username);
         if(user == null) {
-            throw new UsernameNotFoundException(MessageEnum.MSG_USER_INVALID.getMessage());
+            throw new ForbiddenException(MessageEnum.MSG_USER_INVALID);
         }
         return user;
     }
 
-    public User login(User userRequest) throws UsernameNotFoundException {
+    public User login(User userRequest) {
         User user = (User) loadUserByUsername(userRequest.getEmail());
 
         if(user.getPassword().equals(PASSWORD_DEFAULT) && user.getPassword().equals(userRequest.getPassword())) {
@@ -50,7 +50,7 @@ public class AuthenticationService implements UserDetailsService {
 
     private void validPassword(String userPassword, String userHashCode, String requestPassword) {
         if(!SecurityUtil.cryptPassword(requestPassword+userHashCode).equals(userPassword)) {
-            throw new UsernameNotFoundException(MessageEnum.MSG_USER_INVALID.getMessage());
+            throw new ForbiddenException(MessageEnum.MSG_USER_INVALID);
         }
     }
 
@@ -59,7 +59,7 @@ public class AuthenticationService implements UserDetailsService {
         return repository.save(user);
     }
 
-    public void logout(Long id) throws UsernameNotFoundException {
+    public void logout(Long id) {
         Optional<User> userOptional = repository.findById(id);
         if(userOptional.isPresent()) {
             User user = userOptional.get();
@@ -84,11 +84,11 @@ public class AuthenticationService implements UserDetailsService {
         User user = (User) loadUserByUsername(userRequest.getEmail());
         validPassword(user.getPassword(), user.getUserHashCode(), userRequest.getPassword());
         if(!user.getCheckerCode().equalsIgnoreCase(userRequest.getCheckerCode())) {
-            throw new ServiceException(MessageEnum.MSG_CHECKER_CODE_INVALID.getMessage());
+            throw new ServiceException(MessageEnum.MSG_CHECKER_CODE_INVALID);
         }
         user.getFunctionalities().add(FunctionalityEnum.COURSE);
         user.setToken(tokenService.generateToken(user));
-        user.setFlAtivo(Boolean.TRUE);
+        user.setFlActive(Boolean.TRUE);
         return repository.save(user);
     }
 
@@ -108,7 +108,7 @@ public class AuthenticationService implements UserDetailsService {
         validOldPassword(oldPassword, user);
         user.setUserHashCode(GeneralUtil.getNewCode());
         user.setPassword(service.validatePassword(request.getPassword(), user.getUserHashCode()));
-        user.setFlAtivo(Boolean.FALSE);
+        user.setFlActive(Boolean.FALSE);
         user.setToken(null);
         return repository.save(user);
     }

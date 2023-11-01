@@ -1,5 +1,6 @@
 package com.sansyro.sgpspring.util;
 
+import com.sansyro.sgpspring.exception.ServiceException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.io.UnsupportedEncodingException;
@@ -24,7 +25,7 @@ public class SecurityUtil {
             return hexString.toString();
 
         } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+            throw new ServiceException(e.getMessage(), 0);
         }
     }
 

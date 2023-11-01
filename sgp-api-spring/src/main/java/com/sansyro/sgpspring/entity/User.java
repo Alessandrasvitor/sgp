@@ -40,7 +40,7 @@ import static java.util.Objects.isNull;
 @Setter
 @Entity
 @Table(name="user")
-public class User implements UserDetails {
+public class User implements UserDetails, Cloneable {
 
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
@@ -54,8 +54,8 @@ public class User implements UserDetails {
     //senhas padrão 123456
     private String password;
 
-    @Column(name="fl_ativo")
-    private boolean flAtivo;
+    @Column(name="fl_active")
+    private boolean flActive;
     @Column(name="checker_code")
     private String checkerCode;
 
@@ -72,6 +72,10 @@ public class User implements UserDetails {
     @CollectionTable(name="functionality_user", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "functionality")
     private Set<FunctionalityEnum> functionalities;
+
+    public User clone() throws CloneNotSupportedException {
+        return (User) super.clone();
+    }
 
     public static User mapper(UserDTO dto) {
         if(isNull(dto)) return null;

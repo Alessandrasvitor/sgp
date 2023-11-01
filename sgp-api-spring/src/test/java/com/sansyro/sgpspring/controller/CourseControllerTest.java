@@ -67,7 +67,7 @@ public class CourseControllerTest {
 
     @Test
     void getByIdWithBadRequestTest() {
-        when(service.getById(anyLong())).thenThrow(new ServiceException());
+        when(service.getById(anyLong())).thenThrow(ServiceException.class);
         ResponseEntity response = controller.getById(ID);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
@@ -87,7 +87,7 @@ public class CourseControllerTest {
 
     @Test
     void saveWithBadRequestTest() {
-        doThrow(new ServiceException()).when(service).save(any());
+        doThrow(ServiceException.class).when(service).save(any());
         ResponseEntity response = controller.save(courseDTOBuild);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
@@ -108,7 +108,7 @@ public class CourseControllerTest {
 
     @Test
     void updateWithBadRequestTest() {
-        when(service.update(anyLong(), any())).thenThrow(new ServiceException());
+        when(service.update(anyLong(), any())).thenThrow(ServiceException.class);
         ResponseEntity response = controller.update(ID, new CourseDTO());
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
@@ -122,7 +122,7 @@ public class CourseControllerTest {
 
     @Test
     void startWithBadRequestTest() {
-        when(service.start(anyLong())).thenThrow(new ServiceException());
+        when(service.start(anyLong())).thenThrow(ServiceException.class);
         ResponseEntity response = controller.start(ID);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
@@ -157,7 +157,7 @@ public class CourseControllerTest {
 
     @Test
     void deleteWithBadRequestTest() {
-        doThrow(new ServiceException()).when(service).delete(anyLong());
+        doThrow(ServiceException.class).when(service).delete(anyLong());
         ResponseEntity response = controller.delete(ID);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
@@ -179,7 +179,7 @@ public class CourseControllerTest {
 
     @Test
     void finishWithBadRequestTest() {
-        when(service.finish(anyLong(), anyFloat())).thenThrow(new ServiceException());
+        when(service.finish(anyLong(), anyFloat())).thenThrow(ServiceException.class);
         ResponseEntity response = controller.finish(ID, courseDTOBuild);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }

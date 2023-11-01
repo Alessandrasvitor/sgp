@@ -54,7 +54,7 @@ public class LotteryController {
         try {
             return ResponseEntity.ok().body(LotteryDTO.mapper(lotteryService.getById(id)));
         } catch (ServiceException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -66,7 +66,7 @@ public class LotteryController {
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(LotteryDTO.mapper(lotteryService.save(lottery)));
         } catch (ServiceException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -78,7 +78,7 @@ public class LotteryController {
         try {
             return ResponseEntity.ok().body(LotteryDTO.mapper(lotteryService.update(id, lottery)));
         } catch (ServiceException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -91,7 +91,7 @@ public class LotteryController {
             lotteryService.delete(id);
             return ResponseEntity.ok().build();
         } catch (ServiceException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -103,7 +103,7 @@ public class LotteryController {
         try {
             return ResponseEntity.ok().body(LotteryDTO.mapper(lotteryService.generate(TypeLotteryEnum.valueOf(typeLottery))));
         } catch (ServiceException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

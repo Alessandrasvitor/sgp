@@ -13,7 +13,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import static com.sansyro.sgpspring.constants.MessageEnum.MSG_FIELDS_NOT_FILLED;
+import static com.sansyro.sgpspring.constants.MessageEnum.MSG_INSTITUITION_NOT_FOUND;
 import static com.sansyro.sgpspring.constants.StringConstaint.NAME;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 public class InstituitionService {
@@ -33,7 +36,7 @@ public class InstituitionService {
         if(instituitionOp.isPresent()) {
             return instituitionOp.get();
         }
-        throw new ServiceException("Instituição não encontrada");
+        throw new ServiceException(MSG_INSTITUITION_NOT_FOUND, NOT_FOUND);
     }
 
     public Instituition save(Instituition instituition) {
@@ -58,10 +61,10 @@ public class InstituitionService {
 
     private void validateNotNull(Instituition instituition) {
         if(GeneralUtil.stringNullOrEmpty(instituition.getName())){
-            throw new ServiceException("Nome da instituição é obrigatório");
+            throw new ServiceException(MSG_FIELDS_NOT_FILLED);
         }
         if(GeneralUtil.stringNullOrEmpty(instituition.getAddress())){
-            throw new ServiceException("Endereço da instituition é obrigatório");
+            throw new ServiceException(MSG_FIELDS_NOT_FILLED);
         }
     }
 

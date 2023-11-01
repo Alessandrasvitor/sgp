@@ -46,7 +46,7 @@ public class InstituitionController {
         try {
             return ResponseEntity.ok().body(instituitionService.getById(id));
         } catch (ServiceException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -59,7 +59,7 @@ public class InstituitionController {
             instituitionService.save(instituition);
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (ServiceException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -71,7 +71,7 @@ public class InstituitionController {
         try {
             return ResponseEntity.ok().body(instituitionService.update(id, instituition));
         } catch (ServiceException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -84,7 +84,7 @@ public class InstituitionController {
             instituitionService.delete(id);
             return ResponseEntity.ok().build();
         } catch (ServiceException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

@@ -2,159 +2,149 @@ package com.sansyro.sgpspring.controller;
 
 import com.sansyro.sgpspring.build.UserBuild;
 import com.sansyro.sgpspring.entity.User;
-import com.sansyro.sgpspring.exception.ServiceException;
-import com.sansyro.sgpspring.security.service.AuthenticationService;
+import com.sansyro.sgpspring.entity.dto.UserDTO;
 import com.sansyro.sgpspring.service.UserService;
+import com.sansyro.sgpspring.util.GeneralUtil;
+import com.sansyro.sgpspring.util.SecurityUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import java.util.Optional;
 
 import static com.sansyro.sgpspring.constants.StringConstaint.PASSWORD_DEFAULT;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
-public class AuthenticationControllerTest {
+public class AuthenticationControllerTest extends GenericControllerTest {
 
-    @InjectMocks
-    private AuthenticationController controller;
-
-    @Mock
+    @Autowired
     private AuthenticationManager authenticationManager;
 
-    @Mock
+    @Autowired
     private UserService userService;
-
-    @Mock
-    private AuthenticationService authenticationService;
 
     private final Long ID = 1L;
 
+    private User user;
+
     private User userBuild;
 
+    private UserDTO userDTO;
+
     @BeforeEach
-    void setUp() {
+    void setUp() throws CloneNotSupportedException {
         userBuild = UserBuild.getBuild();
+        user = userBuild.clone();
+        user.setPassword(SecurityUtil.cryptPassword(user.getPassword()+user.getUserHashCode()));
+
     }
 
     @Test
-    void loginTest() {
-        when(authenticationService.login(any())).thenReturn(userBuild);
-        ResponseEntity response = controller.login(userBuild);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
+    void loginTest() throws Exception {
+        when(userRepository.findByEmail(anyString())).thenReturn(user);
+        when(userRepository.save(any())).thenReturn(user);
+        mockMvc.perform(
+                post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(GeneralUtil.generatedStringObject(userBuild)))
+                .andExpect(status().isOk());
+
+        when(userRepository.findByEmail(anyString())).thenReturn(null);
+        mockMvc.perform(
+                        post("/auth/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(GeneralUtil.generatedStringObject(userBuild)))
+                .andExpect(status().isBadRequest());
+
+        when(userRepository.findByEmail(anyString())).thenReturn(userBuild);
+        mockMvc.perform(
+                        post("/auth/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(GeneralUtil.generatedStringObject(userBuild)))
+                .andExpect(status().isBadRequest());
+
+        user.setPassword(PASSWORD_DEFAULT);
+        userBuild.setPassword(PASSWORD_DEFAULT);
+        when(userRepository.findByEmail(anyString())).thenReturn(user);
+        mockMvc.perform(
+                        post("/auth/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(GeneralUtil.generatedStringObject(userBuild)))
+                .andExpect(status().isOk());
+
+        when(userRepository.findByEmail(anyString())).thenThrow(RuntimeException.class);
+        mockMvc.perform(
+                        post("/auth/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(GeneralUtil.generatedStringObject(userBuild)))
+                .andExpect(status().isInternalServerError());
+
     }
 
     @Test
-    void loginWithErrorTest() {
-        when(authenticationService.login(any())).thenThrow(RuntimeException.class);
-        ResponseEntity response = controller.login(userBuild);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    void logoutTest() throws Exception {
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        mockMvc.perform(
+                        put("/auth/logout/{id}", ID))
+                .andExpect(status().isOk());
+
+        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+        mockMvc.perform(
+                        put("/auth/logout/{id}", ID))
+                .andExpect(status().isOk());
+
+        when(userRepository.findById(anyLong())).thenThrow(RuntimeException.class);
+        mockMvc.perform(
+                        put("/auth/logout/{id}", ID))
+                .andExpect(status().isInternalServerError());
+
     }
 
     @Test
-    void loginWithBadRequestTest() {
-        when(authenticationService.login(any())).thenThrow(ServiceException.class);
-        ResponseEntity response = controller.login(userBuild);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    }
+    void registerTest() throws Exception {
+        when(userRepository.findByEmail(anyString())).thenReturn(user);
+        when(userRepository.save(any())).thenReturn(user);
+        when(userRepository.findByEmail(anyString())).thenReturn(null);
+        mockMvc.perform(
+                        post("/auth/register")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(GeneralUtil.generatedStringObject(userBuild)))
+                .andExpect(status().isOk());
 
-    @Test
-    void logoutTest() {
-        ResponseEntity response = controller.logout(ID);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-    }
+        mockMvc.perform(
+                        post("/auth/register")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{}"))
+                .andExpect(status().isBadRequest());
 
-    @Test
-    void logoutWithErrorTest() {
-        doThrow(RuntimeException.class).when(authenticationService).logout(any());
-        ResponseEntity response = controller.logout(ID);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    }
+        mockMvc.perform(
+                        post("/auth/register")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(GeneralUtil.generatedStringObject(User.builder().name(user.getName()).build())))
+                .andExpect(status().isBadRequest());
 
-    @Test
-    void registerTest() {
-        when(authenticationService.register(any())).thenReturn(userBuild);
-        ResponseEntity response = controller.register(userBuild);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-    }
+        mockMvc.perform(
+                        post("/auth/register")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(GeneralUtil.generatedStringObject(
+                                        User.builder().name(user.getName())
+                                                .email(user.getName()).build())))
+                .andExpect(status().isBadRequest());
 
-    @Test
-    void registerWithErrorTest() {
-        when(authenticationService.register(any())).thenThrow(RuntimeException.class);
-        ResponseEntity response = controller.register(userBuild);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    }
+        mockMvc.perform(
+                        post("/auth/register")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(GeneralUtil.generatedStringObject(
+                                        User.builder().name(user.getName())
+                                                .email(user.getEmail()).build())))
+                .andExpect(status().isOk());
 
-    @Test
-    void registerTokenWithBadRequestTest() {
-        when(authenticationService.register(any())).thenThrow(ServiceException.class);
-        ResponseEntity response = controller.register(userBuild);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    }
-
-    @Test
-    void changePasswordTest() {
-        when(authenticationService.updatePassword(anyString(), any())).thenReturn(userBuild);
-        ResponseEntity response = controller.changePassword(PASSWORD_DEFAULT, userBuild);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-    }
-
-    @Test
-    void changePasswordWithErrorTest() {
-        when(authenticationService.updatePassword(anyString(), any())).thenThrow(RuntimeException.class);
-        ResponseEntity response = controller.changePassword(PASSWORD_DEFAULT, userBuild);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    }
-
-    @Test
-    void changePasswordWithBadRequestTest() {
-        when(authenticationService.updatePassword(anyString(), any())).thenThrow(UsernameNotFoundException.class);
-        ResponseEntity response = controller.changePassword(PASSWORD_DEFAULT, userBuild);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    }
-
-    @Test
-    void updateTokenTest() {
-        when(authenticationService.updateToken(any())).thenReturn(userBuild);
-        ResponseEntity response = controller.updateToken(userBuild);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-    }
-
-    @Test
-    void updateTokenWithErrorTest() {
-        when(authenticationService.updateToken(any())).thenThrow(RuntimeException.class);
-        ResponseEntity response = controller.updateToken(userBuild);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    }
-
-    @Test
-    void updateTokenWithBadRequestTest() {
-        when(authenticationService.updateToken(any())).thenThrow(ServiceException.class);
-        ResponseEntity response = controller.updateToken(userBuild);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    }
-
-    @Test
-    void updateTokenWithBadRequestErrorTest() {
-        when(authenticationService.updateToken(any())).thenThrow(UsernameNotFoundException.class);
-        ResponseEntity response = controller.updateToken(userBuild);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
 }

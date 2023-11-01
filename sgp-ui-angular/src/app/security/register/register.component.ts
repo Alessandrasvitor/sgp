@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { User } from 'src/app/shared/class/classes';
 import { ErrorService } from 'src/app/shared/service/error.service';
 import { SecurityService } from '../security.service';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-register',
@@ -17,6 +18,7 @@ export class RegisterComponent implements OnInit {
   constructor(
     private errorService: ErrorService,
     private securityService: SecurityService,
+    private messageService: MessageService,
     private router: Router
   ) { }
 
@@ -27,6 +29,7 @@ export class RegisterComponent implements OnInit {
     if(this.password === this.user.password) {
       this.securityService.register(this.user)
       .then(() => {
+        this.messageService.add({ severity: 'success', detail: 'Usuário '+this.user.name+' cadastrado com sucesso!'});
         this.router.navigate(['/active-user']);
       })
       .catch(erro => {

@@ -59,7 +59,7 @@ public class UserController {
         try {
             return ResponseEntity.ok().body(UserDTO.mapper(userService.getById(id)));
         } catch (ServiceException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -71,7 +71,7 @@ public class UserController {
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(UserDTO.mapper(userService.create(user)));
         } catch (ServiceException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -83,7 +83,7 @@ public class UserController {
         try {
             return ResponseEntity.ok().body(UserDTO.mapper(userService.update(id, user)));
         } catch (ServiceException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -95,7 +95,7 @@ public class UserController {
         try {
             return ResponseEntity.ok().body(UserDTO.mapper(userService.updateFunctionalities(id, user)));
         } catch (ServiceException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -107,7 +107,7 @@ public class UserController {
         try {
             return ResponseEntity.ok().body(userService.getById(id));
         } catch (ServiceException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -120,7 +120,7 @@ public class UserController {
             userService.resetPassword(id);
             return ResponseEntity.ok().build();
         } catch (ServiceException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

@@ -78,7 +78,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     //Ignora as urls livres de autenticação
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
         web.ignoring()
                 .antMatchers(HttpMethod.GET, "/api/**")
                 .antMatchers(HttpMethod.PUT, "/auth/**")

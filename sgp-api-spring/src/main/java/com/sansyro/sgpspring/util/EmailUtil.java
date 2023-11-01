@@ -12,6 +12,8 @@ import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 
+import static com.sansyro.sgpspring.constants.MessageEnum.MSG_EMAIL_INVALID;
+
 @Slf4j
 public class EmailUtil {
 
@@ -21,7 +23,7 @@ public class EmailUtil {
             emailAddr.validate();
             return true;
         } catch (AddressException ex) {
-            throw new ServiceException(GeneralUtil.getMessageExeption(MessageEnum.MSG_EMAIL_INVALID.getMessage(), email));
+            throw new ServiceException(GeneralUtil.getMessageExeption(MSG_EMAIL_INVALID.getMessage(), email), MSG_EMAIL_INVALID.getCode());
         }
     }
 

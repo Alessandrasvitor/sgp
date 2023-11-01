@@ -1,7 +1,6 @@
 package com.sansyro.sgpspring.service;
 
 import com.sansyro.sgpspring.constants.FunctionalityEnum;
-import com.sansyro.sgpspring.constants.MessageEnum;
 import com.sansyro.sgpspring.entity.User;
 import com.sansyro.sgpspring.entity.dto.UserDTO;
 import com.sansyro.sgpspring.exception.ServiceException;
@@ -13,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +20,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
+import static com.sansyro.sgpspring.constants.MessageEnum.MSG_FIELDS_NOT_FILLED;
+import static com.sansyro.sgpspring.constants.MessageEnum.MSG_USER_NOT_FOUND;
+import static com.sansyro.sgpspring.constants.MessageEnum.MSG_USER_DOUBLE;
 import static com.sansyro.sgpspring.constants.StringConstaint.NAME;
 import static com.sansyro.sgpspring.constants.StringConstaint.PASSWORD_DEFAULT;
-import static java.util.Objects.isNull;
 
 @Service
 public class UserService {
@@ -43,13 +45,13 @@ public class UserService {
         if(userOp.isPresent()) {
             return userOp.get();
         }
-        throw new ServiceException(MessageEnum.MSG_USER_NOT_FOUND.getMessage());
+        throw new ServiceException(MSG_USER_NOT_FOUND, HttpStatus.NOT_FOUND);
     }
 
     public User getByEmail(String email) {
         User user = userRepository.findByEmail(email);
         if(user == null) {
-            throw new ServiceException(MessageEnum.MSG_USER_NOT_FOUND.getMessage());
+            throw new ServiceException(MSG_USER_NOT_FOUND, HttpStatus.NOT_FOUND);
         }
         return user;
     }
@@ -88,29 +90,23 @@ public class UserService {
 
     public String validatePassword(String password, String hash) {
         if(GeneralUtil.stringNullOrEmpty(password)){
-            throw new ServiceException("A Senha do usuário é obrigatória");
-        }
-        if(PASSWORD_DEFAULT.equals(password)){
-            throw new ServiceException("A Senha não pode ser igual a: "+PASSWORD_DEFAULT);
+            throw new ServiceException(MSG_FIELDS_NOT_FILLED);
         }
         return SecurityUtil.cryptPassword(password + hash);
     }
 
     private void validateUserDuplicate(String email) {
         if(userRepository.findByEmail(email) != null) {
-            throw new ServiceException("Email já cadastrado na base");
+            throw new ServiceException(GeneralUtil.getMessageExeption(MSG_USER_DOUBLE.getMessage(), email), MSG_USER_DOUBLE.getCode());
         }
     }
 
     public void validateUserNull(User user) {
-        if(isNull(user)) {
-            throw new ServiceException("Campos obrigatórios não preenchidos");
-        }
         if(GeneralUtil.stringNullOrEmpty(user.getName())){
-            throw new ServiceException("Nome do usuário é obrigatório");
+            throw new ServiceException(MSG_FIELDS_NOT_FILLED);
         }
         if(GeneralUtil.stringNullOrEmpty(user.getEmail())){
-            throw new ServiceException("Email do usuário é obrigatório");
+            throw new ServiceException(MSG_FIELDS_NOT_FILLED);
         }
         if(GeneralUtil.stringNullOrEmpty(user.getStartView())){
             user.setStartView(FunctionalityEnum.HOME.getPage());

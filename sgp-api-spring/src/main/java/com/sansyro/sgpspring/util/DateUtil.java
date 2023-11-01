@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static com.sansyro.sgpspring.constants.MessageEnum.MSG_UNABLE_CONVERT_DATE;
 import static java.util.Objects.isNull;
 
 public class DateUtil {
@@ -36,7 +37,7 @@ public class DateUtil {
             SimpleDateFormat sdf = new SimpleDateFormat(FORMAT_DEFAULT_DATE);
             return sdf.parse(date);
         } catch (ParseException e) {
-            throw new ServiceException("Não foi possível converter a data: "+ date);
+            throw new ServiceException(GeneralUtil.getMessageExeption(MSG_UNABLE_CONVERT_DATE.getMessage(), date), MSG_UNABLE_CONVERT_DATE.getCode());
         }
     }
 

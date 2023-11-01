@@ -56,7 +56,7 @@ public class CourseController {
         try {
             return ResponseEntity.ok().body(CourseDTO.mapper(courseService.getById(id)));
         } catch (ServiceException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -68,7 +68,7 @@ public class CourseController {
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(CourseDTO.mapper(courseService.save(course)));
         } catch (ServiceException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -80,7 +80,7 @@ public class CourseController {
         try {
             return ResponseEntity.ok().body(CourseDTO.mapper(courseService.update(id, course)));
         } catch (ServiceException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -92,7 +92,7 @@ public class CourseController {
         try {
             return ResponseEntity.ok().body(CourseDTO.mapper(courseService.finish(id, course.getNotation())));
         } catch (ServiceException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -104,7 +104,7 @@ public class CourseController {
         try {
             return ResponseEntity.ok().body(CourseDTO.mapper(courseService.start(id)));
         } catch (ServiceException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -117,7 +117,7 @@ public class CourseController {
             courseService.delete(id);
             return ResponseEntity.ok().build();
         } catch (ServiceException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

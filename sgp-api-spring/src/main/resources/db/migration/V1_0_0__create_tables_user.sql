@@ -6,7 +6,10 @@ create table IF NOT EXISTS user (
      password varchar(255) not null,
      user_hash_code varchar(255) not null,
      start_view varchar(50) not null,
-     token  varchar(255)
+     token  varchar(255),
+     phone_number varchar(20) not null,
+     checker_code varchar(10) default '0123456789' not null,
+     fl_active boolean default false not null
 );
 
 create table IF NOT EXISTS functionality_user (
@@ -15,9 +18,9 @@ create table IF NOT EXISTS functionality_user (
     FOREIGN KEY (user_id) REFERENCES user(id)
 );
 
-INSERT INTO user (name, email, password, user_hash_code, start_view) VALUES
-     ('Super Admin', 'sansyro@email.com', '123456', '123456', 'instituition'),
-     ('Visitante', 'email@email.com', '123456', '123456', 'home');
+INSERT INTO user (name, email, password, user_hash_code, start_view, phone_number) VALUES
+     ('Super Admin', 'sansyro@email.com', '123456', '123456', 'instituition', '0123456789'),
+     ('Visitante', 'email@email.com', '123456', '123456', 'home', '0123456789');
 
 INSERT INTO functionality_user (user_id, functionality) VALUES
   ((SELECT u.id FROM user u WHERE u.email = 'sansyro@email.com' ), 'HOME'),
