@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ErrorService } from 'src/app/shared/service/error.service';
 import { SecurityService } from '../security.service';
 import { Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-active-user',
@@ -15,10 +16,12 @@ export class ActiveUserComponent implements OnInit {
   resetActiveTime = false;
   resetActiveTimer = 'Aguarde 2 minutos para reenviar';
   timerInterval: any;
+  successMessage = 'Operação realizada com sucesso!';
 
   constructor(
-    private errorService: ErrorService,
     private securityService: SecurityService,
+    private messageService: MessageService,
+    private errorService: ErrorService,
     private router: Router
   ) { }
 
@@ -33,6 +36,7 @@ export class ActiveUserComponent implements OnInit {
   active() {
     this.securityService.activeUser(this.user)
     .then((response: any) => {
+      this.messageService.add({ severity: 'success', summary: response.user.name, detail: 'Bem Vindo ao Sistema de gestão pessoal!' });
       this.router.navigate(['/'+response.user.startView]);
     })
     .catch(erro => {
@@ -46,6 +50,7 @@ export class ActiveUserComponent implements OnInit {
     this.countResetActiveTime();
     this.securityService.resetCheckerCode(this.user)
     .then(() => {
+      this.messageService.add({ severity: 'success', detail: 'Mensagem reenviada com sucesso!'});
     })
     .catch(erro => {
       this.errorService.handle(erro);

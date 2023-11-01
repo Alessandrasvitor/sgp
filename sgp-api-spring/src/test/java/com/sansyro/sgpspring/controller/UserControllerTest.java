@@ -65,7 +65,7 @@ public class UserControllerTest {
 
     @Test
     void getByIdWithBadRequestTest() {
-        when(service.getById(any())).thenThrow(new ServiceException());
+        when(service.getById(any())).thenThrow(ServiceException.class);
         ResponseEntity response = controller.getById(ID);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
@@ -85,7 +85,7 @@ public class UserControllerTest {
 
     @Test
     void saveWithBadRequestTest() {
-        doThrow(new ServiceException()).when(service).save(any());
+        doThrow(ServiceException.class).when(service).save(any());
         ResponseEntity response = controller.save(new User());
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
@@ -107,7 +107,7 @@ public class UserControllerTest {
 
     @Test
     void updateWithBadRequestTest() {
-        when(service.update(any(), any())).thenThrow(new ServiceException());
+        when(service.update(any(), any())).thenThrow(ServiceException.class);
         ResponseEntity response = controller.update(ID, new UserDTO());
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
@@ -136,7 +136,7 @@ public class UserControllerTest {
 
     @Test
     void updateFunctionalitiesWithBadRequestTest() {
-        when(service.updateFunctionalities(any(), any())).thenThrow(new ServiceException());
+        when(service.updateFunctionalities(any(), any())).thenThrow(ServiceException.class);
         ResponseEntity response = controller.updateFunctionalities(ID, dtoBuild);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
@@ -165,7 +165,7 @@ public class UserControllerTest {
 
     @Test
     void getWithPasswordWithBadRequestTest() {
-        when(service.getById(any())).thenThrow(new ServiceException());
+        when(service.getById(any())).thenThrow(ServiceException.class);
         ResponseEntity response = controller.getWithPassword(ID);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
@@ -185,7 +185,7 @@ public class UserControllerTest {
 
     @Test
     void resetPasswordWithBadRequestTest() {
-        doThrow(new ServiceException()).when(service).resetPassword(any());
+        doThrow(ServiceException.class).when(service).resetPassword(any());
         ResponseEntity response = controller.resetPassword(ID);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }

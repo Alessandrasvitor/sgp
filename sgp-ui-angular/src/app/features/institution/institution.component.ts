@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ConfirmationService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { ExcelService } from 'src/app/shared/service/excel.service';
 import { InstituitionService } from './instituition.service';
+import { ErrorService } from 'src/app/shared/service/error.service';
 
 @Component({
   templateUrl: './institution.component.html',
@@ -17,10 +18,13 @@ export class InstitutionComponent implements OnInit {
   editation = false;
   labelCancel = 'Cancelar';
   pageable: any = {page: 0, size: 3, totalPages: 0, totalElements: 0};
+  successMessage = 'Operação realizada com sucesso!';
 
   constructor(
-    private service: InstituitionService,
     private confirmationService: ConfirmationService,
+    private messageService: MessageService,
+    private service: InstituitionService,
+    private errorService: ErrorService,
     private excelService: ExcelService
   ) { }
 
@@ -37,7 +41,7 @@ export class InstitutionComponent implements OnInit {
       this.close();
     },
     error => {
-      this.close();
+      this.errorService.handle(error);
     });
   }
 
@@ -91,10 +95,11 @@ export class InstitutionComponent implements OnInit {
 
   delete(id: any) {
     this.service.delete(id).subscribe(() => {
+      this.messageService.add({ severity: 'success', detail: this.successMessage});
       this.updateView();
     },
     error => {
-      this.close();
+      this.errorService.handle(error);
     });
   }
 
@@ -102,17 +107,19 @@ export class InstitutionComponent implements OnInit {
     this.loading = true;
     if(this.institution.id) {
       this.service.put(this.institution).subscribe((response: any) => {
+        this.messageService.add({ severity: 'success', detail: this.successMessage});
         this.updateView();
       },
       error => {
-        this.close();
+        this.errorService.handle(error);
       });
     } else {
       this.service.post(this.institution).subscribe((response: any) => {
+        this.messageService.add({ severity: 'success', detail: this.successMessage});
         this.updateView();
       },
       error => {
-        this.close();
+        this.errorService.handle(error);
       });
     }
   }
@@ -126,7 +133,7 @@ export class InstitutionComponent implements OnInit {
       this.excelService.exportAsExcelFile(response, 'Instituições');
     },
     error => {
-      this.close();
+      this.errorService.handle(error);
     });
   }
 

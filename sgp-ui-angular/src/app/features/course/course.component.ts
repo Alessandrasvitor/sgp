@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { ConfirmationService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { CategoriaEnum } from 'src/app/shared/class/enums.enum';
 import { ExcelService } from 'src/app/shared/service/excel.service';
 import { InstituitionService } from '../institution/instituition.service';
 import { CourseService } from './course.service';
 import { CategoryPipe } from './../../shared/pipes/category.pipe';
+import { ErrorService } from 'src/app/shared/service/error.service';
 
 @Component({
   templateUrl: './course.component.html',
@@ -24,12 +25,15 @@ export class CourseComponent implements OnInit {
   categories: any = [];
   displayDialog = false;
   pageable: any = {page: 0, size: 3, totalPages: 0, totalElements: 0};
+  successMessage = 'Operação realizada com sucesso!';
 
   constructor(
-    private service: CourseService,
     private instituitionservice: InstituitionService,
     private confirmationService: ConfirmationService,
-    private excelService: ExcelService
+    private messageService: MessageService,
+    private errorService: ErrorService,
+    private excelService: ExcelService,
+    private service: CourseService
   ) { }
 
   ngOnInit() {
@@ -47,7 +51,7 @@ export class CourseComponent implements OnInit {
       this.close();
     },
     error => {
-      this.close();
+      this.errorService.handle(error);
     });
   }
 
@@ -126,10 +130,11 @@ export class CourseComponent implements OnInit {
 
   start(id: any) {
     this.service.start(id).subscribe(() => {
+      this.messageService.add({ severity: 'success', detail: this.successMessage});
       this.updateView();
     },
     error => {
-      this.close();
+      this.errorService.handle(error);
     });
   }
 
@@ -140,19 +145,21 @@ export class CourseComponent implements OnInit {
 
   finish() {
     this.service.finish(this.course.notation, this.course.id).subscribe(() => {
+      this.messageService.add({ severity: 'success', detail: this.successMessage});
       this.updateView();
     },
     error => {
-      this.close();
+      this.errorService.handle(error);
     });
   }
 
   delete(id: any) {
     this.service.delete(id).subscribe(() => {
+      this.messageService.add({ severity: 'success', detail: this.successMessage});
       this.updateView();
     },
     error => {
-      this.close();
+      this.errorService.handle(error);
     });
   }
 
@@ -160,17 +167,19 @@ export class CourseComponent implements OnInit {
     this.loading = true;
     if(this.course.id) {
       this.service.put(this.course).subscribe((response: any) => {
+        this.messageService.add({ severity: 'success', detail: this.successMessage});
         this.updateView();
       },
       error => {
-        this.close();
+        this.errorService.handle(error);
       });
     } else {
       this.service.post(this.course).subscribe((response: any) => {
+        this.messageService.add({ severity: 'success', detail: this.successMessage});
         this.updateView();
       },
       error => {
-        this.close();
+        this.errorService.handle(error);
       });
     }
   }
@@ -180,7 +189,7 @@ export class CourseComponent implements OnInit {
       this.excelService.exportAsExcelFile(response, 'Cursos');
     },
     error => {
-      this.close();
+      this.errorService.handle(error);
     });
   }
 

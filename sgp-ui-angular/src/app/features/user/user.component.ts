@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ConfirmationService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { ExcelService } from 'src/app/shared/service/excel.service';
 import { UserService } from './user.service';
 import { FuncionalityEnum } from 'src/app/shared/class/enums.enum';
@@ -23,12 +23,14 @@ export class UserComponent implements OnInit {
   functionalities: any = [];
   displayDialog = false;
   pageable: any = {page: 0, size: 3, totalPages: 0, totalElements: 0};
+  successMessage = 'Operação realizada com sucesso!';
 
   constructor(
-    private service: UserService,
     private confirmationService: ConfirmationService,
+    private messageService: MessageService,
     private errorService: ErrorService,
-    private excelService: ExcelService
+    private excelService: ExcelService,
+    private service: UserService
   ) { }
 
   ngOnInit() {
@@ -46,7 +48,6 @@ export class UserComponent implements OnInit {
       this.close();
     },
     error => {
-      this.close();
       this.errorService.handle(error);
     });
   }
@@ -118,10 +119,10 @@ export class UserComponent implements OnInit {
 
   resetPwd(id: any) {
     this.service.resetPwd(id).subscribe(() => {
+      this.messageService.add({ severity: 'success', detail: this.successMessage});
       this.updateView();
     },
     error => {
-      this.close();
       this.errorService.handle(error);
     });
   }
@@ -135,20 +136,20 @@ export class UserComponent implements OnInit {
 
   updateFunctionalities() {
     this.service.updateFunctionalities(this.user.functionalities, this.user.id).subscribe(() => {
+      this.messageService.add({ severity: 'success', detail: this.successMessage});
       this.updateView();
     },
     error => {
-      this.close();
       this.errorService.handle(error);
     });
   }
 
   delete(id: any) {
     this.service.delete(id).subscribe(() => {
+      this.messageService.add({ severity: 'success', detail: this.successMessage});
       this.updateView();
     },
     error => {
-      this.close();
       this.errorService.handle(error);
     });
   }
@@ -157,6 +158,7 @@ export class UserComponent implements OnInit {
     this.loading = true;
     if(this.user.id) {
       this.service.put(this.user).subscribe((response: any) => {
+        this.messageService.add({ severity: 'success', detail: this.successMessage});
         this.updateView();
       },
       error => {
@@ -165,6 +167,7 @@ export class UserComponent implements OnInit {
     } else {
       this.user.idUser = this.user.id; 
       this.service.post(this.user).subscribe((response: any) => {
+        this.messageService.add({ severity: 'success', detail: this.successMessage});
         this.updateView();
       },
       error => {
@@ -179,7 +182,7 @@ export class UserComponent implements OnInit {
       this.excelService.exportAsExcelFile(response, 'Usuários');
     },
     error => {
-      this.close();
+      this.errorService.handle(error);
     });
   }
 

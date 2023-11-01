@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { User } from 'src/app/shared/class/classes';
 import { ErrorService } from 'src/app/shared/service/error.service';
 import { SecurityService } from '../security.service';
+import { MessageService } from 'primeng/api';
 
 @Component({
   templateUrl: './reset-pwd.component.html',
@@ -17,6 +18,7 @@ export class ResetPwdComponent implements OnInit {
   constructor(
     private router: Router,
     private securityService: SecurityService,
+    private messageService: MessageService,
     private errorService: ErrorService
   ) { }
 
@@ -29,7 +31,13 @@ export class ResetPwdComponent implements OnInit {
 
   createPwd() {
     if(this.password === this.user.password) {
-      this.securityService.changePassword(this.oldPassword, this.user);
+      this.securityService.changePassword(this.oldPassword, this.user)
+      .then((response: any) => {
+        this.messageService.add({ severity: 'success', summary: response.user.name, detail: 'Operação realizada com sucesso!' });
+      })
+      .catch(erro => {
+        this.errorService.handle(erro);
+      });
     }
   }
 

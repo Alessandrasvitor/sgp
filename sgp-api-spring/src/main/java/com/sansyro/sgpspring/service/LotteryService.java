@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -19,6 +20,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static com.sansyro.sgpspring.constants.MessageEnum.MSG_FIELDS_NOT_FILLED;
+import static com.sansyro.sgpspring.constants.MessageEnum.MSG_LOTERY_NOT_FOUND;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -55,7 +58,7 @@ public class LotteryService {
         if(betOp.isPresent()) {
             return betOp.get();
         }
-        throw new ServiceException("Loteria não encontrada");
+        throw new ServiceException(MSG_LOTERY_NOT_FOUND, HttpStatus.NOT_FOUND);
     }
 
     public Lottery save(LotteryDTO dto) {
@@ -83,10 +86,10 @@ public class LotteryService {
 
     private void validate(LotteryDTO lottery) {
         if(GeneralUtil.stringNullOrEmpty(lottery.getBet())){
-            throw new ServiceException("Aposta é obrigatório");
+            throw new ServiceException(MSG_FIELDS_NOT_FILLED);
         }
         if(isNull(lottery.getType())){
-            throw new ServiceException("O tipo de loteria é obrigatória");
+            throw new ServiceException(MSG_FIELDS_NOT_FILLED);
         }
         if(isNull(lottery.getLotteryDateType())) {
             lottery.setLotteryDateType(new Date());

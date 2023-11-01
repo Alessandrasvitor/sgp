@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { User } from 'src/app/shared/class/classes';
 import { ErrorService } from 'src/app/shared/service/error.service';
 import { SecurityService } from '../security.service';
+import { MessageService } from 'primeng/api';
 
 @Component({
   templateUrl: './login.component.html',
@@ -15,6 +16,7 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private securityService: SecurityService,
+    private messageService: MessageService,
     private errorService: ErrorService,
     private router: Router
   ) { }
@@ -33,6 +35,7 @@ export class LoginComponent implements OnInit {
           this.resetPws(response.user.email);
         } else if(response.user.flActive) {
 					this.securityService.saveLocalStorege(response);
+          this.messageService.add({ severity: 'success', summary: response.user.name, detail: 'Bem Vindo ao Sistema de gestão pessoal!' });
           this.router.navigate(['/'+response.user.startView]);
 				} else {
           this.activeUser(response.user);

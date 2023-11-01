@@ -19,8 +19,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static com.sansyro.sgpspring.constants.MessageEnum.*;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 public class CourseService {
@@ -55,7 +57,7 @@ public class CourseService {
         if(courseOp.isPresent()) {
             return courseOp.get();
         }
-        throw new ServiceException("Curso não encontrado");
+        throw new ServiceException(MSG_COURSE_NOT_FOUND, NOT_FOUND);
     }
 
     public Course save(CourseDTO dto) {
@@ -72,7 +74,7 @@ public class CourseService {
     private void validateDuplicate(Course course) {
         Course courseDuplicated = courseRepository.findByName(course.getName());
         if(nonNull(courseDuplicated) && !courseDuplicated.equals(course)) {
-            throw new ServiceException("Curso já existe na base de dados.");
+            throw new ServiceException(MSG_COURSE_DOUBLE);
         }
     }
 
@@ -113,16 +115,16 @@ public class CourseService {
 
     private void validateNotNull(CourseDTO course) {
         if(GeneralUtil.stringNullOrEmpty(course.getName())){
-            throw new ServiceException("Nome do curso é obrigatório");
+            throw new ServiceException(MSG_FIELDS_NOT_FILLED);
         }
         if(GeneralUtil.stringNullOrEmpty(course.getDescription())){
-            throw new ServiceException("Descrição do course é obrigatória");
+            throw new ServiceException(MSG_FIELDS_NOT_FILLED);
         }
         if(isNull(course.getCategory())){
-            throw new ServiceException("Categoria do course é obrigatória");
+            throw new ServiceException(MSG_FIELDS_NOT_FILLED);
         }
         if(isNull(course.getIdInstituition())){
-            throw new ServiceException("Instituição do course é obrigatória");
+            throw new ServiceException(MSG_FIELDS_NOT_FILLED);
         }
     }
 

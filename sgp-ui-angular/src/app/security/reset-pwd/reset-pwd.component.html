@@ -27,7 +27,7 @@
             <small *ngIf="user.password !== password" class="p-error">A senhas não são compatíveis.</small>
           </div>
         <ng-template pTemplate="footer">
-          <button pButton (click)="createPwd()" type="button" label="Confirmar" ></button>
+          <button pButton (click)="createPwd()" [disabled]="!user.password || !password ||user.password !== password" type="button" label="Confirmar" ></button>
         </ng-template>
     </p-card>
     </div>

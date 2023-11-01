@@ -20,6 +20,7 @@ public class UserDTO {
     private String startView;
     private String email;
     private FunctionalityEnum init;
+    private boolean flActive;
     private Set<FunctionalityEnum> functionalities;
 
     public static UserDTO mapper(User user) {
@@ -30,6 +31,7 @@ public class UserDTO {
                 .name(user.getName())
                 .email(user.getEmail())
                 .functionalities(user.getFunctionalities())
+                .flActive(user.isFlActive())
                 .build();
     }
 

@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { ConfirmationService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { ExcelService } from 'src/app/shared/service/excel.service';
 import { LotteryService } from './lottery.service';
 import { TypeLotteryEnum } from 'src/app/shared/class/enums.enum';
 import { TypeLotteryPipe } from 'src/app/shared/pipes/type-lottery.pipe';
 import { MaxNumberLotteryPipe } from 'src/app/shared/pipes/max-number-lottery.pipe';
+import { ErrorService } from 'src/app/shared/service/error.service';
 
 @Component({
   templateUrl: './lottery.component.html',
@@ -32,11 +33,14 @@ export class LotteryComponent implements OnInit {
   createding = false;
   typeNumber = 'BET';
   pageable: any = {page: 0, size: 3, totalPages: 0, totalElements: 0};
+  successMessage = 'Operação realizada com sucesso!';
 
   constructor(
-    private service : LotteryService,
     private confirmationService: ConfirmationService,
-    private excelService: ExcelService
+    private messageService: MessageService,
+    private excelService: ExcelService,
+    private errorService: ErrorService,
+    private service : LotteryService
     ) { }
 
   ngOnInit() {
@@ -64,7 +68,7 @@ export class LotteryComponent implements OnInit {
       this.close();
     },
     error => {
-      this.close();
+      this.errorService.handle(error);
     });
   }
 
@@ -126,7 +130,7 @@ export class LotteryComponent implements OnInit {
       this.viewEdit = true;
     },
     error => {
-      this.close();
+      this.errorService.handle(error);
     });
   }
 
@@ -147,10 +151,11 @@ export class LotteryComponent implements OnInit {
 
   delete(id: any) {
     this.service.delete(id).subscribe(() => {
+      this.messageService.add({ severity: 'success', detail: this.successMessage});
       this.updateView();
     },
     error => {
-      this.close();
+      this.errorService.handle(error);
     });
   }
 
@@ -158,17 +163,19 @@ export class LotteryComponent implements OnInit {
     this.loading = true;
     if(this.lottery.id) {
       this.service.put(this.lottery).subscribe((response: any) => {
+        this.messageService.add({ severity: 'success', detail: this.successMessage});
         this.updateView();
       },
       error => {
-        this.close();
+        this.errorService.handle(error);
       });
     } else {
       this.service.post(this.lottery).subscribe((response: any) => {
+        this.messageService.add({ severity: 'success', detail: this.successMessage});
         this.updateView();
       },
       error => {
-        this.close();
+        this.errorService.handle(error);
       });
     }
   }
@@ -285,7 +292,7 @@ export class LotteryComponent implements OnInit {
       this.excelService.exportAsExcelFile(response, 'Loterias');
     },
     error => {
-      this.close();
+      this.errorService.handle(error);
     });
   }
 
