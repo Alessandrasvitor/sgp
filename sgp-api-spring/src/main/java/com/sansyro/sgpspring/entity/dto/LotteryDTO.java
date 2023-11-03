@@ -1,5 +1,7 @@
 package com.sansyro.sgpspring.entity.dto;
 
+import static java.util.Objects.isNull;
+
 import com.sansyro.sgpspring.entity.Lottery;
 import com.sansyro.sgpspring.util.DateUtil;
 import lombok.AllArgsConstructor;

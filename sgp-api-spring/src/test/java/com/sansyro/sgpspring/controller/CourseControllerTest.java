@@ -1,43 +1,54 @@
 package com.sansyro.sgpspring.controller;
 
-import com.sansyro.sgpspring.build.CourseBuild;
-import com.sansyro.sgpspring.build.CourseDTOBuild;
-import com.sansyro.sgpspring.entity.Course;
-import com.sansyro.sgpspring.entity.dto.CourseDTO;
-import com.sansyro.sgpspring.exception.ServiceException;
-import com.sansyro.sgpspring.service.CourseService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
-import java.util.ArrayList;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static com.sansyro.sgpspring.constants.MessageEnum.MSG_COURSE_DOUBLE;
+import static com.sansyro.sgpspring.constants.MessageEnum.MSG_COURSE_NOT_FOUND;
+import static com.sansyro.sgpspring.constants.MessageEnum.MSG_FIELDS_NOT_FILLED;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyFloat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
-public class CourseControllerTest {
+import com.sansyro.sgpspring.build.CourseBuild;
+import com.sansyro.sgpspring.build.InstituitionBuild;
+import com.sansyro.sgpspring.constants.CategoryEnum;
+import com.sansyro.sgpspring.constants.FunctionalityEnum;
+import com.sansyro.sgpspring.entity.Course;
+import com.sansyro.sgpspring.entity.User;
+import com.sansyro.sgpspring.entity.dto.CourseDTO;
+import com.sansyro.sgpspring.repository.CourseRepository;
+import com.sansyro.sgpspring.repository.InstituitionRepository;
+import com.sansyro.sgpspring.util.GeneralUtil;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
-    @InjectMocks
-    private CourseController controller;
+public class CourseControllerTest extends GenericControllerTest {
 
-    @Mock
-    private CourseService service;
+    @MockBean
+    private CourseRepository repository;
 
-    private final Long ID = 1L;
+    @MockBean
+    private InstituitionRepository instituitionRepository;
 
     private CourseDTO courseDTOBuild;
 
@@ -45,143 +56,211 @@ public class CourseControllerTest {
 
     @BeforeEach
     void setUp() {
-        courseDTOBuild = CourseDTOBuild.getBuild();
+        user.setFunctionalities(Set.of(FunctionalityEnum.COURSE, FunctionalityEnum.HOME));
+        user.setToken(tokenService.generateToken(User.builder().id(user.getId()).build()));
         courseBuild = CourseBuild.getBuild();
+        courseBuild.setUser(user);
+        courseDTOBuild = CourseDTO.mapper(courseBuild);
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
     }
 
     @Test
-    void listTest() {
-        when(service.list()).thenReturn(new ArrayList<>());
-        ResponseEntity response = controller.list();
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+    void listTest() throws Exception {
+        when(repository.list(anyLong())).thenReturn(new ArrayList<>());
+        mockMvc.perform(get("/course/all")
+                .header("Authorization", "Bearer " + user.getToken()))
+            .andExpect(status().isOk());
+
+        when(repository.list(anyLong(), (Pageable) any())).thenReturn(new PageImpl<>(Collections.emptyList()));
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("page", "1");
+        params.add("size", "3");
+        mockMvc.perform(get("/course")
+                .header("Authorization", "Bearer " + user.getToken())
+                .params(params))
+            .andExpect(status().isOk());
     }
 
     @Test
-    void getByIdTest() {
-        Course courseBuild = CourseBuild.getBuild();
-        when(service.getById(anyLong())).thenReturn(courseBuild);
-        ResponseEntity response = controller.getById(ID);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
+    void getByIdTest() throws Exception {
+        when(repository.findById(anyLong())).thenReturn(Optional.of(courseBuild));
+        mockMvc.perform(get("/course/{id}", courseBuild.getId())
+                .header("Authorization", "Bearer " + user.getToken()))
+            .andExpect(status().isOk());
+
+        when(repository.findById(anyLong())).thenReturn(Optional.empty());
+        mockMvc.perform(get("/course/{id}", courseBuild.getId())
+                .header("Authorization", "Bearer " + user.getToken()))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.userMessage").value(MSG_COURSE_NOT_FOUND.getMessage()))
+            .andExpect(jsonPath("$.code").value(MSG_COURSE_NOT_FOUND.getCode()));
+
+        when(repository.findById(anyLong())).thenReturn(null);
+        mockMvc.perform(get("/course/{id}", courseBuild.getId())
+                .header("Authorization", "Bearer " + user.getToken()))
+            .andExpect(status().isInternalServerError());
     }
 
     @Test
-    void getByIdWithBadRequestTest() {
-        when(service.getById(anyLong())).thenThrow(ServiceException.class);
-        ResponseEntity response = controller.getById(ID);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    void saveTest() throws Exception {
+        CourseDTO dto = CourseDTO.builder().build();
+        mockMvc.perform(post("/course")
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(GeneralUtil.generatedStringObject(dto)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.userMessage").value(MSG_FIELDS_NOT_FILLED.getMessage()))
+            .andExpect(jsonPath("$.code").value(MSG_FIELDS_NOT_FILLED.getCode()));
+
+        dto.setName(RandomStringUtils.randomAlphabetic(20));
+        dto.setDescription(RandomStringUtils.randomAlphabetic(50));
+        mockMvc.perform(post("/course")
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(GeneralUtil.generatedStringObject(dto)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.userMessage").value(MSG_FIELDS_NOT_FILLED.getMessage()))
+            .andExpect(jsonPath("$.code").value(MSG_FIELDS_NOT_FILLED.getCode()));
+
+        Course clone = courseBuild.clone();
+        clone.setId(null);
+        when(repository.findByName(anyString())).thenReturn(courseBuild);
+        mockMvc.perform(post("/course")
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(GeneralUtil.generatedStringObject(CourseDTO.mapper(clone))))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.userMessage").value(MSG_COURSE_DOUBLE.getMessage()))
+            .andExpect(jsonPath("$.code").value(MSG_COURSE_DOUBLE.getCode()));
+
+        clone.setName(RandomStringUtils.randomAlphabetic(10));
+        when(instituitionRepository.findById(anyLong())).thenReturn(Optional.of(InstituitionBuild.getBuild()));
+        mockMvc.perform(post("/course")
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(GeneralUtil.generatedStringObject(CourseDTO.mapper(clone))))
+            .andExpect(status().isCreated());
+
+        when(repository.save(any())).thenThrow(RuntimeException.class);
+        mockMvc.perform(post("/course")
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(GeneralUtil.generatedStringObject(CourseDTO.mapper(clone))))
+            .andExpect(status().isInternalServerError());
     }
 
     @Test
-    void getByIdWithErrorTest() {
-        when(service.getById(anyLong())).thenThrow(new NullPointerException());
-        ResponseEntity response = controller.getById(ID);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    void updateTest() throws Exception {
+        CourseDTO dto = CourseDTO.builder().name(RandomStringUtils.randomAlphabetic(20)).build();
+        when(repository.findById(anyLong())).thenReturn(Optional.of(courseBuild));
+        mockMvc.perform(put("/course/{id}", courseBuild.getId())
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(GeneralUtil.generatedStringObject(dto)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.userMessage").value(MSG_FIELDS_NOT_FILLED.getMessage()))
+            .andExpect(jsonPath("$.code").value(MSG_FIELDS_NOT_FILLED.getCode()));
+
+        dto.setDescription(RandomStringUtils.randomAlphabetic(50));
+        dto.setCategory(CategoryEnum.INFORMATICA.name());
+        mockMvc.perform(put("/course/{id}", courseBuild.getId())
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(GeneralUtil.generatedStringObject(dto)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.userMessage").value(MSG_FIELDS_NOT_FILLED.getMessage()))
+            .andExpect(jsonPath("$.code").value(MSG_FIELDS_NOT_FILLED.getCode()));
+
+        when(repository.findByName(anyString())).thenReturn(courseBuild);
+        when(instituitionRepository.findById(anyLong())).thenReturn(Optional.of(InstituitionBuild.getBuild()));
+        mockMvc.perform(put("/course/{id}", courseBuild.getId())
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(GeneralUtil.generatedStringObject(courseDTOBuild)))
+            .andExpect(status().isOk());
+
+        when(repository.save(any())).thenThrow(RuntimeException.class);
+        mockMvc.perform(put("/course/{id}", courseBuild.getId())
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(GeneralUtil.generatedStringObject(courseDTOBuild)))
+            .andExpect(status().isInternalServerError());
     }
 
     @Test
-    void saveTest() {
-        ResponseEntity response = controller.save(courseDTOBuild);
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    void startTest() throws Exception {
+        when(repository.findById(anyLong())).thenReturn(Optional.empty());
+        mockMvc.perform(patch("/course/start/{id}", courseBuild.getId())
+                .header("Authorization", "Bearer " + user.getToken()))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.userMessage").value(MSG_COURSE_NOT_FOUND.getMessage()))
+            .andExpect(jsonPath("$.code").value(MSG_COURSE_NOT_FOUND.getCode()));
+
+        when(repository.findById(anyLong())).thenReturn(Optional.of(courseBuild));
+        mockMvc.perform(patch("/course/start/{id}", courseBuild.getId())
+                .header("Authorization", "Bearer " + user.getToken()))
+            .andExpect(status().isOk());
+
+        when(repository.save(any())).thenThrow(RuntimeException.class);
+        mockMvc.perform(patch("/course/start/{id}", courseBuild.getId())
+                .header("Authorization", "Bearer " + user.getToken()))
+            .andExpect(status().isInternalServerError());
     }
 
     @Test
-    void saveWithBadRequestTest() {
-        doThrow(ServiceException.class).when(service).save(any());
-        ResponseEntity response = controller.save(courseDTOBuild);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    void finishTest() throws Exception {
+        when(repository.findById(anyLong())).thenReturn(Optional.empty());
+        mockMvc.perform(patch("/course/finish/{id}", courseBuild.getId())
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(GeneralUtil.generatedStringObject(courseDTOBuild)))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.userMessage").value(MSG_COURSE_NOT_FOUND.getMessage()))
+            .andExpect(jsonPath("$.code").value(MSG_COURSE_NOT_FOUND.getCode()));
+
+        Course clone = courseBuild.clone();
+        clone.setNotation(7.6f);
+        when(repository.findById(anyLong())).thenReturn(Optional.of(courseBuild));
+        mockMvc.perform(patch("/course/finish/{id}", courseBuild.getId())
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(GeneralUtil.generatedStringObject(CourseDTO.mapper(clone))))
+            .andExpect(status().isOk());
+
+        clone.setNotation(3.9f);
+        when(repository.findById(anyLong())).thenReturn(Optional.of(courseBuild));
+        mockMvc.perform(patch("/course/finish/{id}", courseBuild.getId())
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(GeneralUtil.generatedStringObject(CourseDTO.mapper(clone))))
+            .andExpect(status().isOk());
+
+        when(repository.save(any())).thenThrow(RuntimeException.class);
+        mockMvc.perform(patch("/course/finish/{id}", courseBuild.getId())
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(GeneralUtil.generatedStringObject(courseDTOBuild)))
+            .andExpect(status().isInternalServerError());
     }
 
     @Test
-    void saveWithErrorTest() {
-        doThrow(new RuntimeException()).when(service).save(any());
-        ResponseEntity response = controller.save(courseDTOBuild);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    }
+    void deleteTest() throws Exception {
+        doNothing().when(repository).deleteById(anyLong());
+        mockMvc.perform(delete("/course/{id}", courseBuild.getId())
+                .header("Authorization", "Bearer " + user.getToken()))
+            .andExpect(status().isOk());
 
-    @Test
-    void updateTest() {
-        when(service.update(anyLong(), any())).thenReturn(courseBuild);
-        ResponseEntity response = controller.update(ID, new CourseDTO());
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-    }
+        doThrow(EmptyResultDataAccessException.class).when(repository).deleteById(anyLong());
+        mockMvc.perform(delete("/course/{id}", courseBuild.getId())
+                .header("Authorization", "Bearer " + user.getToken()))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.userMessage").value(MSG_COURSE_NOT_FOUND.getMessage()))
+            .andExpect(jsonPath("$.code").value(MSG_COURSE_NOT_FOUND.getCode()));
 
-    @Test
-    void updateWithBadRequestTest() {
-        when(service.update(anyLong(), any())).thenThrow(ServiceException.class);
-        ResponseEntity response = controller.update(ID, new CourseDTO());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    }
-
-    @Test
-    void updateWithErrorTest() {
-        when(service.update(anyLong(), any())).thenThrow(new RuntimeException());
-        ResponseEntity response = controller.update(ID, new CourseDTO());
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    }
-
-    @Test
-    void startWithBadRequestTest() {
-        when(service.start(anyLong())).thenThrow(ServiceException.class);
-        ResponseEntity response = controller.start(ID);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    }
-
-    @Test
-    void startTest() {
-        when(service.start(anyLong())).thenReturn(courseBuild);
-        ResponseEntity response = controller.start(ID);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-    }
-
-    @Test
-    void startWithExceptionTest() {
-        when(service.start(anyLong())).thenThrow(new RuntimeException());
-        ResponseEntity response = controller.start(ID);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    }
-
-    @Test
-    void deleteTest() {
-        ResponseEntity response = controller.delete(ID);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-    }
-
-    @Test
-    void deleteWithErrorTest() {
-        doThrow(new RuntimeException()).when(service).delete(anyLong());
-        ResponseEntity response = controller.delete(ID);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    }
-
-    @Test
-    void deleteWithBadRequestTest() {
-        doThrow(ServiceException.class).when(service).delete(anyLong());
-        ResponseEntity response = controller.delete(ID);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    }
-
-    @Test
-    void finishTest() {
-        when(service.finish(anyLong(), anyFloat())).thenReturn(courseBuild);
-        ResponseEntity response = controller.finish(ID, courseDTOBuild);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-    }
-
-    @Test
-    void finishWithErrorTest() {
-        when(service.finish(anyLong(), anyFloat())).thenThrow(new RuntimeException());
-        ResponseEntity response = controller.finish(ID, courseDTOBuild);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    }
-
-    @Test
-    void finishWithBadRequestTest() {
-        when(service.finish(anyLong(), anyFloat())).thenThrow(ServiceException.class);
-        ResponseEntity response = controller.finish(ID, courseDTOBuild);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        doThrow(RuntimeException.class).when(repository).deleteById(anyLong());
+        mockMvc.perform(delete("/course/{id}", courseBuild.getId())
+                .header("Authorization", "Bearer " + user.getToken()))
+            .andExpect(status().isInternalServerError());
     }
 
 }

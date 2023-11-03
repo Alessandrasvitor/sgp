@@ -17,11 +17,10 @@ import static com.sansyro.sgpspring.constants.MessageEnum.MSG_EMAIL_INVALID;
 @Slf4j
 public class EmailUtil {
 
-    public static boolean isValidEmailAddress(String email) {
+    public static void isValidEmailAddress(String email) {
         try {
             InternetAddress emailAddr = new InternetAddress(email);
             emailAddr.validate();
-            return true;
         } catch (AddressException ex) {
             throw new ServiceException(GeneralUtil.getMessageExeption(MSG_EMAIL_INVALID.getMessage(), email), MSG_EMAIL_INVALID.getCode());
         }

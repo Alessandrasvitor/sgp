@@ -1,17 +1,19 @@
 package com.sansyro.sgpspring.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import static java.util.Objects.isNull;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sansyro.sgpspring.constants.TypeLotteryEnum;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
-
-import java.text.MessageFormat;
-import java.util.*;
-
-import static java.util.Objects.isNull;
 
 @Slf4j
 public class GeneralUtil {

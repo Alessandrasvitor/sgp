@@ -12,7 +12,7 @@ public class CourseBuild {
 
     public static Course getBuild() {
         return Course.builder()
-            .id(RandomUtils.nextLong())
+            .id(RandomUtils.nextLong(0,10))
             .name(RandomStringUtils.randomAlphabetic(15))
             .description(RandomStringUtils.randomAlphabetic(8))
             .startDate(new Date())

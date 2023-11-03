@@ -8,7 +8,7 @@ public class InstituitionBuild {
 
     public static Instituition getBuild() {
         return Instituition.builder()
-            .id(RandomUtils.nextLong())
+            .id(RandomUtils.nextLong(0,10))
             .name(RandomStringUtils.randomAlphabetic(15))
             .address(RandomStringUtils.randomAlphabetic(8))
             .quantity(RandomUtils.nextFloat())
