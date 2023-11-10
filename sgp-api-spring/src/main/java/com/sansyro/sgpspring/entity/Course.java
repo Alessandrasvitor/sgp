@@ -30,11 +30,10 @@ import java.util.Objects;
 
 import static java.util.Objects.isNull;
 
-
 @DiscriminatorValue("course")
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder(toBuilder = true)
+@Builder
 @Getter
 @Setter
 @Entity
@@ -90,9 +89,13 @@ public class Course implements Cloneable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (isNull(o) || getClass() != o.getClass()) return false;
         Course course = (Course) o;
-        return Objects.equals(id, course.id) && Objects.equals(name, course.name) && Objects.equals(user, course.user);
+        return Objects.equals(name, course.name) && Objects.equals(user.getId(), course.user.getId());
+    }
+
+    public Course clone() throws CloneNotSupportedException {
+        return (Course) super.clone();
     }
 
     @Override

@@ -17,7 +17,7 @@ import javax.persistence.GenerationType;
 @DiscriminatorValue("instituition")
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder(toBuilder = true)
+@Builder
 @Getter
 @Setter
 @Entity

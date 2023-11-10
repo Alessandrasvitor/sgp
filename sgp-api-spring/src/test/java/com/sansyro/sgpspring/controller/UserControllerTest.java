@@ -1,199 +1,264 @@
 package com.sansyro.sgpspring.controller;
 
-import com.sansyro.sgpspring.build.UserBuild;
-import com.sansyro.sgpspring.build.UserDTOBuild;
+import static com.sansyro.sgpspring.constants.MessageEnum.MSG_EMAIL_INVALID;
+import static com.sansyro.sgpspring.constants.MessageEnum.MSG_FIELDS_NOT_FILLED;
+import static com.sansyro.sgpspring.constants.MessageEnum.MSG_USER_DOUBLE;
+import static com.sansyro.sgpspring.constants.MessageEnum.MSG_USER_NOT_FOUND;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.sansyro.sgpspring.constants.FunctionalityEnum;
 import com.sansyro.sgpspring.entity.User;
 import com.sansyro.sgpspring.entity.dto.UserDTO;
 import com.sansyro.sgpspring.exception.ServiceException;
-import com.sansyro.sgpspring.service.UserService;
+import com.sansyro.sgpspring.util.GeneralUtil;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
-import java.util.ArrayList;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
-
-@ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
-public class UserControllerTest {
-
-    @InjectMocks
-    private UserController controller;
-
-    @Mock
-    private UserService service;
-
-    private final Long ID = 1L;
+public class UserControllerTest extends GenericControllerTest {
 
     private User userBuild;
 
     private UserDTO dtoBuild;
 
     @BeforeEach
-    void setUp() {
-        userBuild = UserBuild.getBuild();
-        dtoBuild = UserDTOBuild.getBuild();
+    void setUp() throws CloneNotSupportedException {
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        user.setToken(tokenService.generateToken(User.builder().id(user.getId()).build()));
+        userBuild = user.clone();
+        dtoBuild = UserDTO.mapper(userBuild);
     }
 
     @Test
-    void listTest() {
-        when(service.list()).thenReturn(new ArrayList<>());
-        ResponseEntity response = controller.list();
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+    void listTest() throws Exception {
+        when(userRepository.findAll((Sort) any())).thenReturn(new ArrayList<>());
+        mockMvc.perform(get("/user/all")
+                .header("Authorization", "Bearer " + user.getToken()))
+            .andExpect(status().isOk());
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("page", "1");
+        params.add("size", "3");
+        when(userRepository.findAll((Pageable) any())).thenReturn(new PageImpl<>(Collections.emptyList()));
+        mockMvc.perform(get("/user")
+                .header("Authorization", "Bearer " + user.getToken())
+                .params(params))
+            .andExpect(status().isOk());
     }
 
     @Test
-    void getByIdTest() {
-        User userBuild = UserBuild.getBuild();
-        when(service.getById(any())).thenReturn(userBuild);
-        ResponseEntity response = controller.getById(ID);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
+    void getTest() throws Exception {
+        when(userRepository.findAll((Sort) any())).thenReturn(new ArrayList<>());
+        mockMvc.perform(get("/user/{id}", userBuild.getId())
+                .header("Authorization", "Bearer " + user.getToken()))
+            .andExpect(status().isOk());
     }
 
     @Test
-    void getByIdWithBadRequestTest() {
-        when(service.getById(any())).thenThrow(ServiceException.class);
-        ResponseEntity response = controller.getById(ID);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    void saveTest() throws Exception {
+        var userSaveError = User.builder().build();
+        mockMvc.perform(post("/user")
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(GeneralUtil.generatedStringObject(User.builder().build())))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.userMessage").value(MSG_FIELDS_NOT_FILLED.getMessage()))
+            .andExpect(jsonPath("$.code").value(MSG_FIELDS_NOT_FILLED.getCode()));
+
+        userSaveError.setName(RandomStringUtils.randomAlphabetic(20));
+        userSaveError.setEmail(RandomStringUtils.randomAlphabetic(20));
+        mockMvc.perform(post("/user")
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(GeneralUtil.generatedStringObject(userSaveError)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.userMessage").value(
+                GeneralUtil.getMessageExeption(MSG_EMAIL_INVALID.getMessage(), userSaveError.getEmail())))
+            .andExpect(jsonPath("$.code").value(MSG_EMAIL_INVALID.getCode()));
+
+        when(userRepository.findByEmail(anyString())).thenReturn(userBuild);
+        mockMvc.perform(post("/user")
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(GeneralUtil.generatedStringObject(dtoBuild)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.userMessage").value(
+                GeneralUtil.getMessageExeption(MSG_USER_DOUBLE.getMessage(), dtoBuild.getEmail())))
+            .andExpect(jsonPath("$.code").value(MSG_USER_DOUBLE.getCode()));
+
+        when(userRepository.save(any())).thenReturn(userBuild);
+        when(userRepository.findByEmail(anyString())).thenReturn(null);
+        mockMvc.perform(post("/user")
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(GeneralUtil.generatedStringObject(dtoBuild)))
+            .andDo(print())
+            .andExpect(status().isCreated());
+
+        when(userRepository.save(any())).thenThrow(RuntimeException.class);
+        mockMvc.perform(post("/user")
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(GeneralUtil.generatedStringObject(dtoBuild)))
+            .andExpect(status().isInternalServerError());
     }
 
     @Test
-    void getByIdWithErrorTest() {
-        when(service.getById(any())).thenThrow(new NullPointerException());
-        ResponseEntity response = controller.getById(ID);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    void updateTest() throws Exception {
+        mockMvc.perform(put("/user/{id}", user.getId())
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(GeneralUtil.generatedStringObject(User.builder()
+                    .name(RandomStringUtils.randomAlphabetic(20)).build())))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.userMessage").value(MSG_FIELDS_NOT_FILLED.getMessage()))
+            .andExpect(jsonPath("$.code").value(MSG_FIELDS_NOT_FILLED.getCode()));
+
+        when(userRepository.findByEmail(anyString())).thenReturn(userBuild);
+        mockMvc.perform(put("/user/{id}", 1l)
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(GeneralUtil.generatedStringObject(dtoBuild)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.userMessage").value(
+                GeneralUtil.getMessageExeption(MSG_USER_DOUBLE.getMessage(), dtoBuild.getEmail())))
+            .andExpect(jsonPath("$.code").value(MSG_USER_DOUBLE.getCode()));
+
+        when(userRepository.save(any())).thenReturn(userBuild);
+        mockMvc.perform(put("/user/{id}", userBuild.getId())
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(GeneralUtil.generatedStringObject(dtoBuild)))
+            .andDo(print())
+            .andExpect(status().isOk());
+
+        when(userRepository.save(any())).thenThrow(RuntimeException.class);
+        mockMvc.perform(put("/user/{id}", userBuild.getId())
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(GeneralUtil.generatedStringObject(dtoBuild)))
+            .andExpect(status().isInternalServerError());
     }
 
     @Test
-    void saveTest() {
-        ResponseEntity response = controller.save(new User());
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    void updateFunctionalitiesTest() throws Exception {
+        when(userRepository.save(any())).thenReturn(userBuild);
+        mockMvc.perform(patch("/user/functionalities/{id}", userBuild.getId())
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(GeneralUtil.generatedStringObject(dtoBuild)))
+            .andExpect(status().isOk());
+
+        when(userRepository.save(any())).thenThrow(new ServiceException(MSG_USER_NOT_FOUND, NOT_FOUND));
+        mockMvc.perform(patch("/user/functionalities/{id}", userBuild.getId())
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(GeneralUtil.generatedStringObject(dtoBuild)))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.userMessage").value(MSG_USER_NOT_FOUND.getMessage()))
+            .andExpect(jsonPath("$.code").value(MSG_USER_NOT_FOUND.getCode()));
     }
 
     @Test
-    void saveWithBadRequestTest() {
-        doThrow(ServiceException.class).when(service).save(any());
-        ResponseEntity response = controller.save(new User());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    void updateFunctionalitiesInternalServerErrorTest() throws Exception {
+        when(userRepository.save(any())).thenThrow(RuntimeException.class);
+        mockMvc.perform(patch("/user/functionalities/{id}", userBuild.getId())
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(GeneralUtil.generatedStringObject(dtoBuild)))
+            .andExpect(status().isInternalServerError());
     }
 
     @Test
-    void saveWithErrorTest() {
-        doThrow(new RuntimeException()).when(service).save(any());
-        ResponseEntity response = controller.save(new User());
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    void getWithPasswordTest() throws Exception {
+        mockMvc.perform(get("/user/password/{id}", user.getId())
+                .header("Authorization", "Bearer " + user.getToken()))
+            .andExpect(status().isOk());
     }
 
     @Test
-    void updateTest() {
-        User userBuild = UserBuild.getBuild();
-        when(service.update(any(), any())).thenReturn(userBuild);
-        ResponseEntity response = controller.update(ID, new UserDTO());
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+    void resetPasswordTest() throws Exception {
+        when(userRepository.save(any())).thenReturn(userBuild);
+        mockMvc.perform(patch("/user/reset/{id}", userBuild.getId())
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(GeneralUtil.generatedStringObject(dtoBuild)))
+            .andExpect(status().isOk());
+
+        when(userRepository.save(any())).thenThrow(new ServiceException(MSG_USER_NOT_FOUND, NOT_FOUND));
+        mockMvc.perform(patch("/user/reset/{id}", userBuild.getId())
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(GeneralUtil.generatedStringObject(dtoBuild)))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.userMessage").value(MSG_USER_NOT_FOUND.getMessage()))
+            .andExpect(jsonPath("$.code").value(MSG_USER_NOT_FOUND.getCode()));
     }
 
     @Test
-    void updateWithBadRequestTest() {
-        when(service.update(any(), any())).thenThrow(ServiceException.class);
-        ResponseEntity response = controller.update(ID, new UserDTO());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    void resetPasswordInternalServerErrorTest() throws Exception {
+        when(userRepository.save(any())).thenThrow(RuntimeException.class);
+        mockMvc.perform(patch("/user/reset/{id}", userBuild.getId())
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(GeneralUtil.generatedStringObject(dtoBuild)))
+            .andExpect(status().isInternalServerError());
     }
 
     @Test
-    void updateWithErrorTest() {
-        when(service.update(any(), any())).thenThrow(new RuntimeException());
-        ResponseEntity response = controller.update(ID, new UserDTO());
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    void getUserDetailsTest() throws Exception {
+        mockMvc.perform(get("/user/info")
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
     }
 
     @Test
-    void updatePasswordTest() {
-        when(service.update(any(), any())).thenReturn(userBuild);
-        ResponseEntity response = controller.update(ID, dtoBuild);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+    void deleteTest() throws Exception {
+        when(userRepository.save(any())).thenReturn(userBuild);
+        mockMvc.perform(delete("/user/{id}", userBuild.getId())
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        when(userRepository.save(any())).thenThrow(new ServiceException(MSG_USER_NOT_FOUND, NOT_FOUND));
+        mockMvc.perform(delete("/user/{id}", userBuild.getId())
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.userMessage").value(MSG_USER_NOT_FOUND.getMessage()))
+            .andExpect(jsonPath("$.code").value(MSG_USER_NOT_FOUND.getCode()));
     }
 
     @Test
-    void updateFunctionalitiesTest() {
-        when(service.updateFunctionalities(any(), any())).thenReturn(userBuild);
-        ResponseEntity response = controller.updateFunctionalities(ID, dtoBuild);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-    }
-
-    @Test
-    void updateFunctionalitiesWithBadRequestTest() {
-        when(service.updateFunctionalities(any(), any())).thenThrow(ServiceException.class);
-        ResponseEntity response = controller.updateFunctionalities(ID, dtoBuild);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    }
-
-    @Test
-    void updateFunctionalitiesWithExceptionTest() {
-        when(service.updateFunctionalities(any(), any())).thenThrow(new RuntimeException());
-        ResponseEntity response = controller.updateFunctionalities(ID, dtoBuild);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    }
-
-    @Test
-    void getWithPasswordTest() {
-        when(service.getById(any())).thenReturn(userBuild);
-        ResponseEntity response = controller.getWithPassword(ID);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-    }
-
-    @Test
-    void getWithPasswordWithErrorTest() {
-        when(service.getById(any())).thenThrow(new RuntimeException());
-        ResponseEntity response = controller.getWithPassword(ID);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    }
-
-    @Test
-    void getWithPasswordWithBadRequestTest() {
-        when(service.getById(any())).thenThrow(ServiceException.class);
-        ResponseEntity response = controller.getWithPassword(ID);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    }
-
-    @Test
-    void resetPasswordTest() {
-        ResponseEntity response = controller.resetPassword(ID);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-    }
-
-    @Test
-    void resetPasswordWithErrorTest() {
-        doThrow(new RuntimeException()).when(service).resetPassword(any());
-        ResponseEntity response = controller.resetPassword(ID);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    }
-
-    @Test
-    void resetPasswordWithBadRequestTest() {
-        doThrow(ServiceException.class).when(service).resetPassword(any());
-        ResponseEntity response = controller.resetPassword(ID);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    }
-
-    @Test
-    void getUserDetailsWithErrorTest() {
-        ResponseEntity response = controller.getUserDetails();
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    void deleteInternalServerErrorTest() throws Exception {
+        when(userRepository.save(any())).thenThrow(RuntimeException.class);
+        mockMvc.perform(delete("/user/{id}", userBuild.getId())
+                .header("Authorization", "Bearer " + user.getToken())
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isInternalServerError());
     }
 
 }

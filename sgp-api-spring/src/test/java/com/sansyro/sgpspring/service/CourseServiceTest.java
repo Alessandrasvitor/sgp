@@ -1,12 +1,19 @@
 package com.sansyro.sgpspring.service;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.sansyro.sgpspring.build.CourseBuild;
-import com.sansyro.sgpspring.build.CourseDTOBuild;
 import com.sansyro.sgpspring.entity.Course;
 import com.sansyro.sgpspring.entity.User;
 import com.sansyro.sgpspring.entity.dto.CourseDTO;
 import com.sansyro.sgpspring.exception.ServiceException;
 import com.sansyro.sgpspring.repository.CourseRepository;
+import java.util.Optional;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,15 +21,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.any;
 
 @ExtendWith(MockitoExtension.class)
 public class CourseServiceTest {
@@ -48,14 +46,6 @@ public class CourseServiceTest {
         courseBuild = CourseBuild.getBuild();
     }
 
-//    @Test
-//    void listTest() {
-//        when(repository.findAll()).thenReturn(new PageImpl<>(Collections.emptyList()));
-//        List courses = service.list();
-//        verify(repository, times(1)).findAll();
-//        assertNotNull(courses);
-//    }
-
     @Test
     void getByIdTest() {
         when(repository.findById(any())).thenReturn(Optional.of(courseBuild));
@@ -73,10 +63,9 @@ public class CourseServiceTest {
 
     @Test
     void saveTest() {
-        CourseDTO dto = CourseDTOBuild.getBuild();
+        CourseDTO dto = CourseDTO.mapper(CourseBuild.getBuild());
         Course course = CourseBuild.getBuild();
         when(repository.save(any())).thenReturn(course);
-        when(userservice.getById(any())).thenReturn(new User());
         service.save(dto);
         verify(repository, times(1)).save(any());
     }
@@ -96,7 +85,7 @@ public class CourseServiceTest {
 
     @Test
     void saveWithErrorNotDescriptionTest() {
-        CourseDTO dto = CourseDTOBuild.getBuild();
+        CourseDTO dto = CourseDTO.mapper(CourseBuild.getBuild());
         dto.setDescription("");
         assertThrows(ServiceException.class, () -> service.save(dto));
     }
@@ -115,14 +104,14 @@ public class CourseServiceTest {
 
     @Test
     void updateWithErrorNotCategoryTest() {
-        CourseDTO dto = CourseDTOBuild.getBuild();
+        CourseDTO dto = CourseDTO.mapper(CourseBuild.getBuild());
         dto.setCategory(null);
         assertThrows(ServiceException.class, () -> service.update(ID, dto));
     }
 
     @Test
     void updateWithErrorNotInstituitionTest() {
-        CourseDTO dto = CourseDTOBuild.getBuild();
+        CourseDTO dto = CourseDTO.mapper(CourseBuild.getBuild());
         dto.setIdInstituition(null);
         assertThrows(ServiceException.class, () -> service.update(ID, dto));
     }

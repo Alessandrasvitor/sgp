@@ -44,7 +44,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         Optional<User> optionalUser = repository.findById(id);
         if(optionalUser.isPresent()) {
             User user = optionalUser.get();
-            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
         }
     }

@@ -14,6 +14,7 @@ public enum MessageEnum {
     MSG_USER_DOUBLE("Email {0} já cadastrado!", 4001),
     MSG_EMAIL_INVALID("Email {0} inválido!", 4002),
     MSG_CHECKER_CODE_INVALID("Código de verificação inválido!", 4002),
+
     MSG_USER_NOT_FOUND("Usuário não encontrado!", 4004),
     MSG_USER_INVALID("Usuário ou senha inválido!", 4005),
 
@@ -24,7 +25,7 @@ public enum MessageEnum {
 
     MSG_LOTERY_NOT_FOUND("Loteria não encontrada", 4054),
 
-    MSG_UNABLE_CONVERT_DATE("Não foi possível converter a data: {}", 4070)
+    MSG_UNABLE_CONVERT_DATE("Não foi possível converter a data: {0}", 4070)
 
 
     ;

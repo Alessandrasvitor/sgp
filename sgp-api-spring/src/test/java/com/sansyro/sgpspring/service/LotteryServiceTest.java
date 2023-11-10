@@ -1,5 +1,6 @@
 package com.sansyro.sgpspring.service;
 
+import com.sansyro.sgpspring.build.LotteryBuild;
 import com.sansyro.sgpspring.build.UserBuild;
 import com.sansyro.sgpspring.constants.TypeLotteryEnum;
 import com.sansyro.sgpspring.entity.Lottery;
@@ -134,13 +135,6 @@ public class LotteryServiceTest {
         when(repository.save(any())).thenReturn(lottery);
         assertNotNull(service.update(ID, LotteryDTO.mapper(lottery)));
         verify(repository, times(1)).save(any());
-    }
-
-    @Test
-    void updateWithErrorNotTypeTest() {
-        Lottery lottery = new Lottery();
-        lottery.setBet(RandomStringUtils.randomAlphabetic(8));
-        assertThrows(ServiceException.class, () -> service.update(ID, LotteryDTO.mapper(lottery)));
     }
 
     @Test

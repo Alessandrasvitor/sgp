@@ -1,26 +1,39 @@
 package com.sansyro.sgpspring.controller;
 
+import static com.sansyro.sgpspring.constants.MessageEnum.MSG_INSTITUITION_NOT_FOUND;
+import static com.sansyro.sgpspring.constants.StringConstaint.NAME;
+
 import com.sansyro.sgpspring.entity.Instituition;
+import com.sansyro.sgpspring.exception.MessageError;
 import com.sansyro.sgpspring.exception.ServiceException;
 import com.sansyro.sgpspring.service.InstituitionService;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
-import static com.sansyro.sgpspring.constants.StringConstaint.NAME;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/instituition")
 @PreAuthorize("hasAuthority('HOME')")
-@OpenAPIDefinition(info = @Info(title = "Sistema de gestão de entreteinimento", version = "1.0", description = ""))
+@SecurityRequirement(name = "Bearer Auth")
 public class InstituitionController {
 
     @Autowired
@@ -35,8 +48,8 @@ public class InstituitionController {
     @ResponseBody
     @GetMapping()
     public ResponseEntity list(@PageableDefault(sort = NAME,
-            direction = Sort.Direction.ASC,
-            size = 5) Pageable pageable) {
+        direction = Sort.Direction.ASC,
+        size = 5) Pageable pageable) {
         return ResponseEntity.ok().body(instituitionService.list(pageable));
     }
 
@@ -45,9 +58,9 @@ public class InstituitionController {
     public ResponseEntity getById(@PathVariable Long id) {
         try {
             return ResponseEntity.ok().body(instituitionService.getById(id));
-        } catch (ServiceException e){
+        } catch (ServiceException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
-        } catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
@@ -58,9 +71,9 @@ public class InstituitionController {
         try {
             instituitionService.save(instituition);
             return ResponseEntity.status(HttpStatus.CREATED).build();
-        } catch (ServiceException e){
+        } catch (ServiceException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
-        } catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
@@ -70,9 +83,9 @@ public class InstituitionController {
     public ResponseEntity update(@PathVariable Long id, @RequestBody Instituition instituition) {
         try {
             return ResponseEntity.ok().body(instituitionService.update(id, instituition));
-        } catch (ServiceException e){
+        } catch (ServiceException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
-        } catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
@@ -83,9 +96,11 @@ public class InstituitionController {
         try {
             instituitionService.delete(id);
             return ResponseEntity.ok().build();
-        } catch (ServiceException e){
-            return ResponseEntity.status(e.getStatusCode()).body(e.getMessageError());
-        } catch (Exception e){
+        } catch (EmptyResultDataAccessException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                MessageError.builder().userMessage(MSG_INSTITUITION_NOT_FOUND.getMessage())
+                    .code(MSG_INSTITUITION_NOT_FOUND.getCode()).build());
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }

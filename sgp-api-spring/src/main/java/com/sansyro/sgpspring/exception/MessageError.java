@@ -1,11 +1,9 @@
 package com.sansyro.sgpspring.exception;
 
-import lombok.Getter;
-import lombok.Setter;
 import lombok.Builder;
+import lombok.Getter;
 
 @Getter
-@Setter
 @Builder
 public class MessageError {
     private String userMessage;

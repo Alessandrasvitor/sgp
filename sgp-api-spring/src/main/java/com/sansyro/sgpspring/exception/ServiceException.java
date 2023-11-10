@@ -15,10 +15,6 @@ public class ServiceException extends GenericException {
         super(MessageError.builder().userMessage(message).code(code).build(), HttpStatus.BAD_REQUEST);
     }
 
-    public ServiceException(String message, Integer code, HttpStatus status) {
-        super(MessageError.builder().userMessage(message).code(code).build(), status);
-    }
-
     public ServiceException(MessageEnum message, HttpStatus status) {
         super(message, status);
     }

@@ -27,12 +27,12 @@ import javax.persistence.EnumType;
 @DiscriminatorValue("lottery")
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder(toBuilder = true)
+@Builder
 @Getter
 @Setter
 @Entity
 @Table(name="lottery")
-public class Lottery {
+public class Lottery implements Cloneable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -65,6 +65,10 @@ public class Lottery {
                 .paidOut(dto.getPaidOut())
                 .won(dto.getWon())
         .build();
+    }
+
+    public Lottery clone() throws CloneNotSupportedException {
+        return (Lottery) super.clone();
     }
 
 }

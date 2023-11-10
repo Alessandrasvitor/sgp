@@ -18,9 +18,9 @@ create table IF NOT EXISTS functionality_user (
     FOREIGN KEY (user_id) REFERENCES user(id)
 );
 
-INSERT INTO user (name, email, password, user_hash_code, start_view, phone_number) VALUES
-     ('Super Admin', 'sansyro@email.com', '123456', '123456', 'instituition', '0123456789'),
-     ('Visitante', 'email@email.com', '123456', '123456', 'home', '0123456789');
+INSERT INTO user (id, name, email, password, user_hash_code, start_view, phone_number) VALUES
+     (9999999, 'Super Admin', 'sansyro@email.com', '123456', '123456', 'instituition', '0123456789'),
+     (9999998,'Visitante', 'email@email.com', '123456', '123456', 'home', '0123456789');
 
 INSERT INTO functionality_user (user_id, functionality) VALUES
   ((SELECT u.id FROM user u WHERE u.email = 'sansyro@email.com' ), 'HOME'),

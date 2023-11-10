@@ -37,11 +37,11 @@ export class CourseService {
   }
 
   finish(notation: any, id: any) {
-    return this.http.put(this.url + '/finish/' + id, {notation: notation}, this.securityService.getAuthorizated());
+    return this.http.patch(this.url + '/finish/' + id, {notation: notation}, this.securityService.getAuthorizated());
   }
 
   start(id: number) {
-    return this.http.get(this.url + '/start/' + id, this.securityService.getAuthorizated());
+    return this.http.patch(this.url + '/start/' + id, this.securityService.getAuthorizated());
   }
 
   delete(id: any) {

@@ -8,6 +8,8 @@ import com.sansyro.sgpspring.repository.UserRepository;
 import com.sansyro.sgpspring.util.EmailUtil;
 import com.sansyro.sgpspring.util.GeneralUtil;
 import com.sansyro.sgpspring.util.SecurityUtil;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +27,8 @@ import static com.sansyro.sgpspring.constants.MessageEnum.MSG_USER_NOT_FOUND;
 import static com.sansyro.sgpspring.constants.MessageEnum.MSG_USER_DOUBLE;
 import static com.sansyro.sgpspring.constants.StringConstaint.NAME;
 import static com.sansyro.sgpspring.constants.StringConstaint.PASSWORD_DEFAULT;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Service
 public class UserService {
@@ -42,7 +46,7 @@ public class UserService {
 
     public User getById(Long id) {
         Optional<User> userOp = userRepository.findById(id);
-        if(userOp.isPresent()) {
+        if (userOp.isPresent()) {
             return userOp.get();
         }
         throw new ServiceException(MSG_USER_NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -50,7 +54,7 @@ public class UserService {
 
     public User getByEmail(String email) {
         User user = userRepository.findByEmail(email);
-        if(user == null) {
+        if (isNull(user)) {
             throw new ServiceException(MSG_USER_NOT_FOUND, HttpStatus.NOT_FOUND);
         }
         return user;
@@ -75,6 +79,7 @@ public class UserService {
 
     public User update(Long id, UserDTO request) {
         validateUserNull(User.mapper(request));
+        validateUserDuplicate(id, request);
         User user = getById(id);
         user.setStartView(request.getStartView());
         user.setName(request.getName());
@@ -88,30 +93,46 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public String validatePassword(String password, String hash) {
-        if(GeneralUtil.stringNullOrEmpty(password)){
+    public void disable(Long id) {
+        User user = getById(id);
+        user.setStartView(FunctionalityEnum.HOME.getPage());
+        user.setFlActive(Boolean.FALSE);
+        userRepository.save(user);
+    }
+
+    public String validatePassword(String password, String hash) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+        if (GeneralUtil.stringNullOrEmpty(password)) {
             throw new ServiceException(MSG_FIELDS_NOT_FILLED);
         }
         return SecurityUtil.cryptPassword(password + hash);
     }
 
     private void validateUserDuplicate(String email) {
-        if(userRepository.findByEmail(email) != null) {
-            throw new ServiceException(GeneralUtil.getMessageExeption(MSG_USER_DOUBLE.getMessage(), email), MSG_USER_DOUBLE.getCode());
+        if (nonNull(userRepository.findByEmail(email))) {
+            throw new ServiceException(GeneralUtil.getMessageExeption(MSG_USER_DOUBLE.getMessage(),
+                email), MSG_USER_DOUBLE.getCode());
+        }
+    }
+
+    private void validateUserDuplicate(Long id, UserDTO user) {
+        User userDuplicate = userRepository.findByEmail(user.getEmail());
+        if (nonNull(userDuplicate) && !userDuplicate.getId().toString().equals(id.toString())) {
+            throw new ServiceException(GeneralUtil.getMessageExeption(MSG_USER_DOUBLE.getMessage(),
+                user.getEmail()), MSG_USER_DOUBLE.getCode());
         }
     }
 
     public void validateUserNull(User user) {
-        if(GeneralUtil.stringNullOrEmpty(user.getName())){
+        if (GeneralUtil.stringNullOrEmpty(user.getName())) {
             throw new ServiceException(MSG_FIELDS_NOT_FILLED);
         }
-        if(GeneralUtil.stringNullOrEmpty(user.getEmail())){
+        if (GeneralUtil.stringNullOrEmpty(user.getEmail())) {
             throw new ServiceException(MSG_FIELDS_NOT_FILLED);
         }
-        if(GeneralUtil.stringNullOrEmpty(user.getStartView())){
+        if (GeneralUtil.stringNullOrEmpty(user.getStartView())) {
             user.setStartView(FunctionalityEnum.HOME.getPage());
         }
-        if(GeneralUtil.stringNullOrEmpty(user.getPassword())){
+        if (GeneralUtil.stringNullOrEmpty(user.getPassword())) {
             user.setPassword(PASSWORD_DEFAULT);
         }
     }
@@ -123,10 +144,9 @@ public class UserService {
     }
 
     public User getUserLogger() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof User) {
-            return ((User)principal);
-        } else {
+        try {
+            return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        } catch (Exception e) {
             return null;
         }
     }
