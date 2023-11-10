@@ -48,7 +48,6 @@ public class LotteryControllerTest extends GenericControllerTest {
     @BeforeEach
     void setUp() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-        user.setFunctionalities(Set.of(FunctionalityEnum.LOTTERY, FunctionalityEnum.HOME));
         user.setToken(tokenService.generateToken(User.builder().id(user.getId()).build()));
         lotteryBuild = LotteryBuild.getBuild();
         lotteryBuild.setId(user.getId());

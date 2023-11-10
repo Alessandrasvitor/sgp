@@ -2,6 +2,7 @@ package com.sansyro.sgpspring.util;
 
 import static java.util.Objects.isNull;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sansyro.sgpspring.constants.TypeLotteryEnum;
@@ -11,15 +12,13 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 
-@Slf4j
 public class GeneralUtil {
 
     public static Boolean stringNullOrEmpty(String valor ){
-        return isNull(valor) || valor.isEmpty() || valor.length() == 0;
+        return isNull(valor) || valor.isEmpty();
     }
 
     public static String getNewCode() {
@@ -49,15 +48,10 @@ public class GeneralUtil {
         return messageFormat.format(params);
     }
 
-    public static String generatedStringObject(Object obj) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.registerModule(new JavaTimeModule());
-            return objectMapper.writeValueAsString(obj);
-        } catch (Exception e) {
-            log.info("Não foi possível converter o objeto do tipo {} para String.", obj.getClass());
-            return "";
-        }
+    public static String generatedStringObject(Object obj) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        return objectMapper.writeValueAsString(obj);
     }
 
 }

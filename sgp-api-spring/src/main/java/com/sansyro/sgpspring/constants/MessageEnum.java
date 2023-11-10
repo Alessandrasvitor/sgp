@@ -25,7 +25,7 @@ public enum MessageEnum {
 
     MSG_LOTERY_NOT_FOUND("Loteria não encontrada", 4054),
 
-    MSG_UNABLE_CONVERT_DATE("Não foi possível converter a data: {}", 4070)
+    MSG_UNABLE_CONVERT_DATE("Não foi possível converter a data: {0}", 4070)
 
 
     ;

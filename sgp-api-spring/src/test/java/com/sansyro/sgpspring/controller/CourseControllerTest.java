@@ -56,7 +56,6 @@ public class CourseControllerTest extends GenericControllerTest {
 
     @BeforeEach
     void setUp() {
-        user.setFunctionalities(Set.of(FunctionalityEnum.COURSE, FunctionalityEnum.HOME));
         user.setToken(tokenService.generateToken(User.builder().id(user.getId()).build()));
         courseBuild = CourseBuild.getBuild();
         courseBuild.setUser(user);

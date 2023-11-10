@@ -9,6 +9,7 @@ import com.sansyro.sgpspring.exception.ServiceException;
 import com.sansyro.sgpspring.service.CourseService;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Pageable;
@@ -33,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/course")
 @CrossOrigin(origins = "*")
 @PreAuthorize("hasAuthority('COURSE')")
-@OpenAPIDefinition(info = @Info(title = "Sistema de gestão de entreteinimento", version = "1.0", description = ""))
+@SecurityRequirement(name = "Bearer Auth")
 public class CourseController {
 
     @Autowired

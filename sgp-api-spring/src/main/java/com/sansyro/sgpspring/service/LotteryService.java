@@ -96,7 +96,7 @@ public class LotteryService {
     }
 
     public Lottery generate(TypeLotteryEnum typeLottery) {
-        return new Lottery().toBuilder()
+        return Lottery.builder()
             .bet(GeneralUtil.getBet(typeLottery))
             .type(typeLottery)
             .build();

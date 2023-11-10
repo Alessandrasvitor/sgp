@@ -3,6 +3,7 @@ package com.sansyro.sgpspring.controller;
 import com.sansyro.sgpspring.util.DateUtil;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,8 +16,7 @@ import java.util.Date;
 @CrossOrigin
 @RestController
 @RequestMapping("/api")
-@OpenAPIDefinition(info = @Info(title = "Sistema de gestão de entreteinimento", version = "1.0", description = ""))
-
+@SecurityRequirement(name = "Bearer Auth")
 public class SystemController {
 
     @ResponseBody

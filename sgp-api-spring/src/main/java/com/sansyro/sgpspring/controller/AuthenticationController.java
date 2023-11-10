@@ -8,6 +8,7 @@ import com.sansyro.sgpspring.entity.dto.UserDTO;
 import com.sansyro.sgpspring.exception.ForbiddenException;
 import com.sansyro.sgpspring.exception.ServiceException;
 import com.sansyro.sgpspring.security.service.AuthenticationService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/auth")
+@SecurityRequirement(name = "Bearer Auth")
 public class AuthenticationController {
 
     @Autowired
@@ -32,7 +34,9 @@ public class AuthenticationController {
     public ResponseEntity login(@RequestBody @Validated User request) {
         try {
             User user = authenticationService.login(request);
-            return ResponseEntity.ok(TokenResponse.builder().user(UserDTO.mapper(user)).type(BEARER).token(user.getToken()).build());
+            return ResponseEntity.ok(TokenResponse.builder()
+                .user(UserDTO.mapper(user)).type(BEARER)
+                .token(user.getToken()).build());
         } catch (ForbiddenException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessageError());
         } catch (Exception e) {
@@ -61,7 +65,7 @@ public class AuthenticationController {
         }
     }
 
-    @PutMapping("/atctive")
+    @PutMapping("/active")
     public ResponseEntity active(@RequestBody @Validated User request) {
         try {
             User user = authenticationService.activateUser(request);

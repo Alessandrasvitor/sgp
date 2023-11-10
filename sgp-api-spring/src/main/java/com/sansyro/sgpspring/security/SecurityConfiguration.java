@@ -80,9 +80,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) {
         web.ignoring()
-                .antMatchers(HttpMethod.GET, "/api/**")
-                .antMatchers(HttpMethod.PUT, "/auth/**")
-                .antMatchers(HttpMethod.GET, "/auth/**")
-                .antMatchers(HttpMethod.POST,  "/auth/**");
+                .antMatchers(
+          "/api/**",
+                    "/auth/**",
+                    "/v3/api-docs/**",
+                    "/configuration/ui",
+                    "/swagger-resources/**",
+                    "/swagger-ui.html",
+                    "/swagger-ui/**",
+                    "/webjars/**");
     }
 }

@@ -46,14 +46,6 @@ public class CourseServiceTest {
         courseBuild = CourseBuild.getBuild();
     }
 
-//    @Test
-//    void listTest() {
-//        when(repository.findAll()).thenReturn(new PageImpl<>(Collections.emptyList()));
-//        List courses = service.list();
-//        verify(repository, times(1)).findAll();
-//        assertNotNull(courses);
-//    }
-
     @Test
     void getByIdTest() {
         when(repository.findById(any())).thenReturn(Optional.of(courseBuild));

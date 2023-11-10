@@ -45,7 +45,6 @@ public class InstituitionControllerTest extends GenericControllerTest {
 
     @BeforeEach
     void setUp() {
-        user.setFunctionalities(Set.of(FunctionalityEnum.INSTITUITION, FunctionalityEnum.HOME));
         user.setToken(tokenService.generateToken(User.builder().id(user.getId()).build()));
         instituitionBuild = InstituitionBuild.getBuild();
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));

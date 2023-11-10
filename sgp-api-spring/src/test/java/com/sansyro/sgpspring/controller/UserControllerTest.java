@@ -46,7 +46,6 @@ public class UserControllerTest extends GenericControllerTest {
     @BeforeEach
     void setUp() throws CloneNotSupportedException {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-        user.setFunctionalities(Set.of(FunctionalityEnum.USER, FunctionalityEnum.HOME));
         user.setToken(tokenService.generateToken(User.builder().id(user.getId()).build()));
         userBuild = user.clone();
         dtoBuild = UserDTO.mapper(userBuild);

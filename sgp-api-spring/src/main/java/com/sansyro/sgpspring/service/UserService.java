@@ -8,6 +8,8 @@ import com.sansyro.sgpspring.repository.UserRepository;
 import com.sansyro.sgpspring.util.EmailUtil;
 import com.sansyro.sgpspring.util.GeneralUtil;
 import com.sansyro.sgpspring.util.SecurityUtil;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -98,7 +100,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public String validatePassword(String password, String hash) {
+    public String validatePassword(String password, String hash) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         if (GeneralUtil.stringNullOrEmpty(password)) {
             throw new ServiceException(MSG_FIELDS_NOT_FILLED);
         }
@@ -142,10 +144,9 @@ public class UserService {
     }
 
     public User getUserLogger() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof User) {
-            return ((User) principal);
-        } else {
+        try {
+            return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        } catch (Exception e) {
             return null;
         }
     }

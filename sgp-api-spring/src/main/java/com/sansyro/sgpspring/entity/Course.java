@@ -33,7 +33,7 @@ import static java.util.Objects.isNull;
 @DiscriminatorValue("course")
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder(toBuilder = true)
+@Builder
 @Getter
 @Setter
 @Entity

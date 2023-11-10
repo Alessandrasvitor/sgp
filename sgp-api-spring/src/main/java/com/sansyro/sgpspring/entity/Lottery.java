@@ -27,7 +27,7 @@ import javax.persistence.EnumType;
 @DiscriminatorValue("lottery")
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder(toBuilder = true)
+@Builder
 @Getter
 @Setter
 @Entity

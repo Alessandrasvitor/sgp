@@ -1,11 +1,13 @@
 package com.sansyro.sgpspring.service;
 
 import static com.sansyro.sgpspring.constants.StringConstaint.PASSWORD_DEFAULT;
+import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -22,6 +24,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
@@ -33,14 +38,6 @@ public class UserServiceTest {
     private UserRepository repository;
 
     private final Long ID = 1L;
-
-//    @Test
-//    void listTest() {
-//        when(repository.findAll()).thenReturn(new PageImpl<>(Collections.emptyList()));
-//        List users = service.list();
-//        verify(repository, times(1)).findAll();
-//        assertNotNull(users);
-//    }
 
     @Test
     void getByIdTest() {
@@ -141,6 +138,11 @@ public class UserServiceTest {
         when(repository.save(any())).thenReturn(user);
         assertNotNull(service.updateFunctionalities(ID, new UserDTO()));
         verify(repository, times(1)).findById(any());
+    }
+
+    @Test
+    void getUserLoggerNullTest() {
+        assertNull(service.getUserLogger());
     }
 
 }

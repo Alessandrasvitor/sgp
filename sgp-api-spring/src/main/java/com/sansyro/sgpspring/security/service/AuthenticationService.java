@@ -12,6 +12,8 @@ import com.sansyro.sgpspring.repository.UserRepository;
 import com.sansyro.sgpspring.service.UserService;
 import com.sansyro.sgpspring.util.GeneralUtil;
 import com.sansyro.sgpspring.util.SecurityUtil;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,7 +40,7 @@ public class AuthenticationService implements UserDetailsService {
         return user;
     }
 
-    public User login(User userRequest) {
+    public User login(User userRequest) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         User user = (User) loadUserByUsername(userRequest.getEmail());
 
         if (user.getPassword().equals(PASSWORD_DEFAULT) && user.getPassword().equals(userRequest.getPassword())) {
@@ -48,7 +50,8 @@ public class AuthenticationService implements UserDetailsService {
         return returnUser(user);
     }
 
-    private void validPassword(String userPassword, String userHashCode, String requestPassword) {
+    private void validPassword(String userPassword, String userHashCode, String requestPassword)
+        throws UnsupportedEncodingException, NoSuchAlgorithmException {
         if (!SecurityUtil.cryptPassword(requestPassword + userHashCode).equals(userPassword)) {
             throw new ForbiddenException(MessageEnum.MSG_USER_INVALID);
         }
@@ -68,19 +71,19 @@ public class AuthenticationService implements UserDetailsService {
         }
     }
 
-    private User create(User userRequest) {
+    private User create(User userRequest) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         User user = service.save(userRequest);
         user.setPassword(service.validatePassword(user.getPassword(), user.getUserHashCode()));
         return repository.save(user);
     }
 
-    public User register(User userRequest) {
+    public User register(User userRequest) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         User user = create(userRequest);
         service.sendEmailCreate(user);
         return user;
     }
 
-    public User activateUser(User userRequest) {
+    public User activateUser(User userRequest) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         User user = repository.findByEmail(userRequest.getEmail());
         if (isNull(user)) {
             throw new ServiceException(MessageEnum.MSG_USER_NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -106,7 +109,7 @@ public class AuthenticationService implements UserDetailsService {
         service.sendEmailCreate(user);
     }
 
-    public User updatePassword(String oldPassword, User request) {
+    public User updatePassword(String oldPassword, User request) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         User user = (User) loadUserByUsername(request.getEmail());
         validOldPassword(oldPassword, user);
         user.setUserHashCode(GeneralUtil.getNewCode());
@@ -116,7 +119,7 @@ public class AuthenticationService implements UserDetailsService {
         return repository.save(user);
     }
 
-    private void validOldPassword(String oldPassword, User user) {
+    private void validOldPassword(String oldPassword, User user) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         if (PASSWORD_DEFAULT.equals(oldPassword) && PASSWORD_DEFAULT.equals(user.getPassword())) {
             return;
         }

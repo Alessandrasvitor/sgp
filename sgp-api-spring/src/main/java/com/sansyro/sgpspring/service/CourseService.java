@@ -61,6 +61,7 @@ public class CourseService {
         validateDuplicate(course);
         course.setInstituition(instituitionService.getById(dto.getIdInstituition()));
         course.setPriority(5);
+        course.setFinished(Boolean.FALSE);
         return courseRepository.save(course);
     }
 
@@ -97,6 +98,7 @@ public class CourseService {
         if (notation < 7) {
             course.setStatus(StatusEnum.FAIL);
         } else {
+            course.setFinished(Boolean.TRUE);
             course.setStatus(StatusEnum.FINISH);
             course.setStartDate(new Date());
         }

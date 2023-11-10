@@ -35,7 +35,7 @@ import static java.util.Objects.isNull;
 @DiscriminatorValue("user")
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder(toBuilder = true)
+@Builder
 @Getter
 @Setter
 @Entity

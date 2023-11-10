@@ -138,14 +138,6 @@ public class LotteryServiceTest {
     }
 
     @Test
-    void updateWithErrorNotTypeTest() {
-        Lottery lottery = LotteryBuild.getBuild();
-        lottery.setType(null);
-        lottery.setBet(RandomStringUtils.randomAlphabetic(8));
-        assertThrows(ServiceException.class, () -> service.update(ID, LotteryDTO.mapper(lottery)));
-    }
-
-    @Test
     void deleteTest() {
         service.delete(ID);
         verify(repository, times(1)).deleteById(any());

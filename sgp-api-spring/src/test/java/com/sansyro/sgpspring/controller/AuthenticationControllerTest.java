@@ -12,6 +12,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -19,6 +20,9 @@ import com.sansyro.sgpspring.build.UserBuild;
 import com.sansyro.sgpspring.entity.User;
 import com.sansyro.sgpspring.util.GeneralUtil;
 import com.sansyro.sgpspring.util.SecurityUtil;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashSet;
 import java.util.Optional;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,30 +31,30 @@ import org.springframework.http.MediaType;
 
 public class AuthenticationControllerTest extends GenericControllerTest {
 
-    private final Long ID = 1L;
-
-    private User user;
+    private User userAuth;
 
     private User userBuild;
 
     @BeforeEach
-    void setUp() throws CloneNotSupportedException {
-        userBuild = UserBuild.getBuild();
-        user = userBuild.clone();
-        user.setPassword(SecurityUtil.cryptPassword(user.getPassword() + user.getUserHashCode()));
+    void setUp() throws CloneNotSupportedException, UnsupportedEncodingException, NoSuchAlgorithmException {
+        user.setFunctionalities(new HashSet<>());
+        userBuild = user.clone();
+        userAuth = userBuild.clone();
+        userAuth.setPassword(SecurityUtil.cryptPassword(userAuth.getPassword() + userAuth.getUserHashCode()));
     }
 
     @Test
     void loginTest() throws Exception {
-        when(userRepository.findByEmail(anyString())).thenReturn(user);
-        when(userRepository.save(any())).thenReturn(user);
+        when(userRepository.findByEmail(anyString())).thenReturn(userAuth);
+        when(userRepository.save(any())).thenReturn(userAuth);
         mockMvc.perform(
                 post("/auth/login")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(GeneralUtil.generatedStringObject(userBuild)))
+            .andDo(print())
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.user.id").value(user.getId()))
-            .andExpect(jsonPath("$.user.email").value(user.getEmail()));
+            .andExpect(jsonPath("$.user.id").value(userAuth.getId()))
+            .andExpect(jsonPath("$.user.email").value(userAuth.getEmail()));
 
         when(userRepository.findByEmail(anyString())).thenReturn(null);
         mockMvc.perform(
@@ -61,16 +65,16 @@ public class AuthenticationControllerTest extends GenericControllerTest {
             .andExpect(jsonPath("$.userMessage").value(MSG_USER_INVALID.getMessage()))
             .andExpect(jsonPath("$.code").value(MSG_USER_INVALID.getCode()));
 
-        user.setPassword(PASSWORD_DEFAULT);
+        userAuth.setPassword(PASSWORD_DEFAULT);
         userBuild.setPassword(PASSWORD_DEFAULT);
-        when(userRepository.findByEmail(anyString())).thenReturn(user);
+        when(userRepository.findByEmail(anyString())).thenReturn(userAuth);
         mockMvc.perform(
                 post("/auth/login")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(GeneralUtil.generatedStringObject(userBuild)))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.user.id").value(user.getId()))
-            .andExpect(jsonPath("$.user.email").value(user.getEmail()));
+            .andExpect(jsonPath("$.user.id").value(userAuth.getId()))
+            .andExpect(jsonPath("$.user.email").value(userAuth.getEmail()));
 
         when(userRepository.findByEmail(anyString())).thenThrow(RuntimeException.class);
         mockMvc.perform(
@@ -82,7 +86,7 @@ public class AuthenticationControllerTest extends GenericControllerTest {
 
     @Test
     void logoutTest() throws Exception {
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(userAuth));
         mockMvc.perform(
                 put("/auth/logout/{id}", ID))
             .andExpect(status().isOk());
@@ -100,7 +104,7 @@ public class AuthenticationControllerTest extends GenericControllerTest {
 
     @Test
     void registerTest() throws Exception {
-        when(userRepository.save(any())).thenReturn(user);
+        when(userRepository.save(any())).thenReturn(userAuth);
         when(userRepository.findByEmail(anyString())).thenReturn(null);
         mockMvc.perform(
                 post("/auth/register")
@@ -119,7 +123,7 @@ public class AuthenticationControllerTest extends GenericControllerTest {
         mockMvc.perform(
                 post("/auth/register")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(GeneralUtil.generatedStringObject(User.builder().name(user.getName()).build())))
+                    .content(GeneralUtil.generatedStringObject(User.builder().name(userAuth.getName()).build())))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.userMessage").value(MSG_FIELDS_NOT_FILLED.getMessage()))
             .andExpect(jsonPath("$.code").value(MSG_FIELDS_NOT_FILLED.getCode()));
@@ -128,8 +132,8 @@ public class AuthenticationControllerTest extends GenericControllerTest {
                 post("/auth/register")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(GeneralUtil.generatedStringObject(
-                        User.builder().name(user.getName())
-                            .email(user.getName()).build())))
+                        User.builder().name(userAuth.getName())
+                            .email(userAuth.getName()).build())))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.code").value(MSG_EMAIL_INVALID.getCode()));
 
@@ -137,8 +141,8 @@ public class AuthenticationControllerTest extends GenericControllerTest {
                 post("/auth/register")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(GeneralUtil.generatedStringObject(
-                        User.builder().name(user.getName())
-                            .email(user.getEmail()).build())))
+                        User.builder().name(userAuth.getName())
+                            .email(userAuth.getEmail()).build())))
             .andExpect(status().isOk());
 
         when(userRepository.save(any())).thenThrow(RuntimeException.class);
@@ -146,27 +150,16 @@ public class AuthenticationControllerTest extends GenericControllerTest {
                 post("/auth/register")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(GeneralUtil.generatedStringObject(
-                        User.builder().name(user.getName())
-                            .email(user.getEmail()).build())))
+                        User.builder().name(userAuth.getName())
+                            .email(userAuth.getEmail()).build())))
             .andExpect(status().isInternalServerError());
-    }
-
-    @Test
-    void activeTest() throws Exception {
-        when(userRepository.findByEmail(anyString())).thenReturn(user);
-        when(userRepository.save(any())).thenReturn(user);
-        mockMvc.perform(
-                put("/auth/atctive")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(GeneralUtil.generatedStringObject(userBuild)))
-            .andExpect(status().isOk());
     }
 
     @Test
     void activeNotFoundTest() throws Exception {
         when(userRepository.findByEmail(anyString())).thenReturn(null);
         mockMvc.perform(
-                put("/auth/atctive")
+                put("/auth/active")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(GeneralUtil.generatedStringObject(userBuild)))
             .andExpect(status().isNotFound())
@@ -176,21 +169,21 @@ public class AuthenticationControllerTest extends GenericControllerTest {
 
     @Test
     void activeExceptionTest() throws Exception {
-        user.setCheckerCode(RandomStringUtils.randomAlphanumeric(10));
-        when(userRepository.findByEmail(anyString())).thenReturn(user);
+        userAuth.setCheckerCode(RandomStringUtils.randomAlphanumeric(10));
+        when(userRepository.findByEmail(anyString())).thenReturn(userAuth);
         mockMvc.perform(
-                put("/auth/atctive")
+                put("/auth/active")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(GeneralUtil.generatedStringObject(userBuild)))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.userMessage").value(MSG_CHECKER_CODE_INVALID.getMessage()))
             .andExpect(jsonPath("$.code").value(MSG_CHECKER_CODE_INVALID.getCode()));
 
-        userBuild.setCheckerCode(user.getCheckerCode());
-        when(userRepository.findByEmail(anyString())).thenReturn(user);
+        userBuild.setCheckerCode(userAuth.getCheckerCode());
+        when(userRepository.findByEmail(anyString())).thenReturn(userAuth);
         when(userRepository.save(any())).thenThrow(RuntimeException.class);
         mockMvc.perform(
-                put("/auth/atctive")
+                put("/auth/active")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(GeneralUtil.generatedStringObject(userBuild)))
             .andExpect(status().isInternalServerError());
@@ -207,8 +200,8 @@ public class AuthenticationControllerTest extends GenericControllerTest {
             .andExpect(jsonPath("$.userMessage").value(MSG_USER_INVALID.getMessage()))
             .andExpect(jsonPath("$.code").value(MSG_USER_INVALID.getCode()));
 
-        when(userRepository.findByEmail(anyString())).thenReturn(user);
-        when(userRepository.save(any())).thenReturn(user);
+        when(userRepository.findByEmail(anyString())).thenReturn(userAuth);
+        when(userRepository.save(any())).thenReturn(userAuth);
         mockMvc.perform(
                 put("/auth/reset-checker-code")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -226,7 +219,7 @@ public class AuthenticationControllerTest extends GenericControllerTest {
     @Test
     void changePasswordTest() throws Exception {
         when(userRepository.findByEmail(anyString())).thenReturn(userBuild);
-        when(userRepository.save(any())).thenReturn(user);
+        when(userRepository.save(any())).thenReturn(userAuth);
         String password = "" + userBuild.getPassword();
         mockMvc.perform(
                 put("/auth/change-password/{oldPassword}", password)
@@ -236,7 +229,7 @@ public class AuthenticationControllerTest extends GenericControllerTest {
             .andExpect(jsonPath("$.userMessage").value(MSG_USER_INVALID.getMessage()))
             .andExpect(jsonPath("$.code").value(MSG_USER_INVALID.getCode()));
 
-        when(userRepository.findByEmail(anyString())).thenReturn(user);
+        when(userRepository.findByEmail(anyString())).thenReturn(userAuth);
         mockMvc.perform(
                 put("/auth/change-password/{oldPassword}", password)
                     .contentType(MediaType.APPLICATION_JSON)
@@ -253,7 +246,7 @@ public class AuthenticationControllerTest extends GenericControllerTest {
             .andExpect(jsonPath("$.code").value(MSG_FIELDS_NOT_FILLED.getCode()));
 
         userBuild.setPassword(password);
-        user.setPassword(SecurityUtil.cryptPassword(password + user.getUserHashCode()));
+        userAuth.setPassword(SecurityUtil.cryptPassword(password + userAuth.getUserHashCode()));
         when(userRepository.save(any())).thenThrow(RuntimeException.class);
         mockMvc.perform(
                 put("/auth/change-password/{oldPassword}", password)
@@ -264,8 +257,8 @@ public class AuthenticationControllerTest extends GenericControllerTest {
 
     @Test
     void updateTokenTest() throws Exception {
-        when(userRepository.findByEmail(anyString())).thenReturn(user);
-        when(userRepository.save(any())).thenReturn(user);
+        when(userRepository.findByEmail(anyString())).thenReturn(userAuth);
+        when(userRepository.save(any())).thenReturn(userAuth);
         mockMvc.perform(
                 post("/auth/update-token")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -284,7 +277,7 @@ public class AuthenticationControllerTest extends GenericControllerTest {
             .andExpect(jsonPath("$.userMessage").value(MSG_USER_INVALID.getMessage()))
             .andExpect(jsonPath("$.code").value(MSG_USER_INVALID.getCode()));
 
-        when(userRepository.findByEmail(anyString())).thenReturn(user);
+        when(userRepository.findByEmail(anyString())).thenReturn(userAuth);
         when(userRepository.save(any())).thenThrow(RuntimeException.class);
         mockMvc.perform(
                 post("/auth/update-token")
